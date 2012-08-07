@@ -1,0 +1,63 @@
+*.mode1v3
+*.pbxuser
+build/
+build/*
+*.build/
+obj/
+*.o
+openFrameworks.a
+openFrameworksDebug.a
+openFrameworksUniversal.a
+*.app/`
+
+#codeblocks files
+apps/*/*/*.layout
+apps/*/*/*.depend
+apps/*/*/bin/clickToLaunch*
+apps/*/*/bin/libs
+apps/*/*/obj
+
+#codeblocks OF lib files
+libs/openFrameworksCompiled/project/*/*.depend
+libs/openFrameworksCompiled/project/*/*.layout
+
+#linux temporary files
+*~
+
+#eclipse build folders
+#Mac OS X
+addons/Debug Mac OS X
+addons/Release Mac OS X
+libs/openFrameworks/Debug Mac OS X
+libs/openFrameworks/Release Mac OS X
+apps/*/*/Debug Mac OS X
+apps/*/*/Release Mac OS X
+.DS_Store
+
+#Linux
+addons/Debug Linux
+addons/Release Linux
+libs/openFrameworks/Debug Linux
+libs/openFrameworks/Release Linux
+apps/*/*/Debug Linux
+apps/*/*/Release Linux
+apps/*/*/Debug Linux64
+apps/*/*/Release Linux64
+
+openTSPS.xcodeproj/rockwell.mode1v3
+openTSPS.xcodeproj/rockwell.pbxuser
+=======
+Debug*/
+Release*/
+build/
+obj/
+*.app/
+.svn/
+*.perspectivev3
+*.pbxuser
+*.mode*
+*.xcworkspace
+xcuserdata/
+releases/*
+
+.DS_Store
