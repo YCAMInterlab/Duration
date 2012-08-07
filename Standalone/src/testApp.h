@@ -21,5 +21,16 @@ class testApp : public ofBaseApp{
     void gotMessage(ofMessage msg);
 
 	ofxTimeline timeline;
-    ofxUICanvas* uicanvas;
+    void bangFired(ofxTLBangEventArgs& bang);
+	
+    ofRectangle canvasRectangle;
+    ofxUICanvas* gui;   	
+	void guiEvent(ofxUIEventArgs &e);
+    
+    //control elements
+    ofxUILabel* timeLabel;
+    ofxUIMultiImageToggle* playpause;
+    ofxUIDropDownList* addTrackDropDown; 
+
+    vector<string> trackTypes;
 };
