@@ -66,18 +66,13 @@ class testApp : public ofBaseApp{
     string defaultProjectDirectoryPath;
 	DurationProjectSettings settings;
 
-    void newProject(string newProjectName, string newProjectPath);
-    void loadProject(string projectName, string projectDirectory);    
+    void newProject(string newProjectPath, string newProjectName);
+    void loadProject(string projectPath, string projectName);
     void saveProject();
     
     DurationProjectSettings defaultProjectSettings();
     
-    bool shouldCreateNewProject;
-	string createNewProjectName;
-    string createNewProjectPath;
-    
+    bool shouldCreateNewProject;    
     bool shouldLoadProject;
-    string loadNewProjectName;
-    string loadNewProjectPath;
 
 };

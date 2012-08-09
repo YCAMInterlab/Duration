@@ -139,46 +139,53 @@ void  testApp::guiEvent(ofxUIEventArgs &e){
     else if(name == "PLAYPAUSE"){
         timeline.togglePlay();
     }
-    else if(name == "ADD TRACK"){
-        ofxUIDropDownList *ddlist = (ofxUIDropDownList *) e.widget;
-        if(ddlist->isOpen()){
+    else if(e.widget == addTrackDropDown){
+        if(addTrackDropDown->isOpen()){
             cout << "DISABLING" << endl;
             timeline.disable();
         }
-        else{
-            cout << "ENABLING" << endl;
+        else {
             timeline.enable();
+            if(addTrackDropDown->getSelected().size() > 0){
+                string selectedTrackType = addTrackDropDown->getSelected()[0]->getName();
+                if(selectedTrackType == "BANGS"){
+                    timeline.addBangs("New Bangs");
+                    cout << "adding new bangs" << endl;
+                }
+                else if(selectedTrackType == "FLAGS"){
+                    timeline.addFlags("New Flags");                
+                }
+                else if(selectedTrackType == "CURVES"){
+                    timeline.addKeyframes("New Curves");                                
+                }
+                else if(selectedTrackType == "SWITCHES"){
+                    timeline.addSwitcher("New Switches");                
+                }
+
+                addTrackDropDown->clearSelected();
+            }
         }
-        ddlist->clearSelected();
     }
     else if(e.widget == projectDropDown){
-        vector<ofxUIWidget *> &selected = projectDropDown->getSelected(); 
-        for(int i = 0; i < selected.size(); i++) {
-            if(selected[i]->getName() == NEW_PROJECT_TEXT){
-                shouldCreateNewProject = true;
-            }
-            else if(selected[i]->getName() == OPEN_PROJECT_TEXT){
-                ofFileDialogResult r = ofSystemLoadDialog("Load Project", true);
-                if(r.bSuccess){
-                    shouldLoadProject = true;
-                    loadNewProjectName = r.getName();
-                    loadNewProjectPath = r.getPath();;
+        if(projectDropDown->isOpen()){
+            timeline.disable();
+        }
+		else {
+            timeline.enable();
+            if(projectDropDown->getSelected().size() > 0){
+                string selectedTrackType = projectDropDown->getSelected()[0]->getName();
+                if(selectedTrackType == NEW_PROJECT_TEXT){
+                    shouldCreateNewProject = true;
                 }
-            }
-            else if(selected[i]->getName() == "BANGS"){
-                timeline.addBangs("New Bangs");
-            }
-            else if(selected[i]->getName() == "FLAGS"){
-                timeline.addFlags("New Flags");                
-            }
-            else if(selected[i]->getName() == "CURVES"){
-                timeline.addKeyframes("New Curves");                                
-            }
-            else if(selected[i]->getName() == "SWITCHES"){
-                timeline.addSwitcher("New Switches");                
+                else if(selectedTrackType == OPEN_PROJECT_TEXT){
+                    shouldLoadProject = true;
+                }
+                else {
+                    //loadProject(<#string projectName#>, <#string projectDirectory#>)
+                }
+                projectDropDown->clearSelected();
             }
         }
-        projectDropDown->clearSelected();
     }
     else if(name == "SAVE"){
         saveProject();
@@ -209,17 +216,17 @@ void testApp::update(){
 	timeLabel->setLabel(timeline.getCurrentTimecode());
     if(shouldLoadProject){
         shouldLoadProject = false;
-        loadProject(loadNewProjectName, loadNewProjectPath);
+        ofFileDialogResult r = ofSystemLoadDialog("Load Project", true);
+        if(r.bSuccess){
+	        loadProject(r.getPath(), r.getName());    
+        }        
     }
     
     if(shouldCreateNewProject){
         shouldCreateNewProject = false;
         ofFileDialogResult r = ofSystemSaveDialog("New Project", "NewDuration");
         if(r.bSuccess){
-            createNewProjectName = r.getName();
-            createNewProjectPath = r.getPath();
-            cout << "name " << r.getName() << " and path " << r.getPath() << endl;
-            newProject(createNewProjectPath, createNewProjectName);
+            newProject(r.getPath(), r.getName());
         }
     }
 }
@@ -281,12 +288,12 @@ void testApp::newProject(string newProjectPath, string newProjectName){
 }
 
 //--------------------------------------------------------------
-void testApp::loadProject(string projectName, string projectDirectory){
+void testApp::loadProject(string projectPath, string projectName){
     
     timeline.reset();
     
     ofxXmlSettings projectSettings;
-    if(projectSettings.loadFile(ofToDataPath(projectDirectory+"/.durationproj"))){
+    if(projectSettings.loadFile(ofToDataPath(projectPath+"/.durationproj"))){
         
         //LOAD ALL TRACKS
         projectSettings.pushTag("tracks");
@@ -352,7 +359,7 @@ void testApp::loadProject(string projectName, string projectDirectory){
         oscPortInput->setTextString( ofToString(newSettings.oscPort) );
         projectSettings.popTag(); //project settings;
         
-        newSettings.path = projectDirectory;
+        newSettings.path = projectPath;
         newSettings.name = projectName;
         settings = newSettings;
         projectDropDown->getLabel()->setLabel(projectName);
