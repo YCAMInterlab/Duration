@@ -7,6 +7,7 @@
 typedef struct {
     string path; //full project path
     string name;
+    string settingsPath;
     
     bool useBPM;
     float bpm;
@@ -74,5 +75,5 @@ class testApp : public ofBaseApp{
     
     bool shouldCreateNewProject;    
     bool shouldLoadProject;
-
+    
 };

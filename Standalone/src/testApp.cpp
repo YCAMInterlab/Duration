@@ -34,7 +34,7 @@ void testApp::setup(){
     for(int i = 0; i < projectDirectory.size(); i++){
         if(projectDirectory.getFile(i).isDirectory()){
             ofDirectory subDir = ofDirectory(projectDirectory.getPath(i));
-            cout << "checking path " << projectDirectory.getPath(i) << endl;
+//            cout << "checking path " << projectDirectory.getPath(i) << endl;
             subDir.allowExt("durationproj");
             subDir.setShowHidden(true);
             subDir.listDir();
@@ -44,11 +44,9 @@ void testApp::setup(){
         }
     }
     
-    //TODO load default project
-    
     
     //Set up top GUI
-    gui = new ofxUICanvas(0,0,ofGetWidth(), 70);     
+    gui = new ofxUICanvas(0,0,ofGetWidth(), 200);     
     
     //ADD PROJECT DROP DOWN
     projectDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "PROJECT", projects, OFX_UI_FONT_LARGE);
@@ -118,6 +116,22 @@ void testApp::setup(){
 //	timeline.enableSnapToBPM(true);
 
     ofAddListener(timeline.events().bangFired, this, &testApp::bangFired);
+
+    //TODO load default project
+    
+    ofxXmlSettings defaultSettings;
+    if(defaultSettings.loadFile("settings.xml")){
+        string lastProjectPath = defaultSettings.getValue("lastProjectPath", "");
+        string lastProjectName = defaultSettings.getValue("lastProjectName", "");
+        cout << "loading last project " << lastProjectPath << " and name " << lastProjectName << endl;
+        if(lastProjectPath != "" && lastProjectName != "" && ofDirectory(lastProjectPath).exists()){
+            loadProject(lastProjectPath, lastProjectName);
+        }
+    }
+    else {
+        cout << "Loading sample project " << defaultProjectDirectoryPath << endl;
+        loadProject(ofToDataPath(defaultProjectDirectoryPath+"/Sample Project"), "Sample Project");
+    }
 }
 
 
@@ -130,6 +144,7 @@ void testApp::bangFired(ofxTLBangEventArgs& bang){
 void  testApp::guiEvent(ofxUIEventArgs &e){
     string name = e.widget->getName(); 
 	int kind = e.widget->getKind(); 
+    
 	cout << "name is " << name << " kind is " << kind << endl;    
     
 	if(name == "STOP"){
@@ -149,19 +164,26 @@ void  testApp::guiEvent(ofxUIEventArgs &e){
             if(addTrackDropDown->getSelected().size() > 0){
                 string selectedTrackType = addTrackDropDown->getSelected()[0]->getName();
                 if(selectedTrackType == "BANGS"){
-                    timeline.addBangs("New Bangs");
-                    cout << "adding new bangs" << endl;
+                    string name = timeline.confirmedUniqueName("New Bangs");
+                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
+                    cout << "bang name is " << name << " and " << xmlFile << endl;
+                    timeline.addBangs(name, xmlFile);
                 }
                 else if(selectedTrackType == "FLAGS"){
-                    timeline.addFlags("New Flags");                
+                	string name = timeline.confirmedUniqueName("New Flags");
+                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
+                    timeline.addFlags(name, xmlFile);                
                 }
                 else if(selectedTrackType == "CURVES"){
-                    timeline.addKeyframes("New Curves");                                
+                	string name = timeline.confirmedUniqueName("New Curves");
+                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
+                    timeline.addKeyframes(name, xmlFile);                                
                 }
                 else if(selectedTrackType == "SWITCHES"){
-                    timeline.addSwitcher("New Switches");                
+                	string name = timeline.confirmedUniqueName("New Switches");
+                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
+                    timeline.addSwitcher(name, xmlFile);                
                 }
-
                 addTrackDropDown->clearSelected();
             }
         }
@@ -173,15 +195,15 @@ void  testApp::guiEvent(ofxUIEventArgs &e){
 		else {
             timeline.enable();
             if(projectDropDown->getSelected().size() > 0){
-                string selectedTrackType = projectDropDown->getSelected()[0]->getName();
-                if(selectedTrackType == NEW_PROJECT_TEXT){
+                string selectedProjectName = projectDropDown->getSelected()[0]->getName();
+                if(selectedProjectName == NEW_PROJECT_TEXT){
                     shouldCreateNewProject = true;
                 }
-                else if(selectedTrackType == OPEN_PROJECT_TEXT){
+                else if(selectedProjectName == OPEN_PROJECT_TEXT){
                     shouldLoadProject = true;
                 }
                 else {
-                    //loadProject(<#string projectName#>, <#string projectDirectory#>)
+                    loadProject(ofToDataPath(defaultProjectDirectoryPath+"/"+selectedProjectName), selectedProjectName);
                 }
                 projectDropDown->clearSelected();
             }
@@ -264,7 +286,9 @@ DurationProjectSettings testApp::defaultProjectSettings(){
 void testApp::newProject(string newProjectPath, string newProjectName){
     DurationProjectSettings newProjectSettings = defaultProjectSettings();
     newProjectSettings.name = newProjectName;
-    newProjectSettings.path = ofToDataPath(newProjectPath + "/");
+    newProjectSettings.path = ofToDataPath(newProjectPath + "/" + newProjectName);
+    newProjectSettings.settingsPath = ofToDataPath(newProjectSettings.path + "/.durationproj");
+    
     ofDirectory newProjectDirectory(newProjectSettings.path);
     if(newProjectDirectory.exists()){
     	ofSystemAlertDialog("The folder \"" + newProjectName + "\" already exists.");
@@ -274,17 +298,13 @@ void testApp::newProject(string newProjectPath, string newProjectName){
     
     //TODO: prompt to save existing project
     settings = newProjectSettings;
-    
+
     timeline.reset();
 
     //saves file with default settings to new directory
     saveProject();
-
-//    //loads it up and clears the timeline
-    cout << "NEW PROJECT: loading project path " << settings.path << endl; 
-    loadProject(settings.name, settings.path);
     
-    projectDropDown->setName(newProjectName);
+    loadProject(settings.path, settings.name);
 }
 
 //--------------------------------------------------------------
@@ -293,77 +313,91 @@ void testApp::loadProject(string projectPath, string projectName){
     timeline.reset();
     
     ofxXmlSettings projectSettings;
-    if(projectSettings.loadFile(ofToDataPath(projectPath+"/.durationproj"))){
-        
-        //LOAD ALL TRACKS
-        projectSettings.pushTag("tracks");
-        int numPages = projectSettings.getNumTags("page");
-        for(int p = 0; p < numPages; p++){
-            projectSettings.pushTag("page", p);
-            string pageName = projectSettings.getValue("name", "defaultPage");
-            if(p == 0){
-                timeline.setPageName(pageName, 0);
-            }
-            else{
-                timeline.addPage(pageName, true);
-            }
-
-            int numTracks = projectSettings.getNumTags("track");
-            for(int i = 0; i < numTracks; i++){
-                projectSettings.pushTag("track", i);
-                string trackType = projectSettings.getValue("type", "");
-                ofxTLTrack* newTrack = NULL;
-                string xmlFileName = projectSettings.getValue("xmlFileName", "");
-                string trackName = projectSettings.getValue("trackName","");
-                if(trackType == "BANGS"){
-                    newTrack = timeline.addBangs(trackName, xmlFileName);
-                }
-                else if(trackType == "FLAGS"){
-                    newTrack = timeline.addFlags(trackName, xmlFileName);                
-                }
-                else if(trackType == "CURVES"){
-                    newTrack = timeline.addKeyframes(trackName, xmlFileName);                                
-                }
-                else if(trackType == "SWITCHES"){
-                    newTrack = timeline.addSwitcher(trackName, xmlFileName);                
-                }        
-                projectSettings.popTag(); //track
-            }
-        	projectSettings.popTag(); //page
-        }
-        timeline.setCurrentPage(0);
-        projectSettings.popTag(); //tracks
-        
-        //LOAD OTHER SETTINGS
-        projectSettings.pushTag("timelineSettings");
-        timeline.setDurationInTimecode(projectSettings.getValue("duration", "00:00:00:000"));
-		timeline.setCurrentTimecode(projectSettings.getValue("playhead", "00:00:00:000"));
-        timeline.setInPointAtTimecode(projectSettings.getValue("inpoint", "00:00:00:000"));
-        timeline.setOutPointAtTimecode(projectSettings.getValue("outpoint", "00:00:00:000"));
-        bool loops = projectSettings.getValue("loop", true);
-        timeline.setLoopType(loops ? OF_LOOP_NORMAL : OF_LOOP_NONE);
-        durationLabel->setLabel(timeline.getDurationInTimecode());
-        loopToggle->setValue( loops );
-        projectSettings.popTag(); //timeline settings;
-
-        DurationProjectSettings newSettings;
-        projectSettings.pushTag("projectSettings");
-        
-        useBPMToggle->setValue( newSettings.useBPM = projectSettings.getValue("useBPM", true) );
-        bpmDialer->setValue( newSettings.bpm = projectSettings.getValue("bpm", 120.0f) );
-        snapToBPMToggle->setValue( newSettings.snapToBPM = projectSettings.getValue("snapToBPM", true) );
-        snapToKeysToggle->setValue( newSettings.snapToKeys = projectSettings.getValue("snapToKeys", true) );
-        useOSCToggle->setValue( newSettings.useOSC = projectSettings.getValue("useOSC", true) );
-        oscIPInput->setTextString( newSettings.oscIP = projectSettings.getValue("OSCIP", "127.0.0.1") );        
-        newSettings.oscPort = projectSettings.getValue("OSCPort", 1001);        
-        oscPortInput->setTextString( ofToString(newSettings.oscPort) );
-        projectSettings.popTag(); //project settings;
-        
-        newSettings.path = projectPath;
-        newSettings.name = projectName;
-        settings = newSettings;
-        projectDropDown->getLabel()->setLabel(projectName);
+    if(!projectSettings.loadFile(ofToDataPath(projectPath+"/.durationproj"))){
+    	ofLogError() << " failed to load project " << ofToDataPath(projectPath+"/.durationproj") << endl;
+        return;
     }
+        
+    cout << "successfully loaded project " << projectPath << endl;
+    //LOAD ALL TRACKS
+    projectSettings.pushTag("tracks");
+    int numPages = projectSettings.getNumTags("page");
+    for(int p = 0; p < numPages; p++){
+        projectSettings.pushTag("page", p);
+        string pageName = projectSettings.getValue("name", "defaultPage");
+        if(p == 0){
+            timeline.setPageName(pageName, 0);
+        }
+        else{
+            timeline.addPage(pageName, true);
+        }
+
+        int numTracks = projectSettings.getNumTags("track");
+        for(int i = 0; i < numTracks; i++){
+            projectSettings.pushTag("track", i);
+            string trackType = projectSettings.getValue("type", "");
+            ofxTLTrack* newTrack = NULL;
+            string xmlFileName = projectSettings.getValue("xmlFileName", "");
+            string trackName = projectSettings.getValue("trackName","");
+            string trackFilePath = ofToDataPath(projectPath + "/" + xmlFileName);
+
+            if(trackType == "Bangs"){
+                newTrack = timeline.addBangs(trackName, trackFilePath);
+            }
+            else if(trackType == "Flags"){
+                newTrack = timeline.addFlags(trackName, trackFilePath);                
+            }
+            else if(trackType == "Tweens"){
+                newTrack = timeline.addKeyframes(trackName, trackFilePath);                                
+            }
+            else if(trackType == "Switches"){
+                newTrack = timeline.addSwitcher(trackName, trackFilePath);                
+            }        
+            projectSettings.popTag(); //track
+        }
+        projectSettings.popTag(); //page
+    }
+    timeline.setCurrentPage(0);
+    projectSettings.popTag(); //tracks
+    
+    //LOAD OTHER SETTINGS
+    projectSettings.pushTag("timelineSettings");
+    timeline.setDurationInTimecode(projectSettings.getValue("duration", "00:00:00:000"));
+    timeline.setCurrentTimecode(projectSettings.getValue("playhead", "00:00:00:000"));
+    timeline.setInPointAtTimecode(projectSettings.getValue("inpoint", "00:00:00:000"));
+    timeline.setOutPointAtTimecode(projectSettings.getValue("outpoint", "00:00:00:000"));
+    bool loops = projectSettings.getValue("loop", true);
+    timeline.setLoopType(loops ? OF_LOOP_NORMAL : OF_LOOP_NONE);
+    durationLabel->setLabel(timeline.getDurationInTimecode());
+    loopToggle->setValue( loops );
+    projectSettings.popTag(); //timeline settings;
+
+    DurationProjectSettings newSettings;
+    projectSettings.pushTag("projectSettings");
+    
+    useBPMToggle->setValue( newSettings.useBPM = projectSettings.getValue("useBPM", true) );
+    bpmDialer->setValue( newSettings.bpm = projectSettings.getValue("bpm", 120.0f) );
+    snapToBPMToggle->setValue( newSettings.snapToBPM = projectSettings.getValue("snapToBPM", true) );
+    snapToKeysToggle->setValue( newSettings.snapToKeys = projectSettings.getValue("snapToKeys", true) );
+    useOSCToggle->setValue( newSettings.useOSC = projectSettings.getValue("useOSC", true) );
+    oscIPInput->setTextString( newSettings.oscIP = projectSettings.getValue("OSCIP", "127.0.0.1") );        
+    newSettings.oscPort = projectSettings.getValue("OSCPort", 1001);        
+    oscPortInput->setTextString( ofToString(newSettings.oscPort) );
+    projectSettings.popTag(); //project settings;
+
+    newSettings.path = projectPath;
+    newSettings.name = projectName;
+    newSettings.settingsPath = ofToDataPath(newSettings.path + "/.durationproj");
+    settings = newSettings;
+
+    projectDropDown->getLabel()->setLabel(projectName);
+    durationLabel->setLabel(timeline.getDurationInTimecode());
+
+    ofxXmlSettings defaultSettings;
+    defaultSettings.loadFile("settings.xml");
+    defaultSettings.setValue("lastProjectPath", settings.path);
+    defaultSettings.setValue("lastProjectName", settings.name);
+    defaultSettings.saveFile();
 }
 
 //--------------------------------------------------------------
@@ -380,8 +414,12 @@ void testApp::saveProject(){
         projectSettings.addValue("name", pages[i]->getName());
         vector<ofxTLTrack*> tracks = pages[i]->getTracks();
         for (int t = 0; t < tracks.size(); t++) {
+            projectSettings.addTag("track");
+            projectSettings.pushTag("track", t);
+            projectSettings.addValue("type", tracks[t]->getTrackType());
             projectSettings.addValue("xmlFileName", tracks[t]->getXMLFileName());
             projectSettings.addValue("trackName",tracks[t]->getName());
+            projectSettings.popTag();
         }
         projectSettings.popTag(); //page
     }
@@ -409,8 +447,9 @@ void testApp::saveProject(){
     projectSettings.addValue("OSCPort", settings.oscPort);
 
 	projectSettings.popTag(); //projectSettings
-    projectSettings.saveFile(ofToDataPath(settings.path+".durationproj"));
+    projectSettings.saveFile(settings.settingsPath);
 
+    
 }
 
 //--------------------------------------------------------------
