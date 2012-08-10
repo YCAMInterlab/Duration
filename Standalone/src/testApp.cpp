@@ -260,6 +260,9 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+    if(timeline.isModal()){
+        return;
+    }
 	if(key == ' '){
         timeline.togglePlay();
     }
@@ -317,7 +320,8 @@ void testApp::loadProject(string projectPath, string projectName){
     	ofLogError() << " failed to load project " << ofToDataPath(projectPath+"/.durationproj") << endl;
         return;
     }
-        
+    
+    timeline.setWorkingFolder(projectPath);
     cout << "successfully loaded project " << projectPath << endl;
     //LOAD ALL TRACKS
     projectSettings.pushTag("tracks");

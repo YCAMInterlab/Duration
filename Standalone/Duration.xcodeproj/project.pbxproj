@@ -597,8 +597,8 @@
 			children = (
 				E7DFB22015D0E2B100CD5CF1 /* ofxTimeline.h */,
 				E7DFB21F15D0E2B100CD5CF1 /* ofxTimeline.cpp */,
-				E7DFB22115D0E2B100CD5CF1 /* ofxTLAudioWaveform.cpp */,
 				E7DFB22215D0E2B100CD5CF1 /* ofxTLAudioWaveform.h */,
+				E7DFB22115D0E2B100CD5CF1 /* ofxTLAudioWaveform.cpp */,
 				E7DFB22315D0E2B100CD5CF1 /* ofxTLBangs.cpp */,
 				E7DFB22415D0E2B100CD5CF1 /* ofxTLBangs.h */,
 				E7DFB22515D0E2B100CD5CF1 /* ofxTLColors.cpp */,
