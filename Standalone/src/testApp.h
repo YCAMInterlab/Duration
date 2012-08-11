@@ -3,6 +3,10 @@
 #include "ofMain.h"
 #include "ofxTimeline.h"
 #include "ofxUI.h"
+#include "ofxOsc.h"
+
+#define DURATION_VERSION_STRING string("001")
+#define DURATION_VERSION_INT 1
 
 typedef struct {
     string path; //full project path
@@ -39,6 +43,8 @@ class testApp : public ofBaseApp{
 	ofxTimeline timeline;
     void bangFired(ofxTLBangEventArgs& bang);
 	
+    ofxOscSender sender;
+    
     ofRectangle canvasRectangle;
     ofxUICanvas* gui;   	
 	void guiEvent(ofxUIEventArgs &e);
@@ -46,7 +52,8 @@ class testApp : public ofBaseApp{
     //control elements
     ofxUIDropDownList* projectDropDown; 
     ofxUILabel* timeLabel;
-    ofxUILabel* durationLabel;
+    //ofxUILabel* durationLabel;
+    ofxUITextInput* durationLabel;
     ofxUILabel* bpmLabel;
     ofxUIMultiImageToggle* playpauseToggle;
 
@@ -75,5 +82,8 @@ class testApp : public ofBaseApp{
     
     bool shouldCreateNewProject;    
     bool shouldLoadProject;
+
+    vector<ofxOscMessage> bangsReceived;
+	
     
 };

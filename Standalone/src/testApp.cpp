@@ -1,5 +1,6 @@
 #include "testApp.h"
 
+
 #define DROP_DOWN_WIDTH 200
 #define TEXT_INPUT_WIDTH 100
 
@@ -46,7 +47,7 @@ void testApp::setup(){
     
     
     //Set up top GUI
-    gui = new ofxUICanvas(0,0,ofGetWidth(), 200);     
+    gui = new ofxUICanvas(0,0,ofGetWidth(), 75);     
     
     //ADD PROJECT DROP DOWN
     projectDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "PROJECT", projects, OFX_UI_FONT_LARGE);
@@ -58,7 +59,8 @@ void testApp::setup(){
     string zeroTimecode = "00:00:00:000";
     timeLabel = new ofxUILabel(zeroTimecode, OFX_UI_FONT_LARGE);
     gui->addWidgetRight(timeLabel); 
-	durationLabel = new ofxUILabel(" / "+zeroTimecode, OFX_UI_FONT_SMALL);
+	//durationLabel = new ofxUILabel(" / "+zeroTimecode, OFX_UI_FONT_SMALL);
+    durationLabel = new ofxUITextInput("DURATION", zeroTimecode, timeLabel->getRect()->width,0,0,0, OFX_UI_FONT_SMALL);
     gui->addWidgetSouthOf(durationLabel, zeroTimecode);
     
     //ADD PLAY/PAUSE
@@ -95,8 +97,8 @@ void testApp::setup(){
     
     //SETUP OSC CONTROLS
     useOSCToggle = new ofxUILabelToggle(false, "OSC", OFX_UI_FONT_MEDIUM);
-    oscIPInput = new ofxUITextInput(TEXT_INPUT_WIDTH, "OSCIP", "127.0.0.1", OFX_UI_FONT_MEDIUM);
-    oscPortInput = new ofxUITextInput(TEXT_INPUT_WIDTH, "OSCPORT", "1001", OFX_UI_FONT_MEDIUM);
+    oscIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscPortInput = new ofxUITextInput("OSCPORT", "1001",TEXT_INPUT_WIDTH, 0, 0,0, OFX_UI_FONT_MEDIUM);
 
     gui->addWidgetEastOf(useOSCToggle, "BPM_VALUE");
     gui->addWidgetRight(oscIPInput);
@@ -111,13 +113,11 @@ void testApp::setup(){
 	timeline.setDurationInSeconds(30);
 	timeline.setOffset(ofVec2f(0, 75));
     
-//    timeline.setShowBPMGrid(true);
     timeline.setBPM(120.f);
-//	timeline.enableSnapToBPM(true);
+
 
     ofAddListener(timeline.events().bangFired, this, &testApp::bangFired);
 
-    //TODO load default project
     
     ofxXmlSettings defaultSettings;
     if(defaultSettings.loadFile("settings.xml")){
@@ -134,10 +134,18 @@ void testApp::setup(){
     }
 }
 
-
 //--------------------------------------------------------------
 void testApp::bangFired(ofxTLBangEventArgs& bang){
- 	ofLogVerbose() << "Bang Fired from track " << bang.track->getName() << " at time " << bang.currentTime << " with flag " << bang.flag;
+ 	ofLogNotice() << "Bang Fired from track " << bang.track->getName() << " at time " << bang.currentTime << " with flag " << bang.flag;
+
+    string trackType = bang.track->getTrackType();
+    ofxOscMessage m;
+    m.setAddress("/duration/" + DURATION_VERSION_STRING + "/" + ofToLower(trackType) + "/" + bang.track->getName());
+    m.addIntArg(bang.currentMillis);
+    if(trackType == "Flags"){
+        m.addStringArg(bang.flag);
+    }
+	bangsReceived.push_back(m);
 }
 
 //--------------------------------------------------------------
@@ -154,9 +162,13 @@ void  testApp::guiEvent(ofxUIEventArgs &e){
     else if(name == "PLAYPAUSE"){
         timeline.togglePlay();
     }
+    else if(name == "DURATION"){
+        string newDuration = durationLabel->getTextString();
+        timeline.setDurationInTimecode(newDuration);
+        durationLabel->setTextString(timeline.getDurationInTimecode());
+    }
     else if(e.widget == addTrackDropDown){
         if(addTrackDropDown->isOpen()){
-            cout << "DISABLING" << endl;
             timeline.disable();
         }
         else {
@@ -166,7 +178,6 @@ void  testApp::guiEvent(ofxUIEventArgs &e){
                 if(selectedTrackType == "BANGS"){
                     string name = timeline.confirmedUniqueName("New Bangs");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    cout << "bang name is " << name << " and " << xmlFile << endl;
                     timeline.addBangs(name, xmlFile);
                 }
                 else if(selectedTrackType == "FLAGS"){
@@ -217,25 +228,62 @@ void  testApp::guiEvent(ofxUIEventArgs &e){
         timeline.setLoopType(loopToggle->getValue() ? OF_LOOP_NORMAL : OF_LOOP_NONE);
     }
     //BPM
-	else if(e.widget == bpmDialer){
-    	timeline.setBPM(bpmDialer->getValue());   
+	else if(e.widget == bpmDialer){        
+    	timeline.setBPM(settings.bpm = bpmDialer->getValue());   
 	}
     else if(e.widget == useBPMToggle){
-        timeline.setShowBPMGrid(useBPMToggle->getValue());
-        timeline.enableSnapToBPM(useBPMToggle->getValue());
+        settings.useBPM = useBPMToggle->getValue();
+        timeline.setShowBPMGrid(settings.useBPM);
+        timeline.enableSnapToBPM(settings.useBPM);
     }
     //OSC
     else if(e.widget == useOSCToggle){
-        //TODO: osc
+		settings.useOSC = useOSCToggle->getValue();
+        if(settings.useOSC){
+            //TODO validate address
+            sender.setup(settings.oscIP, settings.oscPort);
+        }
     }
     else if(e.widget == oscIPInput){
-        
+        string newIP = oscIPInput->getTextString();
+        if(newIP == settings.oscIP){
+            return;
+        }
+        vector<string> ipComponents = ofSplitString(newIP, ".");
+        bool valid = false;
+        if(ipComponents.size() == 4){
+			for(int i = 0; i < 4; i++){
+                int component = ofToInt(ipComponents[i]);
+                if (component < 0 || component > 255){
+                    valid = false;
+                    break;
+                }
+            }
+            if(valid){
+                settings.oscIP = newIP;
+                sender.setup(settings.oscIP, settings.oscPort);                
+            }
+            else{
+				oscIPInput->setTextString(settings.oscIP);
+            }
+        }
+    }
+    else if(e.widget == oscPortInput){
+        int newPort = ofToInt(oscPortInput->getTextString());
+        if(newPort != settings.oscPort && newPort > 0 && newPort < 65535){
+	        sender.setup(settings.oscIP, newPort);
+        }
+        else {
+            oscPortInput->setTextString( ofToString(settings.oscPort) );
+        }
     }
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
+    
 	timeLabel->setLabel(timeline.getCurrentTimecode());
+    
     if(shouldLoadProject){
         shouldLoadProject = false;
         ofFileDialogResult r = ofSystemLoadDialog("Load Project", true);
@@ -249,6 +297,49 @@ void testApp::update(){
         ofFileDialogResult r = ofSystemSaveDialog("New Project", "NewDuration");
         if(r.bSuccess){
             newProject(r.getPath(), r.getName());
+        }
+    }
+    
+    if(timeline.getIsPlaying()){
+        if(settings.useOSC){
+            int numMessages = 0;
+            ofxOscBundle bundle;
+			string addressPrefix = "/duration/" + DURATION_VERSION_STRING + "/";
+            vector<ofxTLPage*>& pages = timeline.getPages();
+            for(int i = 0; i < pages.size(); i++){
+            	vector<ofxTLTrack*> tracks = pages[i]->getTracks();
+                for(int t = 0; t < tracks.size(); t++){
+                    string trackType = tracks[t]->getTrackType();
+                    if(trackType == "Tweens" || trackType == "Switches"){
+        	            ofxOscMessage m;
+	                    m.setAddress(addressPrefix + ofToLower(trackType) + "/" + tracks[t]->getName());
+    	                m.addIntArg(timeline.getCurrentTimeMillis());
+						if(trackType == "Tweens"){
+                            ofxTLTweener* tweens = (ofxTLTweener*)tracks[t];
+							m.addFloatArg(tweens->getValueAtTimeInMillis(timeline.getCurrentTimeMillis()));
+                            m.addFloatArg(tweens->getValueRange().min);
+                            m.addFloatArg(tweens->getValueRange().max);
+                		}
+                        else if(trackType == "Switches"){
+                            ofxTLSwitcher* switches = (ofxTLSwitcher*)tracks[t];
+                            m.addIntArg(switches->isOnAtMillis(timeline.getCurrentTimeMillis()));
+                        }
+                        bundle.addMessage(m);
+                        numMessages++;
+                    }        
+                }                
+            }
+            
+            //any bangs that came our way this frame send them out too
+            for(int i = 0; i < bangsReceived.size(); i++){
+                bundle.addMessage(bangsReceived[i]);
+            }
+            numMessages += bangsReceived.size();
+            if(numMessages > 0){
+                cout << "sent " << numMessages << endl;
+	            sender.sendBundle(bundle);
+            }
+        	bangsReceived.clear();
         }
     }
 }
@@ -289,7 +380,7 @@ DurationProjectSettings testApp::defaultProjectSettings(){
 void testApp::newProject(string newProjectPath, string newProjectName){
     DurationProjectSettings newProjectSettings = defaultProjectSettings();
     newProjectSettings.name = newProjectName;
-    newProjectSettings.path = ofToDataPath(newProjectPath + "/" + newProjectName);
+    newProjectSettings.path = ofToDataPath(newProjectPath);
     newProjectSettings.settingsPath = ofToDataPath(newProjectSettings.path + "/.durationproj");
     
     ofDirectory newProjectDirectory(newProjectSettings.path);
@@ -297,7 +388,10 @@ void testApp::newProject(string newProjectPath, string newProjectName){
     	ofSystemAlertDialog("The folder \"" + newProjectName + "\" already exists.");
         return;
     }
-    newProjectDirectory.create();
+    if(!newProjectDirectory.create()){
+    	ofSystemAlertDialog("The folder \"" + newProjectSettings.path + "\" could not be created.");        
+        return;
+    }
     
     //TODO: prompt to save existing project
     settings = newProjectSettings;
@@ -313,15 +407,15 @@ void testApp::newProject(string newProjectPath, string newProjectName){
 //--------------------------------------------------------------
 void testApp::loadProject(string projectPath, string projectName){
     
-    timeline.reset();
-    
     ofxXmlSettings projectSettings;
     if(!projectSettings.loadFile(ofToDataPath(projectPath+"/.durationproj"))){
     	ofLogError() << " failed to load project " << ofToDataPath(projectPath+"/.durationproj") << endl;
         return;
     }
-    
+
     timeline.setWorkingFolder(projectPath);
+    timeline.reset();
+
     cout << "successfully loaded project " << projectPath << endl;
     //LOAD ALL TRACKS
     projectSettings.pushTag("tracks");
@@ -357,6 +451,7 @@ void testApp::loadProject(string projectPath, string projectName){
             else if(trackType == "Switches"){
                 newTrack = timeline.addSwitcher(trackName, trackFilePath);                
             }        
+            
             projectSettings.popTag(); //track
         }
         projectSettings.popTag(); //page
@@ -372,7 +467,8 @@ void testApp::loadProject(string projectPath, string projectName){
     timeline.setOutPointAtTimecode(projectSettings.getValue("outpoint", "00:00:00:000"));
     bool loops = projectSettings.getValue("loop", true);
     timeline.setLoopType(loops ? OF_LOOP_NORMAL : OF_LOOP_NONE);
-    durationLabel->setLabel(timeline.getDurationInTimecode());
+    //durationLabel->setLabel(timeline.getDurationInTimecode());
+    durationLabel->setTextString(timeline.getDurationInTimecode());
     loopToggle->setValue( loops );
     projectSettings.popTag(); //timeline settings;
 
@@ -394,9 +490,14 @@ void testApp::loadProject(string projectPath, string projectName){
     newSettings.settingsPath = ofToDataPath(newSettings.path + "/.durationproj");
     settings = newSettings;
 
-    projectDropDown->getLabel()->setLabel(projectName);
-    durationLabel->setLabel(timeline.getDurationInTimecode());
-
+    projectDropDown->setLabelText(projectName);
+    timeline.setShowBPMGrid(newSettings.useBPM);
+    timeline.enableSnapToBPM(newSettings.useBPM);
+	timeline.setBPM(newSettings.bpm);
+    
+	if(settings.useOSC){
+        sender.setup(settings.oscIP, settings.oscPort);
+    }
     ofxXmlSettings defaultSettings;
     defaultSettings.loadFile("settings.xml");
     defaultSettings.setValue("lastProjectPath", settings.path);
