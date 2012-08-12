@@ -4,6 +4,7 @@
 #include "ofxTimeline.h"
 #include "ofxUI.h"
 #include "ofxOsc.h"
+#include "ofxTLUIHeader.h"
 
 #define DURATION_VERSION_STRING string("001")
 #define DURATION_VERSION_INT 1
@@ -84,6 +85,8 @@ class testApp : public ofBaseApp{
     bool shouldLoadProject;
 
     vector<ofxOscMessage> bangsReceived;
-	
+	vector<ofxTLUIHeader*> headers;
+    
+	void createHeaderForTrack(ofxTLTrack* track);
     
 };

@@ -40,6 +40,7 @@
 		E72B8DDF15D629CB00DB5A38 /* ofxOscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72B8DCE15D629CB00DB5A38 /* ofxOscMessage.cpp */; };
 		E72B8DE015D629CB00DB5A38 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72B8DD015D629CB00DB5A38 /* ofxOscReceiver.cpp */; };
 		E72B8DE115D629CB00DB5A38 /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72B8DD215D629CB00DB5A38 /* ofxOscSender.cpp */; };
+		E775F6AF15D7898A006E2E59 /* ofxTLUIHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E775F6AE15D7898A006E2E59 /* ofxTLUIHeader.cpp */; };
 		E7D3318615D379E30009192F /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = E7D3316A15D379E20009192F /* kiss_fft.c */; };
 		E7D3318715D379E30009192F /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = E7D3316B15D379E20009192F /* kiss_fftr.c */; };
 		E7D3318815D379E30009192F /* ofOpenALSoundPlayer_TimelineAdditions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7D3316D15D379E20009192F /* ofOpenALSoundPlayer_TimelineAdditions.cpp */; };
@@ -178,6 +179,8 @@
 		E72B8DD115D629CB00DB5A38 /* ofxOscReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscReceiver.h; sourceTree = "<group>"; };
 		E72B8DD215D629CB00DB5A38 /* ofxOscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscSender.cpp; sourceTree = "<group>"; };
 		E72B8DD315D629CB00DB5A38 /* ofxOscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscSender.h; sourceTree = "<group>"; };
+		E775F6AD15D78959006E2E59 /* ofxTLUIHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxTLUIHeader.h; sourceTree = "<group>"; };
+		E775F6AE15D7898A006E2E59 /* ofxTLUIHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTLUIHeader.cpp; sourceTree = "<group>"; };
 		E7D3316115D379E20009192F /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
 		E7D3316215D379E20009192F /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
 		E7D3316915D379E20009192F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
@@ -426,6 +429,8 @@
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E72B8DA915D6243800DB5A38 /* ofxUITimecode.h */,
+				E775F6AD15D78959006E2E59 /* ofxTLUIHeader.h */,
+				E775F6AE15D7898A006E2E59 /* ofxTLUIHeader.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1052,6 +1057,7 @@
 				E72B8DDF15D629CB00DB5A38 /* ofxOscMessage.cpp in Sources */,
 				E72B8DE015D629CB00DB5A38 /* ofxOscReceiver.cpp in Sources */,
 				E72B8DE115D629CB00DB5A38 /* ofxOscSender.cpp in Sources */,
+				E775F6AF15D7898A006E2E59 /* ofxTLUIHeader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

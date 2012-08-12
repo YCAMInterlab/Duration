@@ -1,0 +1,23 @@
+<colors>
+	<background>
+		<r>41</r><g>42</g><b>53</b>
+	</background>
+	<text>
+		<r>255</r><g>255</g><b>255</b>
+	</text>
+	<key>
+		<r>52</r><g>175</g><b>195</b>
+	</key>
+	<highlight>
+		<r>165</r><g>54</g><b>71</b>
+	</highlight>
+	<disabled>
+		<r>98</r><g>98</g><b>103</b>
+	</disabled>
+	<modalBackground>
+		<r>98</r><g>98</g><b>103</b>
+	</modalBackground>
+	<outline>
+		<r>149</r><g>204</g><b>103</b>
+	</outline>
+</colors>
