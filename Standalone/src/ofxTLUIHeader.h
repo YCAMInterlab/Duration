@@ -14,10 +14,14 @@ class ofxTLUIHeader {
 	virtual void viewWasResized(ofEventArgs& args); 
     virtual void guiEvent(ofxUIEventArgs &e);
 
-    
+    virtual bool isOSCEnabled();
+    virtual void setOSCEnabled(bool enableosc);
   protected:
     
     ofxUICanvas* gui;
+	ofxUINumberDialer* minDialer;
+	ofxUINumberDialer* maxDialer;
+    ofxUIToggle* oscEnabledToggle;
     ofxTLTrackHeader* trackHeader;
     
 };

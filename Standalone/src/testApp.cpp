@@ -115,7 +115,6 @@ void testApp::setup(){
     timeline.getColors().load("defaultColors.xml");
     timeline.setBPM(120.f);
 
-
     ofAddListener(timeline.events().bangFired, this, &testApp::bangFired);
 
     ofxXmlSettings defaultSettings;
@@ -138,6 +137,9 @@ void testApp::bangFired(ofxTLBangEventArgs& bang){
  	ofLogNotice() << "Bang Fired from track " << bang.track->getDisplayName() << " at time " << bang.currentTime << " with flag " << bang.flag;
 
     string trackType = bang.track->getTrackType();
+    if(!headers[bang.track->getName()]->isOSCEnabled()){
+        return;
+    }
     ofxOscMessage m;
     m.setAddress("/duration/" + DURATION_VERSION_STRING + "/" + ofToLower(trackType) + "/" + bang.track->getDisplayName());
     m.addIntArg(bang.currentMillis);
@@ -314,6 +316,10 @@ void testApp::update(){
             for(int i = 0; i < pages.size(); i++){
             	vector<ofxTLTrack*> tracks = pages[i]->getTracks();
                 for(int t = 0; t < tracks.size(); t++){
+                    if(!headers[tracks[t]->getName()]->isOSCEnabled()){
+                        continue;
+                    }
+
                     string trackType = tracks[t]->getTrackType();
                     if(trackType == "Tweens" || trackType == "Switches"){
         	            ofxOscMessage m;
@@ -426,6 +432,8 @@ void testApp::loadProject(string projectPath, string projectName){
         return;
     }
 
+    headers.clear(); //smart pointers will call destructor
+    
     timeline.setWorkingFolder(projectPath);
     timeline.reset();
 
@@ -459,7 +467,10 @@ void testApp::loadProject(string projectPath, string projectName){
                 newTrack = timeline.addFlags(trackName, trackFilePath);                
             }
             else if(trackType == "Tweens"){
-                newTrack = timeline.addKeyframes(trackName, trackFilePath);                                
+                ofxTLTweener* tweens = timeline.addKeyframes(trackName, trackFilePath);
+                tweens->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
+                                              projectSettings.getValue("max", 1.0)));
+                newTrack = tweens;
             }
             else if(trackType == "Switches"){
                 newTrack = timeline.addSwitcher(trackName, trackFilePath);                
@@ -469,7 +480,8 @@ void testApp::loadProject(string projectPath, string projectName){
                 if(displayName != ""){
 	                newTrack->setDisplayName(displayName);
                 }
-                createHeaderForTrack(newTrack);
+				ofxTLUIHeader* headerTrack = createHeaderForTrack(newTrack);
+            	headerTrack->setOSCEnabled(projectSettings.getValue("sendOSC", true));
             }
             projectSettings.popTag(); //track
         }
@@ -540,10 +552,20 @@ void testApp::saveProject(){
         for (int t = 0; t < tracks.size(); t++) {
             projectSettings.addTag("track");
             projectSettings.pushTag("track", t);
-            projectSettings.addValue("type", tracks[t]->getTrackType());
+            //save track properties
+            string trackType = tracks[t]->getTrackType();
+            string trackName = tracks[t]->getName();
+            projectSettings.addValue("type", trackType);
             projectSettings.addValue("xmlFileName", tracks[t]->getXMLFileName());
             projectSettings.addValue("trackName",tracks[t]->getName());
             projectSettings.addValue("displayName",tracks[t]->getDisplayName());
+            //save custom gui props
+            projectSettings.addValue("sendOSC", headers[trackName]->isOSCEnabled());
+            if(trackType == "Tweens"){
+                ofxTLTweener* tweens = (ofxTLTweener*)tracks[t];
+                projectSettings.addValue("min", tweens->getValueRange().min);
+                projectSettings.addValue("max", tweens->getValueRange().max);
+            }
             projectSettings.popTag();
         }
         projectSettings.popTag(); //page
@@ -576,11 +598,12 @@ void testApp::saveProject(){
 }
 
 //--------------------------------------------------------------
-void testApp::createHeaderForTrack(ofxTLTrack* track){
+ofxTLUIHeader* testApp::createHeaderForTrack(ofxTLTrack* track){
     ofxTLUIHeader* headerGui = new ofxTLUIHeader();
     ofxTLTrackHeader* header = timeline.getTrackHeader(track);
     headerGui->setTrackHeader(header);
-    headers.push_back(headerGui);
+    headers[track->getName()] = ofPtr<ofxTLUIHeader>( headerGui );
+    return headerGui;
 }
 
 //--------------------------------------------------------------

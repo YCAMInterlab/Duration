@@ -85,8 +85,8 @@ class testApp : public ofBaseApp{
     bool shouldLoadProject;
 
     vector<ofxOscMessage> bangsReceived;
-	vector<ofxTLUIHeader*> headers;
+	map<string, ofPtr<ofxTLUIHeader> > headers;
     
-	void createHeaderForTrack(ofxTLTrack* track);
+	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
     
 };
