@@ -61,6 +61,7 @@ void testApp::setup(){
     gui->addWidgetRight(timeLabel); 
 	//durationLabel = new ofxUILabel(" / "+zeroTimecode, OFX_UI_FONT_SMALL);
     durationLabel = new ofxUITextInput("DURATION", zeroTimecode, timeLabel->getRect()->width,0,0,0, OFX_UI_FONT_SMALL);
+    durationLabel->setAutoClear(false);
     gui->addWidgetSouthOf(durationLabel, zeroTimecode);
     
     //ADD PLAY/PAUSE
@@ -98,8 +99,10 @@ void testApp::setup(){
     //SETUP OSC CONTROLS
     useOSCToggle = new ofxUILabelToggle(false, "OSC", OFX_UI_FONT_MEDIUM);
     oscIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscIPInput->setAutoClear(false);
     oscPortInput = new ofxUITextInput("OSCPORT", "12345",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
-
+    oscPortInput->setAutoClear(false);
+    
     gui->addWidgetEastOf(useOSCToggle, "BPM_VALUE");
     gui->addWidgetRight(oscIPInput);
     gui->addWidgetRight(oscPortInput);
@@ -305,6 +308,18 @@ void testApp::update(){
         if(r.bSuccess){
             newProject(r.getPath(), r.getName());
         }
+    }
+    
+    //check if we deleted an element this frame
+    map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
+    while(it != headers.end()){
+		if(it->second->getShouldDelete()){
+            cout << "removing " << it->first << endl;
+            timeline.removeTrack(it->first);
+            headers.erase(it);
+            break;
+        }
+        it++;
     }
     
     if(timeline.getIsPlaying()){

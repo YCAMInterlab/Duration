@@ -4,6 +4,8 @@
 ofxTLUIHeader::ofxTLUIHeader(){
 	gui = NULL;
     trackHeader = NULL;
+    shouldDelete = false;
+
 }
 
 ofxTLUIHeader::~ofxTLUIHeader(){
@@ -11,10 +13,12 @@ ofxTLUIHeader::~ofxTLUIHeader(){
     if(trackHeader != NULL){
         ofRemoveListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
     }
+    
     if(gui != NULL){
 	    ofRemoveListener(gui->newGUIEvent, this, &ofxTLUIHeader::guiEvent);
         delete gui;
     }
+    cout << "header destructor" << endl;
 }
 
 void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
@@ -55,9 +59,10 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     vector<string> deleteTrack;
     deleteTrack.push_back("sure?");
     ofxUIDropDownList* dropDown = new ofxUIDropDownList("delete", deleteTrack, OFX_UI_FONT_SMALL);
+    dropDown->setAllowMultiple(false);
+    dropDown->setAutoClose(true);
     dropDown->setPadding(0); //Tweak to make the drop down small enough
     gui->addWidgetRight(dropDown);
-    
     
     gui->autoSizeToFitWidgets();
     
@@ -76,6 +81,10 @@ bool ofxTLUIHeader::isOSCEnabled(){
 
 void ofxTLUIHeader::setOSCEnabled(bool enableosc){
     oscEnabledToggle->setValue(enableosc);
+}
+
+bool ofxTLUIHeader::getShouldDelete(){
+    return shouldDelete;
 }
 
 void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
@@ -102,10 +111,14 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
             trackHeader->getTrack()->disable();
         }
         else{
+
             trackHeader->getTrack()->enable();
             if(deleteDropDown->getSelected().size() > 0 &&
                deleteDropDown->getSelected()[0]->getName() == "sure?"){
-				//TODO delete this track!
+				//do this because the header gets deleted before our destructor is called
+                ofRemoveListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
+                trackHeader = NULL;
+                shouldDelete = true;
             }
             deleteDropDown->clearSelected();
             deleteDropDown->close();
