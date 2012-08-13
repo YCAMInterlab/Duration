@@ -18,7 +18,6 @@ ofxTLUIHeader::~ofxTLUIHeader(){
 	    ofRemoveListener(gui->newGUIEvent, this, &ofxTLUIHeader::guiEvent);
         delete gui;
     }
-    cout << "header destructor" << endl;
 }
 
 void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){

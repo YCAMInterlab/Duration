@@ -53,7 +53,9 @@ void testApp::setup(){
     projectDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "PROJECT", projects, OFX_UI_FONT_LARGE);
     projectDropDown->setAutoClose(true);
     gui->addWidgetDown(projectDropDown);
-    gui->addWidgetRight(new ofxUIImageButton(32, 32, false, "GUI/save.png", "SAVE"));
+    ofxUIMultiImageButton* saveButton = new ofxUIMultiImageButton(32, 32, false, "GUI/save_.png", "SAVE");
+    saveButton->setLabelVisible(false);
+    gui->addWidgetRight(saveButton);
     
     //ADD TIMECODE
     string zeroTimecode = "00:00:00:000";
@@ -67,10 +69,13 @@ void testApp::setup(){
     //ADD PLAY/PAUSE
     playpauseToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/play_.png", "PLAYPAUSE");
     playpauseToggle->setLabelVisible(false);
-    gui->addWidgetEastOf(playpauseToggle, zeroTimecode); 
-    gui->addWidgetRight(new ofxUIImageButton(32, 32, false, "GUI/stop.png", "STOP"));  
-    gui->addWidgetRight(loopToggle = new ofxUIImageToggle(32, 32, false, "GUI/loop.png", "LOOP"));  
-	
+    gui->addWidgetEastOf(playpauseToggle, zeroTimecode);
+    ofxUIMultiImageButton* stopButton = new ofxUIMultiImageButton(32, 32, false, "GUI/stop_.png", "STOP");
+    stopButton->setLabelVisible(false);
+    gui->addWidgetRight(stopButton);
+    gui->addWidgetRight(loopToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/loop_.png", "LOOP"));  
+	loopToggle->setLabelVisible(false);
+    
     //ADD TRACKS
     vector<string> trackTypes; 
     trackTypes.push_back("BANGS");    
@@ -430,6 +435,7 @@ void testApp::newProject(string newProjectPath, string newProjectName){
     //TODO: prompt to save existing project
     settings = newProjectSettings;
 
+    headers.clear(); //smart pointers will call destructor
     timeline.reset();
 
     //saves file with default settings to new directory

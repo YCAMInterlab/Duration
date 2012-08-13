@@ -59,7 +59,7 @@ class testApp : public ofBaseApp{
     ofxUIMultiImageToggle* playpauseToggle;
 
 	//project settings elements
-    ofxUIImageToggle* loopToggle;
+    ofxUIMultiImageToggle* loopToggle;
     ofxUILabelToggle* useBPMToggle;
 	ofxUINumberDialer* bpmDialer;
     ofxUILabelToggle* snapToBPMToggle;
