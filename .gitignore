@@ -61,3 +61,14 @@ xcuserdata/
 releases/*
 
 .DS_Store
+
+#Win32
+*.exe
+*.pdb
+*.dll
+*.opensdf
+*.sdf
+*.suo
+*.lib
+*.ilk
+*.exp
