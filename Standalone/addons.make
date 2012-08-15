@@ -1,9 +1,9 @@
-ofxMSATimer
-ofxOsc
-ofxRange
-ofxTextInputField
-ofxTimecode
 ofxTimeline
-ofxTween
-ofxUI
 ofxXmlSettings
+ofxTween
+ofxRange
+ofxMSATimer
+ofxTimecode
+ofxTextInputField
+ofxUI
+ofxOsc
