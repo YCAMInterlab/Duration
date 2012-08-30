@@ -11,7 +11,8 @@
 void testApp::setup(){
 	
     //setup OF
-    ofSetFrameRate(120);
+//    ofSetVerticalSync(true);
+    ofSetFrameRate(60);
     ofBackground(.15*255);
     ofEnableAlphaBlending();
     ofEnableSmoothing();
@@ -129,20 +130,23 @@ void testApp::setup(){
     if(defaultSettings.loadFile("settings.xml")){
         string lastProjectPath = defaultSettings.getValue("lastProjectPath", "");
         string lastProjectName = defaultSettings.getValue("lastProjectName", "");
-        cout << "loading last project " << lastProjectPath << " and name " << lastProjectName << endl;
         if(lastProjectPath != "" && lastProjectName != "" && ofDirectory(lastProjectPath).exists()){
             loadProject(lastProjectPath, lastProjectName);
+        }
+        else{
+            ofLogError() << "Duration -- Last project was not found, creating a new project";
+            loadProject(ofToDataPath(defaultProjectDirectoryPath+"/Sample Project"), "Sample Project", true);
         }
     }
     else {
         cout << "Loading sample project " << defaultProjectDirectoryPath << endl;
-        loadProject(ofToDataPath(defaultProjectDirectoryPath+"/Sample Project"), "Sample Project");
+        loadProject(ofToDataPath(defaultProjectDirectoryPath+"/Sample Project"), "Sample Project", true);
     }
 }
 
 //--------------------------------------------------------------
 void testApp::bangFired(ofxTLBangEventArgs& bang){
- 	ofLogNotice() << "Bang Fired from track " << bang.track->getDisplayName() << " at time " << bang.currentTime << " with flag " << bang.flag;
+ 	ofLogNotice() << "Bang from " << bang.track->getDisplayName() << " at time " << bang.currentTime << " with flag " << bang.flag;
 
     string trackType = bang.track->getTrackType();
     if(!headers[bang.track->getName()]->isOSCEnabled()){
@@ -198,12 +202,12 @@ void  testApp::guiEvent(ofxUIEventArgs &e){
                 else if(selectedTrackType == "CURVES"){
                 	string name = timeline.confirmedUniqueName("Curves");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addKeyframes(name, xmlFile);                                
+                    newTrack = timeline.addCurves(name, xmlFile);                                
                 }
                 else if(selectedTrackType == "SWITCHES"){
                 	string name = timeline.confirmedUniqueName("Switches");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addSwitcher(name, xmlFile);                
+                    newTrack = timeline.addSwitches(name, xmlFile);
                 }
                 
                 if(newTrack != NULL){
@@ -341,18 +345,18 @@ void testApp::update(){
                     }
 
                     string trackType = tracks[t]->getTrackType();
-                    if(trackType == "Tweens" || trackType == "Switches"){
+                    if(trackType == "Curves" || trackType == "Switches"){
         	            ofxOscMessage m;
 	                    m.setAddress(addressPrefix + ofToLower(trackType) + "/" + tracks[t]->getDisplayName());
     	                m.addIntArg(timeline.getCurrentTimeMillis());
-						if(trackType == "Tweens"){
-                            ofxTLTweener* tweens = (ofxTLTweener*)tracks[t];
-							m.addFloatArg(tweens->getValueAtTimeInMillis(timeline.getCurrentTimeMillis()));
-                            m.addFloatArg(tweens->getValueRange().min);
-                            m.addFloatArg(tweens->getValueRange().max);
+						if(trackType == "Curves"){
+                            ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
+							m.addFloatArg(curves->getValueAtTimeInMillis(timeline.getCurrentTimeMillis()));
+                            m.addFloatArg(curves->getValueRange().min);
+                            m.addFloatArg(curves->getValueRange().max);
                 		}
                         else if(trackType == "Switches"){
-                            ofxTLSwitcher* switches = (ofxTLSwitcher*)tracks[t];
+                            ofxTLSwitches* switches = (ofxTLSwitches*)tracks[t];
                             m.addIntArg(switches->isOnAtMillis(timeline.getCurrentTimeMillis()));
                         }
                         bundle.addMessage(m);
@@ -442,14 +446,21 @@ void testApp::newProject(string newProjectPath, string newProjectName){
     saveProject();
     
     loadProject(settings.path, settings.name);
+    
+    projectDropDown->addToggle(newProjectName);
 }
 
 //--------------------------------------------------------------
-void testApp::loadProject(string projectPath, string projectName){
+void testApp::loadProject(string projectPath, string projectName, bool forceCreate){
     
     ofxXmlSettings projectSettings;
     if(!projectSettings.loadFile(ofToDataPath(projectPath+"/.durationproj"))){
-    	ofLogError() << " failed to load project " << ofToDataPath(projectPath+"/.durationproj") << endl;
+        if(forceCreate){
+            newProject(projectPath, projectName);
+        }
+        else{
+            ofLogError() << " failed to load project " << ofToDataPath(projectPath+"/.durationproj") << endl;
+        }
         return;
     }
 
@@ -487,14 +498,14 @@ void testApp::loadProject(string projectPath, string projectName){
             else if(trackType == "Flags"){
                 newTrack = timeline.addFlags(trackName, trackFilePath);                
             }
-            else if(trackType == "Tweens"){
-                ofxTLTweener* tweens = timeline.addKeyframes(trackName, trackFilePath);
-                tweens->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
+            else if(trackType == "Curves"){
+                ofxTLCurves* curves = timeline.addCurves(trackName, trackFilePath);
+                curves->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
                                               projectSettings.getValue("max", 1.0)));
-                newTrack = tweens;
+                newTrack = curves;
             }
             else if(trackType == "Switches"){
-                newTrack = timeline.addSwitcher(trackName, trackFilePath);                
+                newTrack = timeline.addSwitches(trackName, trackFilePath);
             }        
             if(newTrack != NULL){
                 string displayName = projectSettings.getValue("displayName","");
@@ -582,8 +593,8 @@ void testApp::saveProject(){
             projectSettings.addValue("displayName",tracks[t]->getDisplayName());
             //save custom gui props
             projectSettings.addValue("sendOSC", headers[trackName]->isOSCEnabled());
-            if(trackType == "Tweens"){
-                ofxTLTweener* tweens = (ofxTLTweener*)tracks[t];
+            if(trackType == "Curves"){
+                ofxTLCurves* tweens = (ofxTLCurves*)tracks[t];
                 projectSettings.addValue("min", tweens->getValueRange().min);
                 projectSettings.addValue("max", tweens->getValueRange().max);
             }

@@ -37,9 +37,9 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     //switch on track type
 
     string trackType = trackHeader->getTrack()->getTrackType();
-	if(trackType == "Tweens"){
+	if(trackType == "Curves"){
         //SET THE RANGE
-        ofxTLTweener* tweenTrack = (ofxTLTweener*)trackHeader->getTrack();
+        ofxTLCurves* tweenTrack = (ofxTLCurves*)trackHeader->getTrack();
         minDialer = new ofxUINumberDialer(-9999., 9999., tweenTrack->getValueRange().min, 2, "min", OFX_UI_FONT_SMALL);
         minDialer->setPadding(0);
         gui->addWidgetRight( minDialer );
@@ -65,6 +65,9 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     
     gui->autoSizeToFitWidgets();
     
+    gui->getRect()->y = trackHeader->getDrawRect().y; //TWEAK to get on the header
+	gui->getRect()->x = trackHeader->getTimeline()->getTopRight().x - (gui->getRect()->width + 50);
+
     ofAddListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
     ofAddListener(gui->newGUIEvent, this, &ofxTLUIHeader::guiEvent);
 }
@@ -94,14 +97,14 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         float newMinValue = MIN(minDialer->getValue(), maxDialer->getValue());
         minDialer->setValue(newMinValue);
         ofRange newValueRange = ofRange(newMinValue, maxDialer->getValue());
-        ofxTLTweener* track = (ofxTLTweener*)trackHeader->getTrack();
+        ofxTLCurves* track = (ofxTLCurves*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
     }
 	else if(e.widget->getName() == "max"){
         float newMaxValue = MAX(minDialer->getValue(), maxDialer->getValue());
         maxDialer->setValue(newMaxValue);
         ofRange newValueRange = ofRange(minDialer->getValue(), newMaxValue);
-        ofxTLTweener* track = (ofxTLTweener*)trackHeader->getTrack();
+        ofxTLCurves* track = (ofxTLCurves*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
     }
     else if(e.widget->getName() == "delete"){
@@ -110,7 +113,6 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
             trackHeader->getTrack()->disable();
         }
         else{
-
             trackHeader->getTrack()->enable();
             if(deleteDropDown->getSelected().size() > 0 &&
                deleteDropDown->getSelected()[0]->getName() == "sure?"){
@@ -123,6 +125,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
             deleteDropDown->close();
         }
     }
+    //this is polled from outside
 //	else if(e.widget->getName() == "send osc"){
 //
 //    }

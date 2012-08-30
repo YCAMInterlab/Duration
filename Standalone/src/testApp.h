@@ -76,7 +76,7 @@ class testApp : public ofBaseApp{
 	DurationProjectSettings settings;
 
     void newProject(string newProjectPath, string newProjectName);
-    void loadProject(string projectPath, string projectName);
+    void loadProject(string projectPath, string projectName, bool forceCreate = false);
     void saveProject();
     
     DurationProjectSettings defaultProjectSettings();
