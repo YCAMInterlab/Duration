@@ -121,11 +121,8 @@ void DurationController::setup(){
     gui->addWidgetEastOf(useOSCToggle, "BPM_VALUE");
     gui->addWidgetRight(oscIPInput);
     gui->addWidgetRight(oscPortInput);
-    
-    //SET UP LISENTERS
-    ofAddListener(gui->newGUIEvent, this, &DurationController::guiEvent);
-    
-    //setup timeline
+
+	//setup timeline
 	timeline.setup();
     timeline.setFrameRate(30);
 	timeline.setDurationInSeconds(30);
@@ -140,6 +137,10 @@ void DurationController::setup(){
 	ofAddListener(ofEvents().update, this, &DurationController::update);
 	ofAddListener(ofEvents().draw, this, &DurationController::draw);
 	ofAddListener(ofEvents().keyPressed, this, &DurationController::keyPressed);
+
+    //SET UP LISENTERS
+    ofAddListener(gui->newGUIEvent, this, &DurationController::guiEvent);
+    
 	
     ofxXmlSettings defaultSettings;
     if(defaultSettings.loadFile("settings.xml")){
@@ -150,12 +151,12 @@ void DurationController::setup(){
         }
         else{
             ofLogError() << "Duration -- Last project was not found, creating a new project";
-            loadProject(ofToDataPath(defaultProjectDirectoryPath+"/Sample Project"), "Sample Project", true);
+            loadProject(ofToDataPath(defaultProjectDirectoryPath+"Sample Project"), "Sample Project", true);
         }
     }
     else {
-        cout << "Loading sample project " << defaultProjectDirectoryPath << endl;
-        loadProject(ofToDataPath(defaultProjectDirectoryPath+"/Sample Project"), "Sample Project", true);
+//        cout << "Loading sample project " << defaultProjectDirectoryPath << endl;
+        loadProject(ofToDataPath(defaultProjectDirectoryPath+"Sample Project"), "Sample Project", true);
     }
 
 	receiver.setup(12346);
@@ -173,63 +174,107 @@ void DurationController::threadedFunction(){
 }
 
 void DurationController::handleOscIn(){
+	long timelineStartTime = timeline.getCurrentTimeMillis();
+	
 	while(receiver.hasWaitingMessages()){
 
 		ofxOscMessage m;
 		receiver.getNextMessage(&m);
-
+		bool handled = false;
 		long startTime = recordTimer.getAppTimeMicros();
 		vector<ofxTLPage*>& pages = timeline.getPages();
 		for(int i = 0; i < pages.size(); i++){
 			vector<ofxTLTrack*> tracks = pages[i]->getTracks();
 			for(int t = 0; t < tracks.size(); t++){
 //				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
-				if(m.getAddress() == "/"+tracks[t]->getDisplayName()){
+				if(m.getAddress() == ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()) ){
 					if(recordingIsEnabled && timeline.getIsPlaying()){
 						ofxTLTrack* track = tracks[t];
 						if(track->getTrackType() == "Curves"){
 							ofxTLCurves* curves = (ofxTLCurves*)track;
 							//curves->addKeyframeAtMillis(m.getArgAsFloat(0), recordTimer.getElapsedMillis()+recordTimeOffset);
 //							cout << "adding value " << m.getArgAsFloat(0) << endl;
-							curves->addKeyframe(m.getArgAsFloat(0));
-
+							curves->addKeyframeAtMillis(m.getArgAsFloat(0), timelineStartTime);
+							
 						}
 					}
 					else {
 						//TODO just flash the track
 //						cout << "found track!" << endl;
 					}
+					handled = true;
 				}
 			}
 		}
 		
 		long endTime = recordTimer.getAppTimeMicros();
 //		cout << "receiving message took " << (endTime - startTime) << " micros " << endl;
+		if(handled){
+			return;
+		}
 		//check for playback messages
 		if(m.getAddress() == "/duration/open"){
-			
+			string projectPath = ofToDataPath(m.getArgAsString(0));
+			if(ofFilePath::isAbsolute(projectPath)){
+				loadProject(projectPath);
+			}
+			else{
+				loadProject(defaultProjectDirectoryPath+m.getArgAsString(0));
+			}
 		}
-		if(m.getAddress() == "/duration/play"){
-			
+		else if(m.getAddress() == "/duration/play"){
+			timeline.play();
 		}
-		
-		if(m.getAddress() == "/duration/stop"){
-			
+		else if(m.getAddress() == "/duration/stop"){
+			timeline.stop();
+			recordingIsEnabled = false;
 		}
-		
-		if(m.getAddress() == "/duration/record"){
-			
+		else if(m.getAddress() == "/duration/record"){
+			timeline.play();
+			recordingIsEnabled = false;
 		}
-		
-		if(m.getAddress() == "/duration/seektosecond"){
+		else if(m.getAddress() == "/duration/seektosecond"){
+			if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+				timeline.setCurrentTimeSeconds(m.getArgAsFloat(0));
+			}
+			else{
+				ofLogError("Duration:OSC") << " Seek to Second failed: first argument must be a float";
+			}
 		}
-		
-		if(m.getAddress() == "/duration/seektopercent"){
+		else if(m.getAddress() == "/duration/seektoposition"){
+			if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+				float percent = ofClamp(m.getArgAsFloat(0),0.0,1.0);
+				timeline.setCurrentTimeSeconds(percent);
+			}
+			else{
+				ofLogError("Duration:OSC") << " Seek to Position failed: first argument must be a float between 0.0 and 1.0";
+			}
 		}
-		
-		if(m.getAddress() == "/duration/seektomillis"){
+		else if(m.getAddress() == "/duration/seektomillis"){
+			if(m.getArgType(0) == OFXOSC_TYPE_INT32){
+				timeline.setCurrentTimeMillis(m.getArgAsInt32(0));
+			}
+			else if(m.getArgType(0) == OFXOSC_TYPE_INT64){
+				timeline.setCurrentTimeMillis(m.getArgAsInt64(0));
+			}
+			else{
+				ofLogError("Duration:OSC") << " Seek to Millis failed: first argument must be a int 32 or in 64";
+			}
 		}
-		
+		else if(m.getAddress() == "/druation/seektotimecode"){
+			if(m.getArgType(0) == OFXOSC_TYPE_STRING){
+				long millis = ofxTimecode::millisForTimecode(m.getArgAsString(0));
+				if(millis > 0){
+					timeline.setCurrentTimeMillis(millis);
+				}
+				else{
+					ofLogError("Duration:OSC") << " Seek to Timecode failed: bad timecode. Please format HH:MM:SS:MMM";
+				}
+			}
+			else{
+				ofLogError("Duration:OSC") << " Seek to Timecode failed: first argument must be a string";
+			}
+		}
 	}
 }
 
@@ -268,7 +313,7 @@ void DurationController::handleOscOut(){
 			string trackType = tracks[t]->getTrackType();
 			if(trackType == "Curves" || trackType == "Switches"){
 				ofxOscMessage m;
-				m.setAddress("/" + tracks[t]->getDisplayName());
+				m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
 				m.addIntArg(timeline.getCurrentTimeMillis());
 				if(trackType == "Curves"){
 					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
@@ -307,7 +352,7 @@ void DurationController::bangFired(ofxTLBangEventArgs& bang){
         return;
     }
     ofxOscMessage m;
-    m.setAddress("/" + bang.track->getDisplayName());
+    m.setAddress( ofFilePath::addLeadingSlash(bang.track->getDisplayName()) );
     m.addIntArg(bang.currentMillis);
     if(trackType == "Flags"){
         m.addStringArg(bang.flag);
@@ -367,6 +412,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
                 if(newTrack != NULL){
                     createHeaderForTrack(newTrack);
                 }
+				
                 addTrackDropDown->clearSelected();
             }
         }
@@ -386,7 +432,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
                     shouldLoadProject = true;
                 }
                 else {
-                    loadProject(ofToDataPath(defaultProjectDirectoryPath+"/"+selectedProjectName), selectedProjectName);
+                    loadProject(ofToDataPath(defaultProjectDirectoryPath+selectedProjectName), selectedProjectName);
                 }
                 projectDropDown->clearSelected();
             }
@@ -558,6 +604,14 @@ void DurationController::newProject(string newProjectPath, string newProjectName
     loadProject(settings.path, settings.name);
     
     projectDropDown->addToggle(newProjectName);
+}
+
+//--------------------------------------------------------------
+void DurationController::loadProject(string projectPath, bool forceCreate){
+	//scrape off the last component of the filename for the project name
+	projectPath = ofFilePath::removeTrailingSlash(projectPath);
+	vector<string> pathComponents = ofSplitString(projectPath, "/");
+	loadProject(projectPath, pathComponents[pathComponents.size()-1], forceCreate);
 }
 
 //--------------------------------------------------------------

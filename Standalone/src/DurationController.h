@@ -75,17 +75,12 @@ class DurationController : public ofThread  {
 	DurationProjectSettings settings;
 	
     void newProject(string newProjectPath, string newProjectName);
+    void loadProject(string projectPath, bool forceCreate = false);
     void loadProject(string projectPath, string projectName, bool forceCreate = false);
     void saveProject();
     
     DurationProjectSettings defaultProjectSettings();
-    
-    bool shouldCreateNewProject;
-    bool shouldLoadProject;
-	
-	bool recordingIsEnabled;
-	bool oscIsEnabled;
-	
+    	
 	void startRecording();
 	void stopRecording();
 	
@@ -95,6 +90,12 @@ class DurationController : public ofThread  {
     void bangFired(ofxTLBangEventArgs& bang);
 
 	vector<string> trackAddresses;
+	
+    bool shouldCreateNewProject;
+    bool shouldLoadProject;
+	
+	bool recordingIsEnabled;
+	bool oscIsEnabled;
 	
 	ofxOscReceiver receiver;
 	ofxOscSender sender;
