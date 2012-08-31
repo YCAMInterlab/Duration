@@ -558,52 +558,76 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		E750F8AD15F05C5700B87EA2 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				E78C29BD15EF1AB3003A9CCB /* ofxTimeline.h */,
+				E78C29BC15EF1AB3003A9CCB /* ofxTimeline.cpp */,
+				E78C29D415EF1AB3003A9CCB /* ofxTLPage.h */,
+				E78C29D315EF1AB3003A9CCB /* ofxTLPage.cpp */,
+				E78C29D615EF1AB3003A9CCB /* ofxTLPageTabs.h */,
+				E78C29D515EF1AB3003A9CCB /* ofxTLPageTabs.cpp */,
+				E78C29DA15EF1AB3003A9CCB /* ofxTLTicker.h */,
+				E78C29D915EF1AB3003A9CCB /* ofxTLTicker.cpp */,
+				E78C29D015EF1AB3003A9CCB /* ofxTLInOut.h */,
+				E78C29CF15EF1AB3003A9CCB /* ofxTLInOut.cpp */,
+				E78C29E615EF1AB3003A9CCB /* ofxTLZoomer.h */,
+				E78C29E515EF1AB3003A9CCB /* ofxTLZoomer.cpp */,
+				E78C29DF15EF1AB3003A9CCB /* ofxTLTrackHeader.h */,
+				E78C29DE15EF1AB3003A9CCB /* ofxTLTrackHeader.cpp */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		E750F8AE15F05C6000B87EA2 /* tracks */ = {
+			isa = PBXGroup;
+			children = (
+				E78C29DD15EF1AB3003A9CCB /* ofxTLTrack.h */,
+				E78C29DC15EF1AB3003A9CCB /* ofxTLTrack.cpp */,
+				E78C29D215EF1AB3003A9CCB /* ofxTLKeyframes.h */,
+				E78C29D115EF1AB3003A9CCB /* ofxTLKeyframes.cpp */,
+				E78C29C515EF1AB3003A9CCB /* ofxTLCurves.h */,
+				E78C29C415EF1AB3003A9CCB /* ofxTLCurves.cpp */,
+				E78C29C115EF1AB3003A9CCB /* ofxTLBangs.h */,
+				E78C29C015EF1AB3003A9CCB /* ofxTLBangs.cpp */,
+				E78C29C815EF1AB3003A9CCB /* ofxTLFlags.h */,
+				E78C29C715EF1AB3003A9CCB /* ofxTLFlags.cpp */,
+				E78C29CA15EF1AB3003A9CCB /* ofxTLImageSequence.h */,
+				E78C29C915EF1AB3003A9CCB /* ofxTLImageSequence.cpp */,
+				E78C29CC15EF1AB3003A9CCB /* ofxTLImageSequenceFrame.h */,
+				E78C29CB15EF1AB3003A9CCB /* ofxTLImageSequenceFrame.cpp */,
+				E78C29CE15EF1AB3003A9CCB /* ofxTLImageTrack.h */,
+				E78C29CD15EF1AB3003A9CCB /* ofxTLImageTrack.cpp */,
+				E78C29D815EF1AB3003A9CCB /* ofxTLSwitches.h */,
+				E78C29D715EF1AB3003A9CCB /* ofxTLSwitches.cpp */,
+				E78C29E215EF1AB3003A9CCB /* ofxTLVideoThumb.h */,
+				E78C29E115EF1AB3003A9CCB /* ofxTLVideoThumb.cpp */,
+				E78C29E415EF1AB3003A9CCB /* ofxTLVideoTrack.h */,
+				E78C29E315EF1AB3003A9CCB /* ofxTLVideoTrack.cpp */,
+				E78C29BF15EF1AB3003A9CCB /* ofxTLAudioTrack.h */,
+				E78C29BE15EF1AB3003A9CCB /* ofxTLAudioTrack.cpp */,
+			);
+			name = tracks;
+			sourceTree = "<group>";
+		};
+		E750F8AF15F05C6B00B87EA2 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				E78C29E015EF1AB3003A9CCB /* ofxTLUtils.h */,
+				E78C29C315EF1AB3003A9CCB /* ofxTLColors.h */,
+				E78C29C215EF1AB3003A9CCB /* ofxTLColors.cpp */,
+				E78C29DB15EF1AB3003A9CCB /* ofxTLTimeController.h */,
+				E78C29C615EF1AB3003A9CCB /* ofxTLEvents.h */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
 		E78C29BB15EF1AB3003A9CCB /* src */ = {
 			isa = PBXGroup;
 			children = (
-				E78C29BC15EF1AB3003A9CCB /* ofxTimeline.cpp */,
-				E78C29BD15EF1AB3003A9CCB /* ofxTimeline.h */,
-				E78C29BE15EF1AB3003A9CCB /* ofxTLAudioTrack.cpp */,
-				E78C29BF15EF1AB3003A9CCB /* ofxTLAudioTrack.h */,
-				E78C29C015EF1AB3003A9CCB /* ofxTLBangs.cpp */,
-				E78C29C115EF1AB3003A9CCB /* ofxTLBangs.h */,
-				E78C29C215EF1AB3003A9CCB /* ofxTLColors.cpp */,
-				E78C29C315EF1AB3003A9CCB /* ofxTLColors.h */,
-				E78C29C415EF1AB3003A9CCB /* ofxTLCurves.cpp */,
-				E78C29C515EF1AB3003A9CCB /* ofxTLCurves.h */,
-				E78C29C615EF1AB3003A9CCB /* ofxTLEvents.h */,
-				E78C29C715EF1AB3003A9CCB /* ofxTLFlags.cpp */,
-				E78C29C815EF1AB3003A9CCB /* ofxTLFlags.h */,
-				E78C29C915EF1AB3003A9CCB /* ofxTLImageSequence.cpp */,
-				E78C29CA15EF1AB3003A9CCB /* ofxTLImageSequence.h */,
-				E78C29CB15EF1AB3003A9CCB /* ofxTLImageSequenceFrame.cpp */,
-				E78C29CC15EF1AB3003A9CCB /* ofxTLImageSequenceFrame.h */,
-				E78C29CD15EF1AB3003A9CCB /* ofxTLImageTrack.cpp */,
-				E78C29CE15EF1AB3003A9CCB /* ofxTLImageTrack.h */,
-				E78C29CF15EF1AB3003A9CCB /* ofxTLInOut.cpp */,
-				E78C29D015EF1AB3003A9CCB /* ofxTLInOut.h */,
-				E78C29D115EF1AB3003A9CCB /* ofxTLKeyframes.cpp */,
-				E78C29D215EF1AB3003A9CCB /* ofxTLKeyframes.h */,
-				E78C29D315EF1AB3003A9CCB /* ofxTLPage.cpp */,
-				E78C29D415EF1AB3003A9CCB /* ofxTLPage.h */,
-				E78C29D515EF1AB3003A9CCB /* ofxTLPageTabs.cpp */,
-				E78C29D615EF1AB3003A9CCB /* ofxTLPageTabs.h */,
-				E78C29D715EF1AB3003A9CCB /* ofxTLSwitches.cpp */,
-				E78C29D815EF1AB3003A9CCB /* ofxTLSwitches.h */,
-				E78C29D915EF1AB3003A9CCB /* ofxTLTicker.cpp */,
-				E78C29DA15EF1AB3003A9CCB /* ofxTLTicker.h */,
-				E78C29DB15EF1AB3003A9CCB /* ofxTLTimeController.h */,
-				E78C29DC15EF1AB3003A9CCB /* ofxTLTrack.cpp */,
-				E78C29DD15EF1AB3003A9CCB /* ofxTLTrack.h */,
-				E78C29DE15EF1AB3003A9CCB /* ofxTLTrackHeader.cpp */,
-				E78C29DF15EF1AB3003A9CCB /* ofxTLTrackHeader.h */,
-				E78C29E015EF1AB3003A9CCB /* ofxTLUtils.h */,
-				E78C29E115EF1AB3003A9CCB /* ofxTLVideoThumb.cpp */,
-				E78C29E215EF1AB3003A9CCB /* ofxTLVideoThumb.h */,
-				E78C29E315EF1AB3003A9CCB /* ofxTLVideoTrack.cpp */,
-				E78C29E415EF1AB3003A9CCB /* ofxTLVideoTrack.h */,
-				E78C29E515EF1AB3003A9CCB /* ofxTLZoomer.cpp */,
-				E78C29E615EF1AB3003A9CCB /* ofxTLZoomer.h */,
+				E750F8AF15F05C6B00B87EA2 /* util */,
+				E750F8AE15F05C6000B87EA2 /* tracks */,
+				E750F8AD15F05C5700B87EA2 /* core */,
 			);
 			path = src;
 			sourceTree = "<group>";

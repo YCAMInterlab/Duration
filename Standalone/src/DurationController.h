@@ -34,7 +34,6 @@ typedef struct {
     
 } DurationProjectSettings;
 
-
 class DurationController : public ofThread  {
   public:
 	DurationController();

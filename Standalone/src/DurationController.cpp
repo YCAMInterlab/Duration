@@ -18,7 +18,7 @@
 
 DurationController::DurationController(){
 	oscIsEnabled = false;
-	recordingIsEnabled = false;
+	recordingIsEnabled = true;
 }
 
 DurationController::~DurationController(){
@@ -132,6 +132,7 @@ void DurationController::setup(){
 	timeline.setOffset(ofVec2f(0, 75));
     timeline.getColors().load("defaultColors.xml");
     timeline.setBPM(120.f);
+	timeline.setAutosave(false);
 	timeline.moveToThread(); //increases accuracy of bang call backs
 	
 	//add events
@@ -157,6 +158,8 @@ void DurationController::setup(){
         loadProject(ofToDataPath(defaultProjectDirectoryPath+"/Sample Project"), "Sample Project", true);
     }
 
+	receiver.setup(12346);
+	
 	startThread();
 }
 
@@ -174,10 +177,37 @@ void DurationController::handleOscIn(){
 
 		ofxOscMessage m;
 		receiver.getNextMessage(&m);
+
+		long startTime = recordTimer.getAppTimeMicros();
+		vector<ofxTLPage*>& pages = timeline.getPages();
+		for(int i = 0; i < pages.size(); i++){
+			vector<ofxTLTrack*> tracks = pages[i]->getTracks();
+			for(int t = 0; t < tracks.size(); t++){
+//				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
+				if(m.getAddress() == "/"+tracks[t]->getDisplayName()){
+					if(recordingIsEnabled && timeline.getIsPlaying()){
+						ofxTLTrack* track = tracks[t];
+						if(track->getTrackType() == "Curves"){
+							ofxTLCurves* curves = (ofxTLCurves*)track;
+							//curves->addKeyframeAtMillis(m.getArgAsFloat(0), recordTimer.getElapsedMillis()+recordTimeOffset);
+//							cout << "adding value " << m.getArgAsFloat(0) << endl;
+							curves->addKeyframe(m.getArgAsFloat(0));
+
+						}
+					}
+					else {
+						//TODO just flash the track
+//						cout << "found track!" << endl;
+					}
+				}
+			}
+		}
 		
+		long endTime = recordTimer.getAppTimeMicros();
+//		cout << "receiving message took " << (endTime - startTime) << " micros " << endl;
 		//check for playback messages
 		if(m.getAddress() == "/duration/open"){
-		
+			
 		}
 		if(m.getAddress() == "/duration/play"){
 			
@@ -186,36 +216,20 @@ void DurationController::handleOscIn(){
 		if(m.getAddress() == "/duration/stop"){
 			
 		}
-
+		
 		if(m.getAddress() == "/duration/record"){
 			
 		}
 		
 		if(m.getAddress() == "/duration/seektosecond"){
 		}
+		
 		if(m.getAddress() == "/duration/seektopercent"){
 		}
+		
 		if(m.getAddress() == "/duration/seektomillis"){
 		}
 		
-		vector<ofxTLPage*>& pages = timeline.getPages();
-		for(int i = 0; i < pages.size(); i++){
-			vector<ofxTLTrack*> tracks = pages[i]->getTracks();
-			for(int t = 0; t < tracks.size(); t++){
-				if(m.getAddress() == tracks[i]->getDisplayName()){
-					if(recordingIsEnabled){
-						ofxTLTrack* track = tracks[i];
-						if(track->getTrackType() == "Curves"){
-							ofxTLCurves* curves = (ofxTLCurves*)track;
-							curves->addKeyframeAtMillis(m.getArgAsFloat(0), recordTimer.getElapsedMillis()+recordTimeOffset);
-						}
-					}
-					else {
-						//TODO just flash the track
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -231,6 +245,7 @@ void DurationController::stopRecording(){
 }
 
 void DurationController::handleOscOut(){
+	
 	if(!oscIsEnabled){
 		return;
 	}
@@ -242,7 +257,6 @@ void DurationController::handleOscOut(){
 	
 	int numMessages = 0;
 	ofxOscBundle bundle;
-	string addressPrefix = "/";
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
 		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
@@ -254,7 +268,7 @@ void DurationController::handleOscOut(){
 			string trackType = tracks[t]->getTrackType();
 			if(trackType == "Curves" || trackType == "Switches"){
 				ofxOscMessage m;
-				m.setAddress(addressPrefix + ofToLower(trackType) + "/" + tracks[t]->getDisplayName());
+				m.setAddress("/" + tracks[t]->getDisplayName());
 				m.addIntArg(timeline.getCurrentTimeMillis());
 				if(trackType == "Curves"){
 					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
@@ -463,7 +477,6 @@ void DurationController::update(ofEventArgs& args){
     map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
     while(it != headers.end()){
 		if(it->second->getShouldDelete()){
-            cout << "removing " << it->first << endl;
             timeline.removeTrack(it->first);
             headers.erase(it);
             break;
@@ -667,8 +680,10 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 
 //--------------------------------------------------------------
 void DurationController::saveProject(){
+	
+	timeline.save();
+	
     ofxXmlSettings projectSettings;
-    
     //SAVE ALL TRACKS
     projectSettings.addTag("tracks");
     projectSettings.pushTag("tracks");
