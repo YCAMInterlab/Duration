@@ -17,12 +17,13 @@
 
 
 DurationController::DurationController(){
-	oscIsEnabled = false;
+	oscIsEnabled = true;
 	recordingIsEnabled = true;
+	audioTrack = NULL;
 }
 
 DurationController::~DurationController(){
-
+	waitForThread(true);
 }
 
 void DurationController::setup(){
@@ -92,7 +93,9 @@ void DurationController::setup(){
     trackTypes.push_back("FLAGS");
     trackTypes.push_back("SWITCHES");
     trackTypes.push_back("CURVES");
-    
+    trackTypes.push_back("COLORS");
+//	    trackTypes.push_back("SOUND");
+	
     addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "ADD TRACK", trackTypes, OFX_UI_FONT_MEDIUM);
     addTrackDropDown->setAllowMultiple(false);
     addTrackDropDown->setAutoClose(true);
@@ -295,13 +298,11 @@ void DurationController::handleOscOut(){
 		return;
 	}
 	
-	//no outgoing OSC while recording
-	if(recordingIsEnabled){
-		return;
-	}
-	
 	int numMessages = 0;
 	ofxOscBundle bundle;
+
+	lock();
+	unsigned long sampleMillis = timeline.getCurrentTimeMillis();
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
 		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
@@ -314,22 +315,28 @@ void DurationController::handleOscOut(){
 			if(trackType == "Curves" || trackType == "Switches"){
 				ofxOscMessage m;
 				m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
-				m.addIntArg(timeline.getCurrentTimeMillis());
 				if(trackType == "Curves"){
 					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
-					m.addFloatArg(curves->getValueAtTimeInMillis(timeline.getCurrentTimeMillis()));
-					m.addFloatArg(curves->getValueRange().min);
-					m.addFloatArg(curves->getValueRange().max);
+					m.addFloatArg(curves->getValueAtTimeInMillis(sampleMillis));
 				}
 				else if(trackType == "Switches"){
 					ofxTLSwitches* switches = (ofxTLSwitches*)tracks[t];
-					m.addIntArg(switches->isOnAtMillis(timeline.getCurrentTimeMillis()));
+					m.addIntArg(switches->isOnAtMillis(sampleMillis));
 				}
+				else if(trackType == "Colors"){
+					ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
+					ofColor color = colors->getColorAtMillis(sampleMillis);
+					m.addIntArg(color.r);
+					m.addIntArg(color.g);
+					m.addIntArg(color.b);
+				}
+				
 				bundle.addMessage(m);
 				numMessages++;
 			}
 		}
 	}
+	unlock();
 	
 	//any bangs that came our way this frame send them out too
 	for(int i = 0; i < bangsReceived.size(); i++){
@@ -386,6 +393,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
         else {
             timeline.enable();
             if(addTrackDropDown->getSelected().size() > 0){
+				lock();
                 string selectedTrackType = addTrackDropDown->getSelected()[0]->getName();
                 ofxTLTrack* newTrack = NULL;
                 if(selectedTrackType == "BANGS"){
@@ -408,12 +416,26 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
                     newTrack = timeline.addSwitches(name, xmlFile);
                 }
+                else if(selectedTrackType == "COLORS"){
+                	string name = timeline.confirmedUniqueName("Colors");
+                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
+                    newTrack = timeline.addColors(name, xmlFile);
+                }
+                else if(selectedTrackType == "SOUND"){
+                	string name = timeline.confirmedUniqueName("Sound");
+                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
+					
+                    newTrack = timeline.addColors(name, xmlFile);
+                }
                 
                 if(newTrack != NULL){
                     createHeaderForTrack(newTrack);
                 }
 				
+				unlock();
+				
                 addTrackDropDown->clearSelected();
+
             }
         }
     }
@@ -617,6 +639,7 @@ void DurationController::loadProject(string projectPath, bool forceCreate){
 //--------------------------------------------------------------
 void DurationController::loadProject(string projectPath, string projectName, bool forceCreate){
     
+	
     ofxXmlSettings projectSettings;
     if(!projectSettings.loadFile(ofToDataPath(projectPath+"/.durationproj"))){
         if(forceCreate){
@@ -627,6 +650,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         }
         return;
     }
+	
+	lock();
 	
     headers.clear(); //smart pointers will call destructor
     
@@ -671,6 +696,20 @@ void DurationController::loadProject(string projectPath, string projectName, boo
             else if(trackType == "Switches"){
                 newTrack = timeline.addSwitches(trackName, trackFilePath);
             }
+            else if(trackType == "Colors"){
+				string paletteFilePath  = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
+                newTrack = timeline.addColorsWithPalette(trackName,paletteFilePath);
+            }
+			else if(trackType == "Sound"){
+				if(audioTrack != NULL){
+					ofLogError("DurationController::loadProject") << "Trying to add an additional sound track";
+				}
+				audioTrack = new ofxTLAudioTrack();
+				timeline.addTrack(trackName, audioTrack);
+				newTrack = audioTrack;
+				string paletteFilePath = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
+			}
+			
             if(newTrack != NULL){
                 string displayName = projectSettings.getValue("displayName","");
                 if(displayName != ""){
@@ -730,6 +769,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     defaultSettings.setValue("lastProjectPath", settings.path);
     defaultSettings.setValue("lastProjectName", settings.name);
     defaultSettings.saveFile();
+	
+	unlock();
 }
 
 //--------------------------------------------------------------
@@ -764,6 +805,10 @@ void DurationController::saveProject(){
                 projectSettings.addValue("min", tweens->getValueRange().min);
                 projectSettings.addValue("max", tweens->getValueRange().max);
             }
+			else if(trackType == "Colors"){
+				ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
+				projectSettings.addValue("palette", colors->getPalettePath());
+			}
             projectSettings.popTag();
         }
         projectSettings.popTag(); //page

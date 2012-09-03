@@ -7,8 +7,7 @@
 //
 //
 
-#ifndef __Duration__DurationController__
-#define __Duration__DurationController__
+#pragma once
 
 #include "ofMain.h"
 #include "ofxOsc.h"
@@ -16,7 +15,7 @@
 #include "ofxMSATimer.h"
 #include "ofxTLUIHeader.h"
 #include "ofxUI.h"
-
+#include "ofxTLAudioTrack.h"
 
 typedef struct {
     string path; //full project path
@@ -83,7 +82,6 @@ class DurationController : public ofThread  {
     	
 	void startRecording();
 	void stopRecording();
-	
 
   protected:
 	ofxTimeline timeline;
@@ -106,10 +104,12 @@ class DurationController : public ofThread  {
 	unsigned long recordTimeOffset;
 	ofxMSATimer recordTimer;
 	
+	//only can have one of these!
+	ofxTLAudioTrack* audioTrack;
+	
 	vector<ofxOscMessage> bangsReceived;
 	map<string, ofPtr<ofxTLUIHeader> > headers;
     
 	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
 };
 
-#endif /* defined(__Duration__DurationController__) */

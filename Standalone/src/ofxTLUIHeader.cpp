@@ -1,5 +1,6 @@
 
 #include "ofxTLUIHeader.h"
+#include "ofxTLAudioTrack.h"
 
 ofxTLUIHeader::ofxTLUIHeader(){
 	gui = NULL;
@@ -48,7 +49,15 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
         maxDialer->setPadding(0);
         gui->addWidgetRight( maxDialer );
     }
-	    
+	else if(trackType == "Colors"){
+		ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
+		//TODO: add load/save palette
+	}
+	else if(trackType == "Sound"){
+		ofxTLAudioTrack* soundTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
+		//TODO: add load/save sound
+	}
+	
 	//Enable??
     oscEnabledToggle = new ofxUIToggle("send osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
     oscEnabledToggle->setPadding(1);
@@ -90,7 +99,7 @@ bool ofxTLUIHeader::getShouldDelete(){
 }
 
 void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
-    cout << e.widget->getName() << " hit!" << endl;
+//    cout << e.widget->getName() << " hit!" << endl;
     
     //TODO min/max
     if(e.widget->getName() == "min"){
