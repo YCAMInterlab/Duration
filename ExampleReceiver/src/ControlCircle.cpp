@@ -10,6 +10,7 @@
 
 ControlCircle::ControlCircle(){
 	position = ofVec2f(0,0);
+	color = ofColor(200, 200, 50);
 }
 
 void ControlCircle::update(){
@@ -38,4 +39,12 @@ void ControlCircle::setName(string newName){
 
 string ControlCircle::getName(){
 	return name;
+}
+
+ofColor ControlCircle::getColor(){
+	return color;
+}
+
+void ControlCircle::setColor(ofColor newColor){
+	color = newColor;
 }

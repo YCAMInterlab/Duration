@@ -23,11 +23,14 @@ class ControlCircle {
 	void setName(string name);
 	string getName();
 	
+	ofColor getColor();
+	void setColor(ofColor color);
   protected:
 	
 	ofVec2f position;
 	float lastTimeMoved;
 	string name;
+	ofColor color;
 };
 
 
