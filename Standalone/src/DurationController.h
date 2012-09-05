@@ -46,8 +46,9 @@ class DurationController : public ofThread  {
 		
     ofRectangle canvasRectangle;
     ofxUICanvas* gui;
-	void guiEvent(ofxUIEventArgs &e);
-    
+	void guiEvent(ofxUIEventArgs& e);
+    void exit(ofEventArgs& e);
+	
     //control elements
     ofxUIDropDownList* projectDropDown;
     ofxUILabel* timeLabel;
@@ -111,5 +112,8 @@ class DurationController : public ofThread  {
 	map<string, ofPtr<ofxTLUIHeader> > headers;
     
 	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
+	
+	float oscRate;
+	unsigned long lastOSCBundleSent;
 };
 

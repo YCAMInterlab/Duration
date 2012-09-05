@@ -6,6 +6,7 @@ ofxTLUIHeader::ofxTLUIHeader(){
 	gui = NULL;
     trackHeader = NULL;
     shouldDelete = false;
+	lastInputReceivedTime = 0;
 
 }
 
@@ -96,6 +97,14 @@ void ofxTLUIHeader::setOSCEnabled(bool enableosc){
 
 bool ofxTLUIHeader::getShouldDelete(){
     return shouldDelete;
+}
+
+ofxTLTrack* ofxTLUIHeader::getTrack(){
+	return trackHeader->getTrack();
+}
+
+ofxTLTrackHeader* ofxTLUIHeader::getTrackHeader(){
+	return trackHeader;
 }
 
 void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){

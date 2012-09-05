@@ -17,6 +17,11 @@ class ofxTLUIHeader {
 	virtual bool getShouldDelete();
     virtual bool isOSCEnabled();
     virtual void setOSCEnabled(bool enableosc);
+	
+	float lastInputReceivedTime;
+	ofxTLTrack* getTrack();
+	ofxTLTrackHeader* getTrackHeader();
+	
   protected:
     
     ofxUICanvas* gui;

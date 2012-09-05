@@ -20,10 +20,12 @@ DurationController::DurationController(){
 	oscIsEnabled = true;
 	recordingIsEnabled = true;
 	audioTrack = NULL;
+	oscRate = (1.0/30.0)*1000; //in millis
+	lastOSCBundleSent = 0;
 }
 
 DurationController::~DurationController(){
-	waitForThread(true);
+
 }
 
 void DurationController::setup(){
@@ -55,9 +57,19 @@ void DurationController::setup(){
             }
         }
     }
+
+	
+	//setup timeline
+	timeline.setup();
+    timeline.setFrameRate(30);
+	timeline.setDurationInSeconds(30);
+	timeline.setOffset(ofVec2f(0, 75));
+    timeline.getColors().load("defaultColors.xml");
+    timeline.setBPM(120.f);
+	timeline.setAutosave(false);
+	timeline.moveToThread(); //increases accuracy of bang call backs
     
-    
-    //Set up top GUI
+	//Set up top GUI
     gui = new ofxUICanvas(0,0,ofGetWidth(), 75);
     
     //ADD PROJECT DROP DOWN
@@ -103,19 +115,20 @@ void DurationController::setup(){
     
     //SETUP BPM CONTROLS
 	
-	useBPMToggle = new ofxUILabelToggle(false, "BPM", OFX_UI_FONT_MEDIUM);
+//	useBPMToggle = new ofxUILabelToggle(false, "BPM", OFX_UI_FONT_MEDIUM);
+	useBPMToggle = new ofxUILabelToggle("BPM", false,0,0,0,0);
     gui->addWidgetEastOf(useBPMToggle, "ADD TRACK");
 	bpmDialer = new ofxUINumberDialer(0., 250., 120., 2, "BPM_VALUE", OFX_UI_FONT_MEDIUM);
     gui->addWidgetEastOf(bpmDialer, "BPM");
 	
     //figure out where to put these
-    snapToBPMToggle = new ofxUILabelToggle(false, "Snap to BPM", OFX_UI_FONT_SMALL);
+    snapToBPMToggle = new ofxUILabelToggle("Snap to BPM",false,0,0,0,0,OFX_UI_FONT_SMALL);
 	//    gui->addWidgetSouthOf(snapToBPM, "BPM");
-    snapToKeysToggle = new ofxUILabelToggle(false, "Snap to Keys", OFX_UI_FONT_SMALL);
+    snapToKeysToggle = new ofxUILabelToggle("Snap to Keys",false,0,0,0,0,OFX_UI_FONT_SMALL);
 	//    gui->addWidgetRight(snapToKeys);
     
     //SETUP OSC CONTROLS
-    useOSCToggle = new ofxUILabelToggle(false, "OSC", OFX_UI_FONT_MEDIUM);
+    useOSCToggle = new ofxUILabelToggle("OSC",false,0,0,0,0);
     oscIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
     oscIPInput->setAutoClear(false);
     oscPortInput = new ofxUITextInput("OSCPORT", "12345",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
@@ -125,26 +138,18 @@ void DurationController::setup(){
     gui->addWidgetRight(oscIPInput);
     gui->addWidgetRight(oscPortInput);
 
-	//setup timeline
-	timeline.setup();
-    timeline.setFrameRate(30);
-	timeline.setDurationInSeconds(30);
-	timeline.setOffset(ofVec2f(0, 75));
-    timeline.getColors().load("defaultColors.xml");
-    timeline.setBPM(120.f);
-	timeline.setAutosave(false);
-	timeline.moveToThread(); //increases accuracy of bang call backs
+	ofAddListener(gui->newGUIEvent, this, &DurationController::guiEvent);
+	gui->disableAppEventCallbacks();
 	
 	//add events
     ofAddListener(timeline.events().bangFired, this, &DurationController::bangFired);
 	ofAddListener(ofEvents().update, this, &DurationController::update);
 	ofAddListener(ofEvents().draw, this, &DurationController::draw);
 	ofAddListener(ofEvents().keyPressed, this, &DurationController::keyPressed);
+	ofAddListener(ofEvents().exit, this, &DurationController::exit);
 
     //SET UP LISENTERS
-    ofAddListener(gui->newGUIEvent, this, &DurationController::guiEvent);
     
-	
     ofxXmlSettings defaultSettings;
     if(defaultSettings.loadFile("settings.xml")){
         string lastProjectPath = defaultSettings.getValue("lastProjectPath", "");
@@ -190,21 +195,24 @@ void DurationController::handleOscIn(){
 			vector<ofxTLTrack*> tracks = pages[i]->getTracks();
 			for(int t = 0; t < tracks.size(); t++){
 //				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
-				if(m.getAddress() == ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()) ){
+				ofxTLTrack* track = tracks[t];
+				if(m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
 					if(recordingIsEnabled && timeline.getIsPlaying()){
-						ofxTLTrack* track = tracks[t];
-						if(track->getTrackType() == "Curves"){
+						if(track->getTrackType() == "Curves" ){
 							ofxTLCurves* curves = (ofxTLCurves*)track;
 							//curves->addKeyframeAtMillis(m.getArgAsFloat(0), recordTimer.getElapsedMillis()+recordTimeOffset);
 //							cout << "adding value " << m.getArgAsFloat(0) << endl;
-							curves->addKeyframeAtMillis(m.getArgAsFloat(0), timelineStartTime);
-							
+							if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+								curves->addKeyframeAtMillis(m.getArgAsFloat(0), timelineStartTime);
+							}
+						}
+						else if(track->getTrackType() == "Bangs"){
+							ofxTLBangs* bangs = (ofxTLBangs*)track;
+							bangs->addKeyframeAtMillis(0,timelineStartTime);
 						}
 					}
-					else {
-						//TODO just flash the track
-//						cout << "found track!" << endl;
-					}
+
+					headers[track->getName()]->lastInputReceivedTime = recordTimer.getAppTimeSeconds();
 					handled = true;
 				}
 			}
@@ -297,12 +305,16 @@ void DurationController::handleOscOut(){
 	if(!oscIsEnabled){
 		return;
 	}
+	unsigned long bundleTime = recordTimer.getAppTimeMillis();
+	if(lastOSCBundleSent+oscRate > bundleTime){
+		return;
+	}
 	
+	unsigned long sampleMillis = timeline.getCurrentTimeMillis();
 	int numMessages = 0;
 	ofxOscBundle bundle;
 
 	lock();
-	unsigned long sampleMillis = timeline.getCurrentTimeMillis();
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
 		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
@@ -312,7 +324,7 @@ void DurationController::handleOscOut(){
 			}
 			
 			string trackType = tracks[t]->getTrackType();
-			if(trackType == "Curves" || trackType == "Switches"){
+			if(trackType == "Curves" || trackType == "Switches" || trackType == "Colors"){
 				ofxOscMessage m;
 				m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
 				if(trackType == "Curves"){
@@ -346,6 +358,7 @@ void DurationController::handleOscOut(){
 	if(numMessages > 0){
 		sender.sendBundle(bundle);
 	}
+	lastOSCBundleSent = bundleTime;
 	bangsReceived.clear();
 	
 }
@@ -522,7 +535,8 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void DurationController::update(ofEventArgs& args){
-    
+	gui->update();
+	
 	timeLabel->setLabel(timeline.getCurrentTimecode());
     
     if(shouldLoadProject){
@@ -555,7 +569,22 @@ void DurationController::update(ofEventArgs& args){
 
 //--------------------------------------------------------------
 void DurationController::draw(ofEventArgs& args){
-    timeline.draw();
+//	cout << "main draw" << endl;
+	//go through and draw all the overlay backgrounds
+	if(recordingIsEnabled){
+		map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
+		for(trackit = headers.begin(); trackit != headers.end(); trackit++){
+			float timeSinceInput = recordTimer.getAppTimeSeconds() - trackit->second->lastInputReceivedTime;
+			if(timeSinceInput > 0 && timeSinceInput < 1.0){
+				
+				ofSetColor(200,0,0,(1-timeSinceInput)*100);
+				ofRect(trackit->second->getTrack()->getDrawRect());
+			}
+		}
+	}
+	
+	timeline.draw();
+	gui->draw();
 }
 
 //--------------------------------------------------------------
@@ -847,4 +876,9 @@ ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
     headerGui->setTrackHeader(header);
     headers[track->getName()] = ofPtr<ofxTLUIHeader>( headerGui );
     return headerGui;
+}
+
+void DurationController::exit(ofEventArgs& e){
+	ofLogNotice("DurationController") << "waiting for thread on exit";
+	waitForThread(true);
 }
