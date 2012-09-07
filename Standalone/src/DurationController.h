@@ -15,13 +15,7 @@
 #include "ofxMSATimer.h"
 #include "ofxTLUIHeader.h"
 #include "ofxUI.h"
-#include "ofxTLAudioTrack.h"
-
-typedef struct{
-	ofRectangle sourceRect;
-	ofVec2f displayPoint;
-	string text;
-} ToolTip;
+//#include "ofxTLAudioTrack.h"
 
 typedef struct {
     string path; //full project path
@@ -38,6 +32,12 @@ typedef struct {
     int oscPort;
     
 } DurationProjectSettings;
+
+typedef struct{
+	ofRectangle sourceRect;
+	ofVec2f displayPoint;
+	string text;
+} ToolTip;
 
 class DurationController : public ofThread  {
   public:
@@ -89,14 +89,11 @@ class DurationController : public ofThread  {
     	
 	void startRecording();
 	void stopRecording();
-	
+
   protected:
 	ofxTimeline timeline;
     void bangFired(ofxTLBangEventArgs& bang);
 
-	vector<ToolTip> toolTips;
-	void createTooltips();
-	
 	vector<string> trackAddresses;
 	
     bool shouldCreateNewProject;
@@ -115,7 +112,7 @@ class DurationController : public ofThread  {
 	ofxMSATimer recordTimer;
 	
 	//only can have one of these!
-	ofxTLAudioTrack* audioTrack;
+//	ofxTLAudioTrack* audioTrack;
 	
 	vector<ofxOscMessage> bangsReceived;
 	map<string, ofPtr<ofxTLUIHeader> > headers;
