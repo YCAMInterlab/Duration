@@ -67,7 +67,7 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     //DELETE ME???
     vector<string> deleteTrack;
     deleteTrack.push_back("sure?");
-    ofxUIDropDownList* dropDown = new ofxUIDropDownList("delete", deleteTrack, OFX_UI_FONT_SMALL);
+    ofxUIDropDownList* dropDown = new ofxUIDropDownList("delete", deleteTrack, 0,0,0, OFX_UI_FONT_SMALL);
     dropDown->setAllowMultiple(false);
     dropDown->setAutoClose(true);
     dropDown->setPadding(0); //Tweak to make the drop down small enough

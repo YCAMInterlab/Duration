@@ -572,15 +572,16 @@ void DurationController::draw(ofEventArgs& args){
 //	cout << "main draw" << endl;
 	//go through and draw all the overlay backgrounds
 	if(recordingIsEnabled){
+		ofPushStyle();
 		map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
 		for(trackit = headers.begin(); trackit != headers.end(); trackit++){
 			float timeSinceInput = recordTimer.getAppTimeSeconds() - trackit->second->lastInputReceivedTime;
 			if(timeSinceInput > 0 && timeSinceInput < 1.0){
-				
 				ofSetColor(200,0,0,(1-timeSinceInput)*100);
 				ofRect(trackit->second->getTrack()->getDrawRect());
 			}
 		}
+		ofPopStyle();
 	}
 	
 	timeline.draw();
