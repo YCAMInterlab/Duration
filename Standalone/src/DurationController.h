@@ -15,7 +15,7 @@
 #include "ofxMSATimer.h"
 #include "ofxTLUIHeader.h"
 #include "ofxUI.h"
-#include "ofxTLAudioTrack.h"
+//#include "ofxTLAudioTrack.h"
 
 typedef struct {
     string path; //full project path
@@ -106,7 +106,7 @@ class DurationController : public ofThread  {
 	ofxMSATimer recordTimer;
 	
 	//only can have one of these!
-	ofxTLAudioTrack* audioTrack;
+//	ofxTLAudioTrack* audioTrack;
 	
 	vector<ofxOscMessage> bangsReceived;
 	map<string, ofPtr<ofxTLUIHeader> > headers;

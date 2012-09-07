@@ -1,6 +1,6 @@
 
 #include "ofxTLUIHeader.h"
-#include "ofxTLAudioTrack.h"
+//#include "ofxTLAudioTrack.h"
 
 ofxTLUIHeader::ofxTLUIHeader(){
 	gui = NULL;
@@ -54,11 +54,12 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
 		//TODO: add load/save palette
 	}
+	/*
 	else if(trackType == "Sound"){
 		ofxTLAudioTrack* soundTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
 		//TODO: add load/save sound
 	}
-	
+	*/
 	//Enable??
     oscEnabledToggle = new ofxUIToggle("send osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
     oscEnabledToggle->setPadding(1);

@@ -19,7 +19,7 @@
 DurationController::DurationController(){
 	oscIsEnabled = true;
 	recordingIsEnabled = true;
-	audioTrack = NULL;
+//	audioTrack = NULL;
 	oscRate = (1.0/30.0)*1000; //in millis
 	lastOSCBundleSent = 0;
 }
@@ -730,6 +730,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 				string paletteFilePath  = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
                 newTrack = timeline.addColorsWithPalette(trackName,paletteFilePath);
             }
+			/*
 			else if(trackType == "Sound"){
 				if(audioTrack != NULL){
 					ofLogError("DurationController::loadProject") << "Trying to add an additional sound track";
@@ -739,6 +740,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 				newTrack = audioTrack;
 				string paletteFilePath = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
 			}
+			*/
 			
             if(newTrack != NULL){
                 string displayName = projectSettings.getValue("displayName","");
