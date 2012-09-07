@@ -17,6 +17,12 @@
 #include "ofxUI.h"
 #include "ofxTLAudioTrack.h"
 
+typedef struct{
+	ofRectangle sourceRect;
+	ofVec2f displayPoint;
+	string text;
+} ToolTip;
+
 typedef struct {
     string path; //full project path
     string name;
@@ -83,11 +89,14 @@ class DurationController : public ofThread  {
     	
 	void startRecording();
 	void stopRecording();
-
+	
   protected:
 	ofxTimeline timeline;
     void bangFired(ofxTLBangEventArgs& bang);
 
+	vector<ToolTip> toolTips;
+	void createTooltips();
+	
 	vector<string> trackAddresses;
 	
     bool shouldCreateNewProject;

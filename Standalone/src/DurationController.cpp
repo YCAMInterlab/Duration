@@ -170,6 +170,8 @@ void DurationController::setup(){
 	receiver.setup(12346);
 	
 	startThread();
+	
+	createToolTips();
 }
 
 void DurationController::threadedFunction(){
@@ -878,6 +880,11 @@ ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
     headers[track->getName()] = ofPtr<ofxTLUIHeader>( headerGui );
     return headerGui;
 }
+
+void DurationController::createTooltips(){
+	
+}
+
 
 void DurationController::exit(ofEventArgs& e){
 	ofLogNotice("DurationController") << "waiting for thread on exit";
