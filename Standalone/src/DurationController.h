@@ -27,9 +27,11 @@ typedef struct {
     bool snapToBPM;
     bool snapToKeys;
     
-    bool useOSC;
+    bool oscInEnabled;
+	bool oscOutEnabled;
+	int oscInPort;
     string oscIP;
-    int oscPort;
+    int oscOutPort;
     
 } DurationProjectSettings;
 
@@ -70,12 +72,13 @@ class DurationController : public ofThread  {
 	ofxUINumberDialer* bpmDialer;
 	
 	//TODO: find a place for these
-    ofxUILabelToggle* snapToBPMToggle;
     ofxUILabelToggle* snapToKeysToggle;
     
-    ofxUILabelToggle* useOSCToggle;
-    ofxUITextInput* oscIPInput;
-    ofxUITextInput* oscPortInput;
+    ofxUILabelToggle* enableOSCInToggle;
+	ofxUILabelToggle* enableOSCOutToggle;
+    ofxUITextInput* oscInPortInput;
+    ofxUITextInput* oscOutIPInput;
+    ofxUITextInput* oscOutPortInput;
     
     vector<string> trackTypes;
     ofxUIDropDownList* addTrackDropDown;
@@ -100,16 +103,14 @@ class DurationController : public ofThread  {
 	
     bool shouldCreateNewProject;
     bool shouldLoadProject;
-	
-	bool recordingIsEnabled;
-	bool oscIsEnabled;
-	
+		
 	ofxOscReceiver receiver;
 	ofxOscSender sender;
 	
 	void threadedFunction();
 	void handleOscOut();
 	void handleOscIn();
+	
 	unsigned long recordTimeOffset;
 	ofxMSATimer recordTimer;
 

@@ -17,11 +17,13 @@
 
 
 DurationController::DurationController(){
-	oscIsEnabled = true;
-	recordingIsEnabled = true;
-//	audioTrack = NULL;
-	oscRate = (1.0/30.0)*1000; //in millis
+	//TODO: make variable
+	oscRate = (1.0/60.0)*1000; //in millis
 	lastOSCBundleSent = 0;
+
+	shouldCreateNewProject = false;
+    shouldLoadProject = false;
+
 }
 
 DurationController::~DurationController(){
@@ -29,8 +31,6 @@ DurationController::~DurationController(){
 }
 
 void DurationController::setup(){
-	shouldCreateNewProject = false;
-    shouldLoadProject = false;
     
     //populate projects
     vector<string> projects;
@@ -64,29 +64,45 @@ void DurationController::setup(){
 	timeline.setup();
     timeline.setFrameRate(30);
 	timeline.setDurationInSeconds(30);
-	timeline.setOffset(ofVec2f(0, 75));
+	timeline.setOffset(ofVec2f(0, 90));
     timeline.getColors().load("defaultColors.xml");
     timeline.setBPM(120.f);
 	timeline.setAutosave(false);
 	timeline.moveToThread(); //increases accuracy of bang call backs
     
 	//Set up top GUI
-    gui = new ofxUICanvas(0,0,ofGetWidth(), 75);
+    gui = new ofxUICanvas(0,0,ofGetWidth(), 90);
     
     //ADD PROJECT DROP DOWN
     projectDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "PROJECT", projects, OFX_UI_FONT_LARGE);
     projectDropDown->setAutoClose(true);
     gui->addWidgetDown(projectDropDown);
+    //ADD TRACKS
+    vector<string> trackTypes;
+    trackTypes.push_back("BANGS");
+    trackTypes.push_back("FLAGS");
+    trackTypes.push_back("SWITCHES");
+    trackTypes.push_back("CURVES");
+    trackTypes.push_back("COLORS");
+	//	    trackTypes.push_back("SOUND");
+	
+    addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "ADD TRACK", trackTypes, OFX_UI_FONT_MEDIUM);
+    addTrackDropDown->setAllowMultiple(false);
+    addTrackDropDown->setAutoClose(true);
+	//    gui->addWidgetRight(addTrackDropDown);
+	gui->addWidgetSouthOf(addTrackDropDown, "PROJECT");
+	
     saveButton = new ofxUIMultiImageButton(32, 32, false, "GUI/save_.png", "SAVE");
     saveButton->setLabelVisible(false);
-    gui->addWidgetRight(saveButton);
+    gui->addWidgetEastOf(saveButton, "PROJECT");
     
+	
     //ADD TIMECODE
     string zeroTimecode = "00:00:00:000";
     timeLabel = new ofxUILabel(zeroTimecode, OFX_UI_FONT_LARGE);
     gui->addWidgetRight(timeLabel);
 	//durationLabel = new ofxUILabel(" / "+zeroTimecode, OFX_UI_FONT_SMALL);
-    durationLabel = new ofxUITextInput("DURATION", zeroTimecode, timeLabel->getRect()->width,0,0,0, OFX_UI_FONT_SMALL);
+    durationLabel = new ofxUITextInput("DURATION", zeroTimecode, timeLabel->getRect()->width,0,0,0,OFX_UI_FONT_MEDIUM);
     durationLabel->setAutoClear(false);
     gui->addWidgetSouthOf(durationLabel, zeroTimecode);
     
@@ -97,50 +113,42 @@ void DurationController::setup(){
     stopButton = new ofxUIMultiImageButton(32, 32, false, "GUI/stop_.png", "STOP");
     stopButton->setLabelVisible(false);
     gui->addWidgetRight(stopButton);
-    gui->addWidgetRight(loopToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/loop_.png", "LOOP"));
+	loopToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/loop_.png", "LOOP");
 	loopToggle->setLabelVisible(false);
+    gui->addWidgetRight(loopToggle);
     
-    //ADD TRACKS
-    vector<string> trackTypes;
-    trackTypes.push_back("BANGS");
-    trackTypes.push_back("FLAGS");
-    trackTypes.push_back("SWITCHES");
-    trackTypes.push_back("CURVES");
-    trackTypes.push_back("COLORS");
-//	    trackTypes.push_back("SOUND");
 	
-    addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "ADD TRACK", trackTypes, OFX_UI_FONT_MEDIUM);
-    addTrackDropDown->setAllowMultiple(false);
-    addTrackDropDown->setAutoClose(true);
-    gui->addWidgetRight(addTrackDropDown);
-    
     //SETUP BPM CONTROLS
-	
-//	useBPMToggle = new ofxUILabelToggle(false, "BPM", OFX_UI_FONT_MEDIUM);
 	useBPMToggle = new ofxUILabelToggle("BPM", false,0,0,0,0);
-    gui->addWidgetEastOf(useBPMToggle, "ADD TRACK");
+    gui->addWidgetRight(useBPMToggle);
 	bpmDialer = new ofxUINumberDialer(0., 250., 120., 2, "BPM_VALUE", OFX_UI_FONT_MEDIUM);
     gui->addWidgetEastOf(bpmDialer, "BPM");
-	
-    //figure out where to put these
-    snapToBPMToggle = new ofxUILabelToggle("Snap to BPM",false,0,0,0,0,OFX_UI_FONT_SMALL);
-	//    gui->addWidgetSouthOf(snapToBPM, "BPM");
-    snapToKeysToggle = new ofxUILabelToggle("Snap to Keys",false,0,0,0,0,OFX_UI_FONT_SMALL);
-	//    gui->addWidgetRight(snapToKeys);
+    //figure out where to put this
+//	snapToKeysToggle = new ofxUILabelToggle("Snap to Keys",false,0,0,00,OFX_UI_FONT_MEDIUM);
+//	gui->addWidgetSouthOf(snapToKeysToggle, "BPM");
+//    snapToBPMToggle = new ofxUILabelToggle("Snap to BPM",false,0,0,0,0,OFX_UI_FONT_SMALL);
+//    gui->addWidgetSouthOf(snapToBPM, "BPM");
     
     //SETUP OSC CONTROLS
-    useOSCToggle = new ofxUILabelToggle("OSC",false,0,0,0,0);
-    oscIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
-    oscIPInput->setAutoClear(false);
-    oscPortInput = new ofxUITextInput("OSCPORT", "12345",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
-    oscPortInput->setAutoClear(false);
-    
-    gui->addWidgetEastOf(useOSCToggle, "BPM_VALUE");
-    gui->addWidgetRight(oscIPInput);
-    gui->addWidgetRight(oscPortInput);
+    enableOSCInToggle = new ofxUILabelToggle("OSC IN",false,0,0,0,0, OFX_UI_FONT_MEDIUM);
+    enableOSCOutToggle = new ofxUILabelToggle("OSC OUT",false,0,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscOutIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscOutIPInput->setAutoClear(false);
+	
+    oscInPortInput = new ofxUITextInput("OSCINPORT", "12346",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscInPortInput->setAutoClear(false);
+
+    oscOutPortInput = new ofxUITextInput("OSCOUTPORT", "12345",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscOutPortInput->setAutoClear(false);
+
+	gui->addWidgetRight(enableOSCInToggle);
+    gui->addWidgetRight(oscInPortInput);
+    gui->addWidgetRight(enableOSCOutToggle);
+    gui->addWidgetRight(oscOutIPInput);
+    gui->addWidgetRight(oscOutPortInput);
 
 	ofAddListener(gui->newGUIEvent, this, &DurationController::guiEvent);
-	gui->disableAppEventCallbacks();
+	gui->disableAppEventCallbacks(); //we want to controld raw 
 	
 	//add events
     ofAddListener(timeline.events().bangFired, this, &DurationController::bangFired);
@@ -168,12 +176,10 @@ void DurationController::setup(){
         loadProject(ofToDataPath(defaultProjectDirectoryPath+"Sample Project"), "Sample Project", true);
     }
 
-	receiver.setup(12346);
+
 	createTooltips();
 	
 	startThread();
-	
-
 }
 
 void DurationController::threadedFunction(){
@@ -186,6 +192,10 @@ void DurationController::threadedFunction(){
 }
 
 void DurationController::handleOscIn(){
+	if(!settings.oscInEnabled){
+		return;
+	}
+	
 	long timelineStartTime = timeline.getCurrentTimeMillis();
 	
 	while(receiver.hasWaitingMessages()){
@@ -201,7 +211,7 @@ void DurationController::handleOscIn(){
 //				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
 				ofxTLTrack* track = tracks[t];
 				if(m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
-					if(recordingIsEnabled && timeline.getIsPlaying()){
+					if(timeline.getIsPlaying()){ //TODO: check for local record enabled on this track
 						if(track->getTrackType() == "Curves" ){
 							ofxTLCurves* curves = (ofxTLCurves*)track;
 							//curves->addKeyframeAtMillis(m.getArgAsFloat(0), recordTimer.getElapsedMillis()+recordTimeOffset);
@@ -227,6 +237,7 @@ void DurationController::handleOscIn(){
 		if(handled){
 			return;
 		}
+		
 		//check for playback messages
 		if(m.getAddress() == "/duration/open"){
 			string projectPath = ofToDataPath(m.getArgAsString(0));
@@ -242,11 +253,11 @@ void DurationController::handleOscIn(){
 		}
 		else if(m.getAddress() == "/duration/stop"){
 			timeline.stop();
-			recordingIsEnabled = false;
+			//TODO: stop record mode
 		}
 		else if(m.getAddress() == "/duration/record"){
 			timeline.play();
-			recordingIsEnabled = false;
+			//TODO: turn on record mode
 		}
 		else if(m.getAddress() == "/duration/seektosecond"){
 			if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
@@ -293,22 +304,24 @@ void DurationController::handleOscIn(){
 	}
 }
 
+//TODO: hook up to record button
+//and make NO LOOP 
 void DurationController::startRecording(){
-	recordingIsEnabled = true;
 	recordTimer.setStartTime();
 	recordTimeOffset = timeline.getCurrentTimeMillis();
 	timeline.play();
 }
 
 void DurationController::stopRecording(){
-	recordingIsEnabled = false;
+
 }
 
 void DurationController::handleOscOut(){
 	
-	if(!oscIsEnabled){
+	if(!settings.oscOutEnabled){
 		return;
 	}
+	
 	unsigned long bundleTime = recordTimer.getAppTimeMillis();
 	if(lastOSCBundleSent+oscRate > bundleTime){
 		return;
@@ -369,8 +382,10 @@ void DurationController::handleOscOut(){
 
 //--------------------------------------------------------------
 void DurationController::bangFired(ofxTLBangEventArgs& bang){
- 	ofLogNotice() << "Bang from " << bang.track->getDisplayName() << " at time " << bang.currentTime << " with flag " << bang.flag;
-	
+// 	ofLogNotice() << "Bang from " << bang.track->getDisplayName() << " at time " << bang.currentTime << " with flag " << bang.flag;
+	if(settings.oscOutEnabled){
+		return;
+	}
     string trackType = bang.track->getTrackType();
     if(!headers[bang.track->getName()]->isOSCEnabled()){
         return;
@@ -493,51 +508,64 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
         timeline.setShowBPMGrid(settings.useBPM);
         timeline.enableSnapToBPM(settings.useBPM);
     }
-    //OSC
-    else if(e.widget == useOSCToggle){
-		settings.useOSC = useOSCToggle->getValue();
-        if(settings.useOSC){
+	else if(e.widget == snapToKeysToggle){
+		timeline.enableSnapToOtherKeyframes(snapToKeysToggle->getValue());
+	}
+    //OSC INPUT
+    else if(e.widget == enableOSCInToggle){
+		settings.oscInEnabled = enableOSCInToggle->getValue();
+        if(settings.oscInEnabled){
             //TODO validate address
-            sender.setup(settings.oscIP, settings.oscPort);
+            receiver.setup(settings.oscInPort);
         }
-		else{
-			oscIsEnabled = false;
-		}
     }
-    else if(e.widget == oscIPInput){
-        string newIP = oscIPInput->getTextString();
+	//INCOMING PORT
+	else if(e.widget == oscInPortInput){
+        int newPort = ofToInt(oscInPortInput->getTextString());
+        if(newPort != settings.oscInEnabled && newPort > 0 && newPort < 65535){
+	        sender.setup(settings.oscIP, newPort);
+            settings.oscInPort = newPort;
+        }
+        else {
+            oscInPortInput->setTextString( ofToString(settings.oscInPort) );
+        }
+    }
+	//OUTGOING IP
+    else if(e.widget == oscOutIPInput){
+        string newIP = ofToLower(oscOutIPInput->getTextString());
         if(newIP == settings.oscIP){
             return;
         }
-        vector<string> ipComponents = ofSplitString(newIP, ".");
-        bool valid = false;
-        if(ipComponents.size() == 4){
-			for(int i = 0; i < 4; i++){
-                int component = ofToInt(ipComponents[i]);
-                if (component < 0 || component > 255){
-                    valid = false;
-                    break;
-                }
-            }
-            if(valid){
-                settings.oscIP = newIP;
-                sender.setup(settings.oscIP, settings.oscPort);
-            }
-            else{
-				oscIPInput->setTextString(settings.oscIP);
-            }
+		
+        bool valid = (newIP == "localhost");
+		if(!valid){
+			vector<string> ipComponents = ofSplitString(newIP, ".");
+			if(ipComponents.size() == 4){
+				for(int i = 0; i < 4; i++){
+					int component = ofToInt(ipComponents[i]);
+					if (component < 0 || component > 255){
+						valid = false;
+						break;
+					}
+				}
+			}
+		}
+		
+		if(valid){
+			settings.oscIP = newIP;
+			sender.setup(settings.oscIP, settings.oscOutPort);
+		}
+		oscOutIPInput->setTextString(settings.oscIP);
+    }
+	//OSC OUTPUT
+    else if(e.widget == enableOSCOutToggle){
+		settings.oscOutEnabled = enableOSCOutToggle->getValue();
+        if(settings.oscOutEnabled){
+            //TODO validate address
+            sender.setup(settings.oscIP, settings.oscOutPort);
         }
     }
-    else if(e.widget == oscPortInput){
-        int newPort = ofToInt(oscPortInput->getTextString());
-        if(newPort != settings.oscPort && newPort > 0 && newPort < 65535){
-	        sender.setup(settings.oscIP, newPort);
-            settings.oscPort = newPort;
-        }
-        else {
-            oscPortInput->setTextString( ofToString(settings.oscPort) );
-        }
-    }
+
 }
 
 //--------------------------------------------------------------
@@ -576,15 +604,18 @@ void DurationController::update(ofEventArgs& args){
 
 //--------------------------------------------------------------
 void DurationController::draw(ofEventArgs& args){
-//	cout << "main draw" << endl;
-	//go through and draw all the overlay backgrounds
-	if(recordingIsEnabled){
+
+	//go through and draw all the overlay backgrounds to indicate 'hot' track sfor recording
+	if(settings.oscInEnabled){
 		ofPushStyle();
 		map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
 		for(trackit = headers.begin(); trackit != headers.end(); trackit++){
+			//TODO: check to make sure recording is enabled on this track
+			//TODO: find a way to illustrate 'invalid' output sent to this track
 			float timeSinceInput = recordTimer.getAppTimeSeconds() - trackit->second->lastInputReceivedTime;
 			if(timeSinceInput > 0 && timeSinceInput < 1.0){
-				ofSetColor(200,0,0,(1-timeSinceInput)*100);
+				//oscilating red to indicate active
+				ofSetColor(200,0,0,(1-timeSinceInput)*(80 + 20*sin(ofGetElapsedTimef()*.5+.5)));
 				ofRect(trackit->second->getTrack()->getDrawRect());
 			}
 		}
@@ -595,7 +626,7 @@ void DurationController::draw(ofEventArgs& args){
 	gui->draw();
 	
 	drawTooltips();
-	drawTooltipDebug();
+	//drawTooltipDebug();
 }
 
 //--------------------------------------------------------------
@@ -628,13 +659,14 @@ DurationProjectSettings DurationController::defaultProjectSettings(){
     settings.useBPM = false;
     settings.bpm = 120.0f;
     settings.snapToBPM = false;
-    settings.snapToKeys = true;;
+    settings.snapToKeys = true;
     
-    settings.useOSC = true;;
-    settings.oscIP = "127.0.0.1";
-    settings.oscPort = 12345;
+    settings.oscOutEnabled = true;
+	settings.oscInEnabled = true;
+    settings.oscInPort = 12346;
+    settings.oscIP = "localhost";
+    settings.oscOutPort = 12345;
     return settings;
-	
 }
 
 //--------------------------------------------------------------
@@ -785,12 +817,14 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     
     useBPMToggle->setValue( newSettings.useBPM = projectSettings.getValue("useBPM", true) );
     bpmDialer->setValue( newSettings.bpm = projectSettings.getValue("bpm", 120.0f) );
-    snapToBPMToggle->setValue( newSettings.snapToBPM = projectSettings.getValue("snapToBPM", true) );
-    snapToKeysToggle->setValue( newSettings.snapToKeys = projectSettings.getValue("snapToKeys", true) );
-    useOSCToggle->setValue( newSettings.useOSC = projectSettings.getValue("useOSC", true) );
-    oscIPInput->setTextString( newSettings.oscIP = projectSettings.getValue("OSCIP", "127.0.0.1") );
-    newSettings.oscPort = projectSettings.getValue("OSCPort", 12345);
-    oscPortInput->setTextString( ofToString(newSettings.oscPort) );
+//    snapToBPMToggle->setValue( newSettings.snapToBPM = projectSettings.getValue("snapToBPM", true) );
+//    snapToKeysToggle->setValue( newSettings.snapToKeys = projectSettings.getValue("snapToKeys", true) );
+    enableOSCInToggle->setValue( newSettings.oscInEnabled = projectSettings.getValue("oscInEnabled", true) );
+	enableOSCOutToggle->setValue( newSettings.oscOutEnabled = projectSettings.getValue("oscOutEnabled", true) );
+    oscInPortInput->setTextString( ofToString(newSettings.oscInPort = projectSettings.getValue("oscInPort", 12346)) );
+    oscOutIPInput->setTextString( newSettings.oscIP = projectSettings.getValue("oscIP", "localhost") );
+    oscOutPortInput->setTextString( ofToString(newSettings.oscOutPort = projectSettings.getValue("oscOutPort", 12345)) );
+	
     projectSettings.popTag(); //project settings;
 	
     newSettings.path = projectPath;
@@ -803,8 +837,11 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     timeline.enableSnapToBPM(newSettings.useBPM);
 	timeline.setBPM(newSettings.bpm);
     
-	if(settings.useOSC){
-        sender.setup(settings.oscIP, settings.oscPort);
+	if(settings.oscInEnabled){
+		receiver.setup(settings.oscInPort);
+	}
+	if(settings.oscOutEnabled){
+        sender.setup(settings.oscIP, settings.oscOutPort);
     }
     ofxXmlSettings defaultSettings;
     defaultSettings.loadFile("settings.xml");
@@ -874,9 +911,12 @@ void DurationController::saveProject(){
     projectSettings.addValue("bpm", settings.bpm);
     projectSettings.addValue("snapToBPM", settings.snapToBPM);
     projectSettings.addValue("snapToKeys", settings.snapToKeys);
-    projectSettings.addValue("useOSC", settings.useOSC);
-    projectSettings.addValue("OSCIP", settings.oscIP);
-    projectSettings.addValue("OSCPort", settings.oscPort);
+	
+    projectSettings.addValue("oscInEnabled", settings.oscInEnabled);
+    projectSettings.addValue("oscOutEnabled", settings.oscOutEnabled);
+    projectSettings.addValue("oscInPort", settings.oscInPort);
+    projectSettings.addValue("oscIP", settings.oscIP);
+    projectSettings.addValue("oscInPort", settings.oscOutPort);
 	
 	projectSettings.popTag(); //projectSettings
     projectSettings.saveFile(settings.settingsPath);
@@ -887,7 +927,9 @@ ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
     ofxTLUIHeader* headerGui = new ofxTLUIHeader();
     ofxTLTrackHeader* header = timeline.getTrackHeader(track);
     headerGui->setTrackHeader(header);
+//	lock();
     headers[track->getName()] = ofPtr<ofxTLUIHeader>( headerGui );
+//	unlock();
     return headerGui;
 }
 
@@ -908,6 +950,20 @@ void DurationController::createTooltips(){
 	saveTip.sourceRect = *saveButton->getRect();
 	saveTip.displayPoint = ofVec2f(saveTip.sourceRect.x, 55);
 	tooltips.push_back(saveTip);
+	
+	//edit duration
+	Tooltip editDurationTip;
+	editDurationTip.text = "edit duration";
+	editDurationTip.displayPoint = zone2;
+	editDurationTip.sourceRect = *durationLabel->getRect();
+	tooltips.push_back(editDurationTip);
+	
+	//current time
+	Tooltip currentTimeTip;
+	currentTimeTip.text = "current time";
+	currentTimeTip.displayPoint = zone2;
+	currentTimeTip.sourceRect = *timeLabel->getRect();
+	tooltips.push_back(currentTimeTip);
 	
 	//play/pause
 	Tooltip playpauseTip;
@@ -945,33 +1001,44 @@ void DurationController::createTooltips(){
 	tooltips.push_back(setBpmTip);
 	
 	//enable OSC
-	
-	//remote ip
-	
-	//in port
-	
-	//out port
-	
-	//record
-	
-	//edit duration
-	Tooltip editDurationTip;
-	editDurationTip.text = "edit duration";
-	editDurationTip.displayPoint = zone2;
-	editDurationTip.sourceRect = *durationLabel->getRect();
-	tooltips.push_back(editDurationTip);
-	
-	//current time
-	Tooltip currentTimeTip;
-	currentTimeTip.text = "current time";
-	currentTimeTip.displayPoint = zone2;
-	currentTimeTip.sourceRect = *timeLabel->getRect();
-	tooltips.push_back(currentTimeTip);
+	Tooltip oscInTip;
+	oscInTip.text = "enable incoming OSC";
+	oscInTip.sourceRect = *enableOSCInToggle->getRect();
+	oscInTip.displayPoint = ofVec2f(oscInTip.sourceRect.x, 55);
+	tooltips.push_back(oscInTip);
+
+	//osc In Port
+	Tooltip oscInPortTip;
+	oscInPortTip.text = "incoming OSC port";
+	oscInPortTip.sourceRect = *oscInPortInput->getRect();
+	oscInPortTip.displayPoint = ofVec2f(oscInPortTip.sourceRect.x, 55);
+	tooltips.push_back(oscInPortTip);
+
+	//osc Out
+	Tooltip oscOutTip;
+	oscOutTip.text = "enable outgoing OSC";
+	oscOutTip.sourceRect = *enableOSCOutToggle->getRect();
+	oscOutTip.displayPoint = ofVec2f(oscOutTip.sourceRect.x, 55);
+	tooltips.push_back(oscOutTip);
+
+	//osc Out IP
+	Tooltip oscOutIPTip;
+	oscOutIPTip.text = "remote IP";
+	oscOutIPTip.sourceRect = *oscOutIPInput->getRect();
+	oscOutIPTip.displayPoint = ofVec2f(oscOutIPTip.sourceRect.x, 55);
+	tooltips.push_back(oscOutIPTip);
+
+	//osc Out IP
+	Tooltip oscOutPortTip;
+	oscOutPortTip.text = "remote port";
+	oscOutPortTip.sourceRect = *oscOutPortInput->getRect();
+	oscOutPortTip.displayPoint = ofVec2f(oscOutPortTip.sourceRect.x, 55);
+	tooltips.push_back(oscOutPortTip);
+
 	
 	for(int i = 0; i < tooltips.size(); i++){
 		tooltips[i].debugColor = ofColor::fromHsb(ofRandom(255), ofRandom(255,200), ofRandom(255,200));		
-	}
-	
+	}	
 }
 
 void DurationController::drawTooltips(){
