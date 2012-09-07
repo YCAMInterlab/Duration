@@ -58,6 +58,7 @@ void DurationController::setup(){
         }
     }
 
+	tooltipFont.loadFont("GUI/NewMedia Fett.ttf", 8);
 	
 	//setup timeline
 	timeline.setup();
@@ -76,7 +77,7 @@ void DurationController::setup(){
     projectDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "PROJECT", projects, OFX_UI_FONT_LARGE);
     projectDropDown->setAutoClose(true);
     gui->addWidgetDown(projectDropDown);
-    ofxUIMultiImageButton* saveButton = new ofxUIMultiImageButton(32, 32, false, "GUI/save_.png", "SAVE");
+    saveButton = new ofxUIMultiImageButton(32, 32, false, "GUI/save_.png", "SAVE");
     saveButton->setLabelVisible(false);
     gui->addWidgetRight(saveButton);
     
@@ -93,7 +94,7 @@ void DurationController::setup(){
     playpauseToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/play_.png", "PLAYPAUSE");
     playpauseToggle->setLabelVisible(false);
     gui->addWidgetEastOf(playpauseToggle, zeroTimecode);
-    ofxUIMultiImageButton* stopButton = new ofxUIMultiImageButton(32, 32, false, "GUI/stop_.png", "STOP");
+    stopButton = new ofxUIMultiImageButton(32, 32, false, "GUI/stop_.png", "STOP");
     stopButton->setLabelVisible(false);
     gui->addWidgetRight(stopButton);
     gui->addWidgetRight(loopToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/loop_.png", "LOOP"));
@@ -168,10 +169,11 @@ void DurationController::setup(){
     }
 
 	receiver.setup(12346);
+	createTooltips();
 	
 	startThread();
 	
-//	createToolTips();
+
 }
 
 void DurationController::threadedFunction(){
@@ -498,6 +500,9 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
             //TODO validate address
             sender.setup(settings.oscIP, settings.oscPort);
         }
+		else{
+			oscIsEnabled = false;
+		}
     }
     else if(e.widget == oscIPInput){
         string newIP = oscIPInput->getTextString();
@@ -588,6 +593,9 @@ void DurationController::draw(ofEventArgs& args){
 	
 	timeline.draw();
 	gui->draw();
+	
+	drawTooltips();
+	drawTooltipDebug();
 }
 
 //--------------------------------------------------------------
@@ -883,10 +891,119 @@ ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
     return headerGui;
 }
 
-//void DurationController::createTooltips(){
-//	
-//}
+void DurationController::createTooltips(){
+	
 
+	ofVec2f zone2 = ofVec2f(420, 55);
+	//switch project
+	Tooltip projectTip;
+	projectTip.text = "switch project";
+	projectTip.sourceRect = *projectDropDown->getRect();
+	projectTip.displayPoint = ofVec2f(projectTip.sourceRect.x, 55);
+	tooltips.push_back(projectTip);
+	
+	//save
+	Tooltip saveTip;
+	saveTip.text = "save";
+	saveTip.sourceRect = *saveButton->getRect();
+	saveTip.displayPoint = ofVec2f(saveTip.sourceRect.x, 55);
+	tooltips.push_back(saveTip);
+	
+	//play/pause
+	Tooltip playpauseTip;
+	playpauseTip.text = "play/pause"; //TODO: switch dynamically
+	playpauseTip.displayPoint = zone2;
+	playpauseTip.sourceRect = *playpauseToggle->getRect();
+	tooltips.push_back(playpauseTip);
+	
+	//stop
+	Tooltip stopTip;
+	stopTip.text = "stop";
+	stopTip.displayPoint = zone2;
+	stopTip.sourceRect = *stopButton->getRect();
+	tooltips.push_back(stopTip);
+	
+	//loop
+	Tooltip loopTip;
+	loopTip.text = "toggle loop";
+	loopTip.displayPoint = zone2;
+	loopTip.sourceRect = *loopToggle->getRect();
+	tooltips.push_back(loopTip);
+
+	//enable Snap to BPM
+	Tooltip bpmTip;
+	bpmTip.text = "snap to measures";
+	bpmTip.sourceRect = *useBPMToggle->getRect();
+	bpmTip.displayPoint = ofVec2f(bpmTip.sourceRect.x, 55);
+	tooltips.push_back(bpmTip);
+	
+	//set beats per minute
+	Tooltip setBpmTip;
+	setBpmTip.text = "set beats per minute";
+	setBpmTip.sourceRect = *bpmDialer->getRect();
+	setBpmTip.displayPoint = ofVec2f(setBpmTip.sourceRect.x, 55);
+	tooltips.push_back(setBpmTip);
+	
+	//enable OSC
+	
+	//remote ip
+	
+	//in port
+	
+	//out port
+	
+	//record
+	
+	//edit duration
+	Tooltip editDurationTip;
+	editDurationTip.text = "edit duration";
+	editDurationTip.displayPoint = zone2;
+	editDurationTip.sourceRect = *durationLabel->getRect();
+	tooltips.push_back(editDurationTip);
+	
+	//current time
+	Tooltip currentTimeTip;
+	currentTimeTip.text = "current time";
+	currentTimeTip.displayPoint = zone2;
+	currentTimeTip.sourceRect = *timeLabel->getRect();
+	tooltips.push_back(currentTimeTip);
+	
+	for(int i = 0; i < tooltips.size(); i++){
+		tooltips[i].debugColor = ofColor::fromHsb(ofRandom(255), ofRandom(255,200), ofRandom(255,200));		
+	}
+	
+}
+
+void DurationController::drawTooltips(){
+
+	ofVec2f mousepoint(ofGetMouseX(), ofGetMouseY());
+	for(int i = 0; i < tooltips.size(); i++){
+		if(tooltips[i].sourceRect.inside(mousepoint)){
+			tooltipFont.drawString(tooltips[i].text,
+								   tooltips[i].displayPoint.x,
+								   tooltips[i].displayPoint.y);
+		}
+	}
+}
+
+void DurationController::drawTooltipDebug(){
+	//draw tool tip position finder
+	tooltipFont.drawString("("+ofToString(ofGetMouseX())+","+ofToString(ofGetMouseY())+")", ofGetMouseX(), ofGetMouseY());
+	//draw tooltip debug balloons
+	ofPushStyle();
+	for(int i = 0; i < tooltips.size(); i++){
+		ofNoFill();
+		ofSetColor(tooltips[i].debugColor, 200);
+		ofRect(tooltips[i].sourceRect);
+		ofLine(tooltips[i].sourceRect.getMax(), tooltips[i].displayPoint);
+		ofFill();
+		ofSetColor(tooltips[i].debugColor, 50);
+		ofRect(tooltips[i].sourceRect);
+		ofSetColor(255);
+		tooltipFont.drawString(tooltips[i].text, tooltips[i].sourceRect.x+5,tooltips[i].sourceRect.y+10);
+	}
+	ofPopStyle();
+}
 
 void DurationController::exit(ofEventArgs& e){
 	ofLogNotice("DurationController") << "waiting for thread on exit";

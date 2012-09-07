@@ -37,7 +37,8 @@ typedef struct{
 	ofRectangle sourceRect;
 	ofVec2f displayPoint;
 	string text;
-} ToolTip;
+	ofColor debugColor;
+} Tooltip;
 
 class DurationController : public ofThread  {
   public:
@@ -57,16 +58,18 @@ class DurationController : public ofThread  {
 	
     //control elements
     ofxUIDropDownList* projectDropDown;
+	ofxUIMultiImageButton* saveButton;
     ofxUILabel* timeLabel;
-    //ofxUILabel* durationLabel;
     ofxUITextInput* durationLabel;
-    ofxUILabel* bpmLabel;
     ofxUIMultiImageToggle* playpauseToggle;
+	ofxUIMultiImageButton* stopButton;
+    ofxUIMultiImageToggle* loopToggle;
 	
 	//project settings elements
-    ofxUIMultiImageToggle* loopToggle;
     ofxUILabelToggle* useBPMToggle;
 	ofxUINumberDialer* bpmDialer;
+	
+	//TODO: find a place for these
     ofxUILabelToggle* snapToBPMToggle;
     ofxUILabelToggle* snapToKeysToggle;
     
@@ -93,7 +96,6 @@ class DurationController : public ofThread  {
   protected:
 	ofxTimeline timeline;
     void bangFired(ofxTLBangEventArgs& bang);
-
 	vector<string> trackAddresses;
 	
     bool shouldCreateNewProject;
@@ -110,7 +112,12 @@ class DurationController : public ofThread  {
 	void handleOscIn();
 	unsigned long recordTimeOffset;
 	ofxMSATimer recordTimer;
+
+	void createTooltips();
+	void drawTooltips();
+	void drawTooltipDebug();
 	
+	vector<Tooltip> tooltips;
 	//only can have one of these!
 //	ofxTLAudioTrack* audioTrack;
 	
@@ -118,8 +125,9 @@ class DurationController : public ofThread  {
 	map<string, ofPtr<ofxTLUIHeader> > headers;
     
 	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
-	
+
 	float oscRate;
 	unsigned long lastOSCBundleSent;
+	ofTrueTypeFont tooltipFont;
 };
 
