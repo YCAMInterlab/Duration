@@ -184,9 +184,11 @@ void DurationController::setup(){
 
 void DurationController::threadedFunction(){
 	while(isThreadRunning()){
+		oscLock.lock();
 		handleOscIn();
 		handleOscOut();
-
+		oscLock.unlock();
+		
 		ofSleepMillis(1);
 	}
 }
@@ -330,12 +332,11 @@ void DurationController::handleOscOut(){
 	unsigned long sampleMillis = timeline.getCurrentTimeMillis();
 	int numMessages = 0;
 	ofxOscBundle bundle;
-
 	lock();
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
 		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
-		for(int t = 0; t < tracks.size(); t++){
+		for(int t = 0; t < tracks.size(); t++){	
 			if(!headers[tracks[t]->getName()]->isOSCEnabled()){
 				continue;
 			}
@@ -456,7 +457,6 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
                 else if(selectedTrackType == "SOUND"){
                 	string name = timeline.confirmedUniqueName("Sound");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-					
                     newTrack = timeline.addColors(name, xmlFile);
                 }
                 
@@ -515,21 +515,38 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
     else if(e.widget == enableOSCInToggle){
 		settings.oscInEnabled = enableOSCInToggle->getValue();
         if(settings.oscInEnabled){
-            //TODO validate address
+			oscLock.lock();
             receiver.setup(settings.oscInPort);
+			oscLock.unlock();
         }
     }
 	//INCOMING PORT
 	else if(e.widget == oscInPortInput){
         int newPort = ofToInt(oscInPortInput->getTextString());
-        if(newPort != settings.oscInPort && newPort > 0 && newPort < 65535){
-	        sender.setup(settings.oscIP, newPort);
+        if(newPort > 0 && newPort < 65535 &&
+		   newPort != settings.oscInPort &&
+		   //don't send messages to ourself
+		   (newPort != settings.oscOutPort || (settings.oscIP != "localhost" && settings.oscIP != "127.0.0.1"))){
             settings.oscInPort = newPort;
+			oscLock.lock();
+	        receiver.setup(settings.oscInPort);
+			oscLock.unlock();
         }
         else {
             oscInPortInput->setTextString( ofToString(settings.oscInPort) );
         }
     }
+	
+	//OSC OUTPUT
+    else if(e.widget == enableOSCOutToggle){
+		settings.oscOutEnabled = enableOSCOutToggle->getValue();
+        if(settings.oscOutEnabled){
+			oscLock.lock();
+            sender.setup(settings.oscIP, settings.oscOutPort);
+			oscLock.unlock();
+        }
+    }
+
 	//OUTGOING IP
     else if(e.widget == oscOutIPInput){
         string newIP = ofToLower(oscOutIPInput->getTextString());
@@ -541,6 +558,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 		if(!valid){
 			vector<string> ipComponents = ofSplitString(newIP, ".");
 			if(ipComponents.size() == 4){
+				valid = true;
 				for(int i = 0; i < 4; i++){
 					int component = ofToInt(ipComponents[i]);
 					if (component < 0 || component > 255){
@@ -550,22 +568,36 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 				}
 			}
 		}
+
+		if((newIP == "127.0.0.1" || newIP == "localhost") && settings.oscInPort == settings.oscOutPort){
+			//don't allow us to send messages to ourself
+			valid = false;
+		}
 		
 		if(valid){
 			settings.oscIP = newIP;
+			oscLock.lock();
 			sender.setup(settings.oscIP, settings.oscOutPort);
+			oscLock.unlock();
 		}
 		oscOutIPInput->setTextString(settings.oscIP);
     }
-	//OSC OUTPUT
-    else if(e.widget == enableOSCOutToggle){
-		settings.oscOutEnabled = enableOSCOutToggle->getValue();
-        if(settings.oscOutEnabled){
-            //TODO validate address
-            sender.setup(settings.oscIP, settings.oscOutPort);
+	//OUTGOING PORT
+	else if(e.widget == oscOutPortInput){
+        int newPort = ofToInt(oscOutPortInput->getTextString());
+        if(newPort > 0 && newPort < 65535 &&
+		   newPort != settings.oscOutPort &&
+		   //don't send messages to ourself
+		   (newPort != settings.oscInPort || (settings.oscIP != "localhost" && settings.oscIP != "127.0.0.1"))){
+            settings.oscOutPort = newPort;
+			oscLock.lock();
+			sender.setup(settings.oscIP, settings.oscOutPort);
+			oscLock.unlock();
+        }
+        else {
+            oscOutPortInput->setTextString( ofToString(settings.oscOutPort) );
         }
     }
-
 }
 
 //--------------------------------------------------------------
@@ -634,6 +666,10 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
     if(timeline.isModal()){
         return;
     }
+	if(gui->hasKeyboardFocus()){
+		cout << "keyboard has focus" << endl;
+		return;
+	}
 	
     int key = keyArgs.key;
 	if(key == ' '){
@@ -837,12 +873,15 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     timeline.enableSnapToBPM(newSettings.useBPM);
 	timeline.setBPM(newSettings.bpm);
     
+	oscLock.lock();
 	if(settings.oscInEnabled){
 		receiver.setup(settings.oscInPort);
 	}
 	if(settings.oscOutEnabled){
         sender.setup(settings.oscIP, settings.oscOutPort);
     }
+	oscLock.unlock();
+	
     ofxXmlSettings defaultSettings;
     defaultSettings.loadFile("settings.xml");
     defaultSettings.setValue("lastProjectPath", settings.path);
@@ -1074,8 +1113,8 @@ void DurationController::drawTooltipDebug(){
 
 void DurationController::exit(ofEventArgs& e){
 	lock();
-	timeline.stop();
 	headers.clear();
+	timeline.reset();
 	unlock();
 	
 	ofLogNotice("DurationController") << "waiting for thread on exit";

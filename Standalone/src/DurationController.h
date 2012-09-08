@@ -118,6 +118,8 @@ class DurationController : public ofThread  {
 	void drawTooltips();
 	void drawTooltipDebug();
 	
+	ofMutex oscLock;
+	
 	vector<Tooltip> tooltips;
 	//only can have one of these!
 //	ofxTLAudioTrack* audioTrack;
@@ -130,5 +132,6 @@ class DurationController : public ofThread  {
 	float oscRate;
 	unsigned long lastOSCBundleSent;
 	ofTrueTypeFont tooltipFont;
+
 };
 
