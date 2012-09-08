@@ -1,5 +1,5 @@
 #include "testApp.h"
-
+#include "ofxRemoveCocoaMenu.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -11,6 +11,8 @@ void testApp::setup(){
     ofEnableSmoothing();
 
 	controller.setup();
+	
+	removeCocoaMenuFromGlut();
 }
 
 //--------------------------------------------------------------

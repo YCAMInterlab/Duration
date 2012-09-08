@@ -1073,6 +1073,11 @@ void DurationController::drawTooltipDebug(){
 }
 
 void DurationController::exit(ofEventArgs& e){
+	lock();
+	timeline.stop();
+	headers.clear();
+	unlock();
+	
 	ofLogNotice("DurationController") << "waiting for thread on exit";
 	waitForThread(true);
 }
