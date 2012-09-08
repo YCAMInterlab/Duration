@@ -5,7 +5,7 @@
 void testApp::setup(){
 	
     ofSetVerticalSync(true);
-    ofSetFrameRate(60);
+    ofSetFrameRate(30);
     ofBackground(.15*255);
     ofEnableAlphaBlending();
     ofEnableSmoothing();

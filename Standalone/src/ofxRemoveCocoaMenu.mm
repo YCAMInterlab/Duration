@@ -14,8 +14,8 @@
 #import <Cocoa/Cocoa.h>
 
 
-#ifdef TARGET_OSX
 void removeCocoaMenuFromGlut(){
+#ifdef TARGET_OSX
 	if (NSApp){
 		NSMenu      *menu;
 		NSMenuItem  *menuItem;
@@ -27,13 +27,13 @@ void removeCocoaMenuFromGlut(){
 		
 		menu = [[NSMenu alloc] initWithTitle:@""];
 		[menu addItemWithTitle:@"About..." action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
-		[[menu addItemWithTitle:@"Quit Duration" action:@selector(terminate:) keyEquivalent:@"q"] setEnabled:YES];
+		//[[menu addItemWithTitle:@"Quit Duration" action:@selector(terminate:) keyEquivalent:@"q"] setEnabled:YES];
 		
 		menuItem = [[NSMenuItem alloc] initWithTitle:@"Apple" action:nil keyEquivalent:@""];
 		[menuItem setSubmenu:menu];
 		[[NSApp mainMenu] addItem:menuItem];
 		[NSApp performSelector:@selector(setAppleMenu:) withObject:menu];
 	}
+#endif
 }
 
-#endif

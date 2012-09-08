@@ -1,5 +1,5 @@
 /**
- * Remove that pesky 
+ * Remove that pesky menu!
  *
  */
 
@@ -7,6 +7,5 @@
 
 #include "ofMain.h"
 
-#ifdef TARGET_OSX
 void removeCocoaMenuFromGlut();
-#endif
+
