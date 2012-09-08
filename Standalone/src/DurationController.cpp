@@ -522,7 +522,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 	//INCOMING PORT
 	else if(e.widget == oscInPortInput){
         int newPort = ofToInt(oscInPortInput->getTextString());
-        if(newPort != settings.oscInEnabled && newPort > 0 && newPort < 65535){
+        if(newPort != settings.oscInPort && newPort > 0 && newPort < 65535){
 	        sender.setup(settings.oscIP, newPort);
             settings.oscInPort = newPort;
         }

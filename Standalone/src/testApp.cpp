@@ -1,5 +1,7 @@
 #include "testApp.h"
+#ifdef TARGET_OSX
 #include "ofxRemoveCocoaMenu.h"
+#endif
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -11,13 +13,16 @@ void testApp::setup(){
     ofEnableSmoothing();
 
 	controller.setup();
-	
+#ifdef TARGET_OSX	
 	removeCocoaMenuFromGlut();
+#endif
 }
+
+//#include "ofxHotkeys.h"
 
 //--------------------------------------------------------------
 void testApp::update(){
-	
+	//cout << "CTRL PRESSED" << ofGetModifierControlPressed() << endl;
 }
 
 //--------------------------------------------------------------
