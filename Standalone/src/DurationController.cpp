@@ -199,7 +199,6 @@ void DurationController::handleOscIn(){
 	}
 	
 	long timelineStartTime = timeline.getCurrentTimeMillis();
-	
 	while(receiver.hasWaitingMessages()){
 
 		ofxOscMessage m;
@@ -212,14 +211,19 @@ void DurationController::handleOscIn(){
 			for(int t = 0; t < tracks.size(); t++){
 //				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
 				ofxTLTrack* track = tracks[t];
+				ofPtr<ofxTLUIHeader> header = headers[track->getName()];				
 				if(m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
 					if(timeline.getIsPlaying()){ //TODO: check for local record enabled on this track
 						if(track->getTrackType() == "Curves" ){
 							ofxTLCurves* curves = (ofxTLCurves*)track;
-							//curves->addKeyframeAtMillis(m.getArgAsFloat(0), recordTimer.getElapsedMillis()+recordTimeOffset);
 //							cout << "adding value " << m.getArgAsFloat(0) << endl;
 							if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
-								curves->addKeyframeAtMillis(m.getArgAsFloat(0), timelineStartTime);
+								float value = m.getArgAsFloat(0);
+								if(value != header->lastValueReceived || !header->hasReceivedValue){
+									curves->addKeyframeAtMillis(value, timelineStartTime);
+									header->lastValueReceived = value;
+									header->hasReceivedValue = true;
+								}
 							}
 						}
 						else if(track->getTrackType() == "Bangs"){
@@ -228,7 +232,7 @@ void DurationController::handleOscIn(){
 						}
 					}
 
-					headers[track->getName()]->lastInputReceivedTime = recordTimer.getAppTimeSeconds();
+					header->lastInputReceivedTime = recordTimer.getAppTimeSeconds();
 					handled = true;
 				}
 			}
@@ -306,17 +310,6 @@ void DurationController::handleOscIn(){
 	}
 }
 
-//TODO: hook up to record button
-//and make NO LOOP 
-void DurationController::startRecording(){
-	recordTimer.setStartTime();
-	recordTimeOffset = timeline.getCurrentTimeMillis();
-	timeline.play();
-}
-
-void DurationController::stopRecording(){
-
-}
 
 void DurationController::handleOscOut(){
 	
@@ -332,37 +325,58 @@ void DurationController::handleOscOut(){
 	unsigned long sampleMillis = timeline.getCurrentTimeMillis();
 	int numMessages = 0;
 	ofxOscBundle bundle;
+	
 	lock();
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
 		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
-		for(int t = 0; t < tracks.size(); t++){	
+		for(int t = 0; t < tracks.size(); t++){
+			ofPtr<ofxTLUIHeader> header = headers[tracks[t]->getName()];
 			if(!headers[tracks[t]->getName()]->isOSCEnabled()){
 				continue;
 			}
 			
 			string trackType = tracks[t]->getTrackType();
 			if(trackType == "Curves" || trackType == "Switches" || trackType == "Colors"){
+				bool messageValid = false;
 				ofxOscMessage m;
-				m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
 				if(trackType == "Curves"){
 					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
-					m.addFloatArg(curves->getValueAtTimeInMillis(sampleMillis));
+					float value = curves->getValueAtTimeInMillis(sampleMillis);
+					if(value != header->lastFloatSent || !header->hasSentValue){
+						m.addFloatArg(value);
+						header->lastFloatSent = value;
+						header->hasSentValue = true;
+						messageValid = true;
+					}
 				}
 				else if(trackType == "Switches"){
 					ofxTLSwitches* switches = (ofxTLSwitches*)tracks[t];
-					m.addIntArg(switches->isOnAtMillis(sampleMillis));
+					bool on = switches->isOnAtMillis(sampleMillis);
+					if(on != header->lastBoolSent || !header->hasSentValue){
+						m.addIntArg(on ? 1 : 0);
+						header->lastBoolSent = on;
+						header->hasSentValue = true;
+						messageValid = true;
+					}
 				}
 				else if(trackType == "Colors"){
 					ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
 					ofColor color = colors->getColorAtMillis(sampleMillis);
-					m.addIntArg(color.r);
-					m.addIntArg(color.g);
-					m.addIntArg(color.b);
+					if(color != header->lastColorSent || !header->hasSentValue){
+						m.addIntArg(color.r);
+						m.addIntArg(color.g);
+						m.addIntArg(color.b);
+						header->lastColorSent = color;
+						header->hasSentValue = true;
+						messageValid = true;
+					}
 				}
-				
-				bundle.addMessage(m);
-				numMessages++;
+				if(messageValid){
+					m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
+					bundle.addMessage(m);
+					numMessages++;
+				}
 			}
 		}
 	}
@@ -377,9 +391,21 @@ void DurationController::handleOscOut(){
 		sender.sendBundle(bundle);
 	}
 	lastOSCBundleSent = bundleTime;
-	bangsReceived.clear();
-	
+	bangsReceived.clear();	
 }
+
+//TODO: hook up to record button
+//and make NO LOOP 
+void DurationController::startRecording(){
+	recordTimer.setStartTime();
+	recordTimeOffset = timeline.getCurrentTimeMillis();
+	timeline.play();
+}
+
+void DurationController::stopRecording(){
+
+}
+
 
 //--------------------------------------------------------------
 void DurationController::bangFired(ofxTLBangEventArgs& bang){
@@ -638,7 +664,7 @@ void DurationController::update(ofEventArgs& args){
 void DurationController::draw(ofEventArgs& args){
 
 	//go through and draw all the overlay backgrounds to indicate 'hot' track sfor recording
-	if(settings.oscInEnabled){
+//	if(settings.oscInEnabled){
 		ofPushStyle();
 		map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
 		for(trackit = headers.begin(); trackit != headers.end(); trackit++){
@@ -647,12 +673,12 @@ void DurationController::draw(ofEventArgs& args){
 			float timeSinceInput = recordTimer.getAppTimeSeconds() - trackit->second->lastInputReceivedTime;
 			if(timeSinceInput > 0 && timeSinceInput < 1.0){
 				//oscilating red to indicate active
-				ofSetColor(200,0,0,(1-timeSinceInput)*(80 + 20*sin(ofGetElapsedTimef()*.5+.5)));
+				ofSetColor(200,20,0,(1-timeSinceInput)*(80 + (20*sin(ofGetElapsedTimef()*8)*.5+.5)));
 				ofRect(trackit->second->getTrack()->getDrawRect());
 			}
 		}
 		ofPopStyle();
-	}
+//	}
 	
 	timeline.draw();
 	gui->draw();
@@ -667,7 +693,6 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
         return;
     }
 	if(gui->hasKeyboardFocus()){
-		cout << "keyboard has focus" << endl;
 		return;
 	}
 	
@@ -724,9 +749,10 @@ void DurationController::newProject(string newProjectPath, string newProjectName
     
     //TODO: prompt to save existing project
     settings = newProjectSettings;
-	
+	lock();
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
+	unlock();
 	
     //saves file with default settings to new directory
     saveProject();
@@ -894,6 +920,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 //--------------------------------------------------------------
 void DurationController::saveProject(){
 	
+	lock();
+	
 	timeline.save();
 	
     ofxXmlSettings projectSettings;
@@ -959,6 +987,8 @@ void DurationController::saveProject(){
 	
 	projectSettings.popTag(); //projectSettings
     projectSettings.saveFile(settings.settingsPath);
+	
+	unlock();
 }
 
 //--------------------------------------------------------------

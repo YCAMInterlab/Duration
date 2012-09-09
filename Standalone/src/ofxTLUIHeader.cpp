@@ -6,7 +6,14 @@ ofxTLUIHeader::ofxTLUIHeader(){
 	gui = NULL;
     trackHeader = NULL;
     shouldDelete = false;
-	lastInputReceivedTime = 0;
+	lastInputReceivedTime = -1000;
+
+	hasReceivedValue = false;
+	hasSentValue = false;
+	lastFloatSent = 0;
+	lastBoolSent = false;
+	lastColorSent = ofColor(0,0,0);
+	lastValueReceived = 0;
 
 }
 

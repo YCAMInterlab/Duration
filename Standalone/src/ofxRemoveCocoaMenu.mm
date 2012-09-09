@@ -13,7 +13,6 @@
 #include "ofxRemoveCocoaMenu.h"
 #import <Cocoa/Cocoa.h>
 
-
 void removeCocoaMenuFromGlut(){
 #ifdef TARGET_OSX
 	if (NSApp){
@@ -27,7 +26,7 @@ void removeCocoaMenuFromGlut(){
 		
 		menu = [[NSMenu alloc] initWithTitle:@""];
 		[menu addItemWithTitle:@"About..." action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
-		//[[menu addItemWithTitle:@"Quit Duration" action:@selector(terminate:) keyEquivalent:@"q"] setEnabled:YES];
+		[menu addItemWithTitle:@"Quit Duration" action:@selector(terminate:) keyEquivalent:@"q"];
 		
 		menuItem = [[NSMenuItem alloc] initWithTitle:@"Apple" action:nil keyEquivalent:@""];
 		[menuItem setSubmenu:menu];

@@ -17,8 +17,22 @@ class ofxTLUIHeader {
 	virtual bool getShouldDelete();
     virtual bool isOSCEnabled();
     virtual void setOSCEnabled(bool enableosc);
-	
+
+	//just for drawing the red receiver background
 	float lastInputReceivedTime;
+	
+	//remove duplicate sending and receiving
+	bool hasReceivedValue;
+	bool hasSentValue;
+	
+	//different value types for tracking last values sent over OSC
+	float lastFloatSent;
+	bool lastBoolSent;
+	ofColor lastColorSent;
+	
+	//only receiving floats for now
+	float lastValueReceived;
+	
 	ofxTLTrack* getTrack();
 	ofxTLTrackHeader* getTrackHeader();
 	

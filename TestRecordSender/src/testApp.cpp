@@ -28,6 +28,7 @@ void testApp::setup(){
 	redColor = ofColor(250, 200, 80);
 	blueColor = redColor.getInverted();
 	
+	bangTime = -10;
 	lastTime = 0;
 }
 
