@@ -14,6 +14,12 @@ ofxTLUIHeader::ofxTLUIHeader(){
 	lastBoolSent = false;
 	lastColorSent = ofColor(0,0,0);
 	lastValueReceived = 0;
+	
+	minDialer = NULL;
+	maxDialer = NULL;
+    sendOSCEnable = NULL;
+	receiveOSCEnable = NULL;
+
 
 }
 
@@ -56,6 +62,7 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
         maxDialer = new ofxUINumberDialer(-9999., 9999, tweenTrack->getValueRange().max, 2, "max", OFX_UI_FONT_SMALL);
         maxDialer->setPadding(0);
         gui->addWidgetRight( maxDialer );
+		
     }
 	else if(trackType == "Colors"){
 		ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
@@ -67,10 +74,17 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		//TODO: add load/save sound
 	}
 	*/
+	
+	if(trackType == "Bangs" || trackType == "Curves"){
+		receiveOSCEnable = new ofxUIToggle("receive osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
+		receiveOSCEnable->setPadding(1);
+		gui->addWidgetRight(receiveOSCEnable);
+	}
+	
 	//Enable??
-    oscEnabledToggle = new ofxUIToggle("send osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
-    oscEnabledToggle->setPadding(1);
-    gui->addWidgetRight(oscEnabledToggle);
+    sendOSCEnable = new ofxUIToggle("send osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
+    sendOSCEnable->setPadding(1);
+    gui->addWidgetRight(sendOSCEnable);
     
     //DELETE ME???
     vector<string> deleteTrack;
@@ -95,12 +109,30 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 	gui->getRect()->x = trackHeader->getTimeline()->getTopRight().x - (gui->getRect()->width + 50);
 }
 
-bool ofxTLUIHeader::isOSCEnabled(){
-	return oscEnabledToggle->getValue();
+//bool ofxTLUIHeader::isOSCEnabled(){
+//	return oscEnabledToggle->getValue();
+//}
+//
+//void ofxTLUIHeader::setOSCEnabled(bool enableosc){
+//    oscEnabledToggle->setValue(enableosc);
+//}
+
+bool ofxTLUIHeader::sendOSC(){
+	return sendOSCEnable->getValue();
 }
 
-void ofxTLUIHeader::setOSCEnabled(bool enableosc){
-    oscEnabledToggle->setValue(enableosc);
+void ofxTLUIHeader::setSendOSC(bool enable){
+	sendOSCEnable->setValue(enable);
+	
+}
+bool ofxTLUIHeader::receiveOSC(){
+	return receiveOSCEnable != NULL && receiveOSCEnable->getValue();
+}
+
+void ofxTLUIHeader::setReceiveOSC(bool enable){
+	if(receiveOSCEnable != NULL){
+		receiveOSCEnable->setValue(enable);
+	}
 }
 
 bool ofxTLUIHeader::getShouldDelete(){

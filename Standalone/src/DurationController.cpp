@@ -212,8 +212,9 @@ void DurationController::handleOscIn(){
 //				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
 				ofxTLTrack* track = tracks[t];
 				ofPtr<ofxTLUIHeader> header = headers[track->getName()];				
-				if(m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
-					if(timeline.getIsPlaying()){ //TODO: check for local record enabled on this track
+				if(header->receiveOSC() && m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
+					
+					if(timeline.getIsPlaying() ){ //TODO: change to isPlaying() && isRecording()
 						if(track->getTrackType() == "Curves" ){
 							ofxTLCurves* curves = (ofxTLCurves*)track;
 //							cout << "adding value " << m.getArgAsFloat(0) << endl;
@@ -332,7 +333,7 @@ void DurationController::handleOscOut(){
 		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
 		for(int t = 0; t < tracks.size(); t++){
 			ofPtr<ofxTLUIHeader> header = headers[tracks[t]->getName()];
-			if(!headers[tracks[t]->getName()]->isOSCEnabled()){
+			if(!header->sendOSC()){
 				continue;
 			}
 			
@@ -414,7 +415,7 @@ void DurationController::bangFired(ofxTLBangEventArgs& bang){
 		return;
 	}
     string trackType = bang.track->getTrackType();
-    if(!headers[bang.track->getName()]->isOSCEnabled()){
+    if(!headers[bang.track->getName()]->sendOSC()){
         return;
     }
     ofxOscMessage m;
@@ -789,8 +790,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 	
     headers.clear(); //smart pointers will call destructor
     
-    timeline.setWorkingFolder(projectPath);
     timeline.reset();
+    timeline.setWorkingFolder(projectPath);
 	
     cout << "successfully loaded project " << projectPath << endl;
     //LOAD ALL TRACKS
@@ -852,7 +853,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 	                newTrack->setDisplayName(displayName);
                 }
 				ofxTLUIHeader* headerTrack = createHeaderForTrack(newTrack);
-            	headerTrack->setOSCEnabled(projectSettings.getValue("sendOSC", true));
+            	headerTrack->setSendOSC(projectSettings.getValue("sendOSC", true));
+				headerTrack->setReceiveOSC(projectSettings.getValue("receiveOSC", true));
             }
             projectSettings.popTag(); //track
         }
@@ -867,6 +869,9 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     timeline.setCurrentTimecode(projectSettings.getValue("playhead", "00:00:00:000"));
     timeline.setInPointAtTimecode(projectSettings.getValue("inpoint", "00:00:00:000"));
     timeline.setOutPointAtTimecode(projectSettings.getValue("outpoint", "00:00:00:000"));
+//	timeline.getZoomer()->setViewRange(ofRange(projectSettings.getValue("zoomViewMin", 0.0),
+//											   projectSettings.getValue("zoomViewMax", 1.0)));
+	
     bool loops = projectSettings.getValue("loop", true);
     timeline.setLoopType(loops ? OF_LOOP_NORMAL : OF_LOOP_NONE);
 	
@@ -945,7 +950,8 @@ void DurationController::saveProject(){
             projectSettings.addValue("trackName",tracks[t]->getName());
             projectSettings.addValue("displayName",tracks[t]->getDisplayName());
             //save custom gui props
-            projectSettings.addValue("sendOSC", headers[trackName]->isOSCEnabled());
+            projectSettings.addValue("sendOSC", headers[trackName]->sendOSC());
+			projectSettings.addValue("receiveOSC", headers[trackName]->receiveOSC());
             if(trackType == "Curves"){
                 ofxTLCurves* tweens = (ofxTLCurves*)tracks[t];
                 projectSettings.addValue("min", tweens->getValueRange().min);
@@ -984,7 +990,9 @@ void DurationController::saveProject(){
     projectSettings.addValue("oscInPort", settings.oscInPort);
     projectSettings.addValue("oscIP", settings.oscIP);
     projectSettings.addValue("oscInPort", settings.oscOutPort);
-	
+//	projectSettings.addValue("zoomViewMin",timeline.getZoomer()->getSelectedRange().min);
+//	projectSettings.addValue("zoomViewMax",timeline.getZoomer()->getSelectedRange().max);
+
 	projectSettings.popTag(); //projectSettings
     projectSettings.saveFile(settings.settingsPath);
 	

@@ -15,8 +15,11 @@ class ofxTLUIHeader {
     virtual void guiEvent(ofxUIEventArgs &e);
     
 	virtual bool getShouldDelete();
-    virtual bool isOSCEnabled();
-    virtual void setOSCEnabled(bool enableosc);
+	
+    virtual bool sendOSC();
+    virtual void setSendOSC(bool enable);
+    virtual bool receiveOSC();
+    virtual void setReceiveOSC(bool enable);
 
 	//just for drawing the red receiver background
 	float lastInputReceivedTime;
@@ -39,9 +42,13 @@ class ofxTLUIHeader {
   protected:
     
     ofxUICanvas* gui;
+    ofxTLTrackHeader* trackHeader;
 	ofxUINumberDialer* minDialer;
 	ofxUINumberDialer* maxDialer;
-    ofxUIToggle* oscEnabledToggle;
-    ofxTLTrackHeader* trackHeader;
+	//Delay dialer?
+	
+    ofxUIToggle* sendOSCEnable;
+	ofxUIToggle* receiveOSCEnable;
+	
     bool shouldDelete;
 };
