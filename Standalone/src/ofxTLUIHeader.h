@@ -21,6 +21,8 @@ class ofxTLUIHeader {
     virtual bool receiveOSC();
     virtual void setReceiveOSC(bool enable);
 
+//	string getPalettePath();
+	
 	//just for drawing the red receiver background
 	float lastInputReceivedTime;
 	
@@ -38,6 +40,7 @@ class ofxTLUIHeader {
 	
 	ofxTLTrack* getTrack();
 	ofxTLTrackHeader* getTrackHeader();
+	string getTrackType();
 	
   protected:
     
@@ -45,10 +48,14 @@ class ofxTLUIHeader {
     ofxTLTrackHeader* trackHeader;
 	ofxUINumberDialer* minDialer;
 	ofxUINumberDialer* maxDialer;
+	ofxUILabelButton* palette;
+	ofxUILabelButton* audioClip;
 	//Delay dialer?
 	
     ofxUIToggle* sendOSCEnable;
 	ofxUIToggle* receiveOSCEnable;
+	bool resizeEventsEnabled;
 	
+	string trackType;
     bool shouldDelete;
 };

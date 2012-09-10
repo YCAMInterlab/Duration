@@ -2,7 +2,7 @@
 //  DurationController.h
 //  Duration
 //
-//  Duration is an application for time.
+//  Duration is a universal timeline.
 //  Made at YCAM InterLab
 //
 //
@@ -24,6 +24,9 @@ DurationController::DurationController(){
 	shouldCreateNewProject = false;
     shouldLoadProject = false;
 
+#ifdef TARGET_OSX
+	audioTrack = NULL;
+#endif
 }
 
 DurationController::~DurationController(){
@@ -62,6 +65,7 @@ void DurationController::setup(){
 	
 	//setup timeline
 	timeline.setup();
+//	timeline.curvesUseBinary = true; //ELOI SWITCH THIS HERE
     timeline.setFrameRate(30);
 	timeline.setDurationInSeconds(30);
 	timeline.setOffset(ofVec2f(0, 90));
@@ -84,7 +88,9 @@ void DurationController::setup(){
     trackTypes.push_back("SWITCHES");
     trackTypes.push_back("CURVES");
     trackTypes.push_back("COLORS");
-	//	    trackTypes.push_back("SOUND");
+#ifdef TARGET_OSX
+	trackTypes.push_back("AUDIO");
+#endif
 	
     addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "ADD TRACK", trackTypes, OFX_UI_FONT_MEDIUM);
     addTrackDropDown->setAllowMultiple(false);
@@ -184,10 +190,12 @@ void DurationController::setup(){
 
 void DurationController::threadedFunction(){
 	while(isThreadRunning()){
+		lock();
 		oscLock.lock();
 		handleOscIn();
 		handleOscOut();
 		oscLock.unlock();
+		unlock();
 		
 		ofSleepMillis(1);
 	}
@@ -311,7 +319,6 @@ void DurationController::handleOscIn(){
 	}
 }
 
-
 void DurationController::handleOscOut(){
 	
 	if(!settings.oscOutEnabled){
@@ -327,7 +334,7 @@ void DurationController::handleOscOut(){
 	int numMessages = 0;
 	ofxOscBundle bundle;
 	
-	lock();
+	//lock();
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
 		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
@@ -381,7 +388,7 @@ void DurationController::handleOscOut(){
 			}
 		}
 	}
-	unlock();
+	//unlock();
 	
 	//any bangs that came our way this frame send them out too
 	for(int i = 0; i < bangsReceived.size(); i++){
@@ -406,7 +413,6 @@ void DurationController::startRecording(){
 void DurationController::stopRecording(){
 
 }
-
 
 //--------------------------------------------------------------
 void DurationController::bangFired(ofxTLBangEventArgs& bang){
@@ -435,8 +441,12 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 	//	cout << "name is " << name << " kind is " << kind << endl;
     
 	if(name == "STOP"){
-        timeline.stop();
-        timeline.setCurrentTimeMillis(0);
+		if(timeline.getIsPlaying()){
+	        timeline.stop();
+		}
+		else{
+	        timeline.setCurrentTimeMillis(0);
+		}
     }
     else if(name == "PLAYPAUSE"){
         timeline.togglePlay();
@@ -481,12 +491,20 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
                     newTrack = timeline.addColors(name, xmlFile);
                 }
-                else if(selectedTrackType == "SOUND"){
-                	string name = timeline.confirmedUniqueName("Sound");
-                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addColors(name, xmlFile);
+#ifdef TARGET_OSX
+                else if(selectedTrackType == "AUDIO"){
+					if(audioTrack != NULL){
+						ofLogError("DurationController::loadProject") << "Trying to add an additional audio track";
+					}
+					else{
+						string name = timeline.confirmedUniqueName("Audio");
+						audioTrack = new ofxTLAudioTrack();
+						timeline.addTrack(name, audioTrack);
+						timeline.bringTrackToTop(audioTrack);
+						newTrack = audioTrack;
+					}
                 }
-                
+#endif
                 if(newTrack != NULL){
                     createHeaderForTrack(newTrack);
                 }
@@ -519,7 +537,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
             }
         }
     }
-    else if(name == "SAVE"){
+    else if(e.widget == saveButton && saveButton->getValue()){
         saveProject();
     }
     //LOOP
@@ -633,6 +651,25 @@ void DurationController::update(ofEventArgs& args){
 	
 	timeLabel->setLabel(timeline.getCurrentTimecode());
     
+#ifdef TARGET_OSX
+	if(audioTrack != NULL && audioTrack->isSoundLoaded()){
+		
+		if(audioTrack->getDuration() != timeline.getDurationInSeconds()){
+			timeline.setDurationInSeconds(audioTrack->getDuration());
+			if(timeline.getTimecontrolTrack() != audioTrack){
+				timeline.setTimecontrolTrack(audioTrack);
+				durationLabel->setTextString(timeline.getDurationInTimecode());
+			}
+		}
+		if(durationLabel->getTextString() != timeline.getDurationInTimecode()){
+			durationLabel->setTextString(timeline.getDurationInTimecode());
+		}
+	}
+#endif
+	
+	if(ofGetHeight() < timeline.getDrawRect().getMaxY()){
+		ofSetWindowShape(ofGetWidth(), timeline.getDrawRect().getMaxY()+30);
+	}
     if(shouldLoadProject){
         shouldLoadProject = false;
         ofFileDialogResult r = ofSystemLoadDialog("Load Project", true);
@@ -653,8 +690,20 @@ void DurationController::update(ofEventArgs& args){
     map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
     while(it != headers.end()){
 		if(it->second->getShouldDelete()){
+			lock();
             timeline.removeTrack(it->first);
+			timeline.setTimecontrolTrack(NULL);
+			if(it->second->getTrackType() == "Audio"){
+				if(audioTrack == NULL){
+					ofLogError("Audio track inconsistency");
+				}
+				else{
+					delete audioTrack;
+					audioTrack = NULL;
+				}
+			}
             headers.erase(it);
+			unlock();
             break;
         }
         it++;
@@ -693,6 +742,7 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
     if(timeline.isModal()){
         return;
     }
+	
 	if(gui->hasKeyboardFocus()){
 		return;
 	}
@@ -827,26 +877,34 @@ void DurationController::loadProject(string projectPath, string projectName, boo
                 curves->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
                                               projectSettings.getValue("max", 1.0)));
                 newTrack = curves;
+				
+
             }
             else if(trackType == "Switches"){
                 newTrack = timeline.addSwitches(trackName, trackFilePath);
             }
             else if(trackType == "Colors"){
 				string paletteFilePath  = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
-                newTrack = timeline.addColorsWithPalette(trackName,paletteFilePath);
+                newTrack = timeline.addColorsWithPalette(trackName,trackFilePath,paletteFilePath);
             }
-			/*
-			else if(trackType == "Sound"){
+#ifdef TARGET_OSX
+			else if(trackType == "Audio"){
 				if(audioTrack != NULL){
-					ofLogError("DurationController::loadProject") << "Trying to add an additional sound track";
+					ofLogError("DurationController::loadProject") << "Trying to add an additional audio track";
 				}
-				audioTrack = new ofxTLAudioTrack();
-				timeline.addTrack(trackName, audioTrack);
-				newTrack = audioTrack;
-				string paletteFilePath = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
+				else{
+					string clipPath = projectSettings.getValue("clip", "");
+
+					audioTrack = new ofxTLAudioTrack();
+					timeline.addTrack(trackName, audioTrack);
+					timeline.bringTrackToTop(audioTrack);
+					if(clipPath != ""){
+						audioTrack->loadSoundfile(clipPath);
+					}
+					newTrack = audioTrack;
+				}
 			}
-			*/
-			
+#endif
             if(newTrack != NULL){
                 string displayName = projectSettings.getValue("displayName","");
                 if(displayName != ""){
@@ -860,6 +918,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         }
         projectSettings.popTag(); //page
     }
+	unlock();
+	
     timeline.setCurrentPage(0);
     projectSettings.popTag(); //tracks
     
@@ -869,8 +929,6 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     timeline.setCurrentTimecode(projectSettings.getValue("playhead", "00:00:00:000"));
     timeline.setInPointAtTimecode(projectSettings.getValue("inpoint", "00:00:00:000"));
     timeline.setOutPointAtTimecode(projectSettings.getValue("outpoint", "00:00:00:000"));
-//	timeline.getZoomer()->setViewRange(ofRange(projectSettings.getValue("zoomViewMin", 0.0),
-//											   projectSettings.getValue("zoomViewMax", 1.0)));
 	
     bool loops = projectSettings.getValue("loop", true);
     timeline.setLoopType(loops ? OF_LOOP_NORMAL : OF_LOOP_NONE);
@@ -918,17 +976,13 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     defaultSettings.setValue("lastProjectPath", settings.path);
     defaultSettings.setValue("lastProjectName", settings.name);
     defaultSettings.saveFile();
-	
-	unlock();
 }
 
 //--------------------------------------------------------------
 void DurationController::saveProject(){
 	
-	lock();
-	
 	timeline.save();
-	
+
     ofxXmlSettings projectSettings;
     //SAVE ALL TRACKS
     projectSettings.addTag("tracks");
@@ -936,7 +990,7 @@ void DurationController::saveProject(){
     vector<ofxTLPage*>& pages = timeline.getPages();
     for(int i = 0; i < pages.size(); i++){
         projectSettings.addTag("page");
-        projectSettings.pushTag("page");
+        projectSettings.pushTag("page", i);
         projectSettings.addValue("name", pages[i]->getName());
         vector<ofxTLTrack*> tracks = pages[i]->getTracks();
         for (int t = 0; t < tracks.size(); t++) {
@@ -953,13 +1007,17 @@ void DurationController::saveProject(){
             projectSettings.addValue("sendOSC", headers[trackName]->sendOSC());
 			projectSettings.addValue("receiveOSC", headers[trackName]->receiveOSC());
             if(trackType == "Curves"){
-                ofxTLCurves* tweens = (ofxTLCurves*)tracks[t];
-                projectSettings.addValue("min", tweens->getValueRange().min);
-                projectSettings.addValue("max", tweens->getValueRange().max);
+                ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
+                projectSettings.addValue("min", curves->getValueRange().min);
+                projectSettings.addValue("max", curves->getValueRange().max);
+				
             }
 			else if(trackType == "Colors"){
 				ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
 				projectSettings.addValue("palette", colors->getPalettePath());
+			}
+			else if(trackType == "Audio"){
+				projectSettings.addValue("clip", audioTrack->getSoundfilePath());
 			}
             projectSettings.popTag();
         }
@@ -996,7 +1054,6 @@ void DurationController::saveProject(){
 	projectSettings.popTag(); //projectSettings
     projectSettings.saveFile(settings.settingsPath);
 	
-	unlock();
 }
 
 //--------------------------------------------------------------
@@ -1004,11 +1061,10 @@ ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
     ofxTLUIHeader* headerGui = new ofxTLUIHeader();
     ofxTLTrackHeader* header = timeline.getTrackHeader(track);
     headerGui->setTrackHeader(header);
-//	lock();
     headers[track->getName()] = ofPtr<ofxTLUIHeader>( headerGui );
-//	unlock();
     return headerGui;
 }
+
 
 void DurationController::createTooltips(){
 	

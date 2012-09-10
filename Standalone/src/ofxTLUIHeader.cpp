@@ -1,6 +1,8 @@
 
 #include "ofxTLUIHeader.h"
-//#include "ofxTLAudioTrack.h"
+#ifdef TARGET_OSX
+#include "ofxTLAudioTrack.h"
+#endif
 
 ofxTLUIHeader::ofxTLUIHeader(){
 	gui = NULL;
@@ -51,7 +53,7 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 	gui->setPadding(0);
     //switch on track type
 
-    string trackType = trackHeader->getTrack()->getTrackType();
+    trackType = trackHeader->getTrack()->getTrackType();
 	if(trackType == "Curves"){
         //SET THE RANGE
         ofxTLCurves* tweenTrack = (ofxTLCurves*)trackHeader->getTrack();
@@ -65,15 +67,20 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		
     }
 	else if(trackType == "Colors"){
-		ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
-		//TODO: add load/save palette
+//		ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
+		palette = new ofxUILabelButton("change palette", false,0,0,0,0, OFX_UI_FONT_SMALL);
+		palette->setPadding(0);
+		gui->addWidgetRight(palette);
 	}
-	/*
-	else if(trackType == "Sound"){
-		ofxTLAudioTrack* soundTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
-		//TODO: add load/save sound
+	
+#ifdef TARGET_OSX
+	else if(trackType == "Audio"){
+//		ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
+		audioClip = new ofxUILabelButton("select audio", false,0,0,0,0, OFX_UI_FONT_SMALL);
+		audioClip->setPadding(0);
+		gui->addWidgetRight(audioClip);
 	}
-	*/
+#endif
 	
 	if(trackType == "Bangs" || trackType == "Curves"){
 		receiveOSCEnable = new ofxUIToggle("receive osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
@@ -81,10 +88,11 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		gui->addWidgetRight(receiveOSCEnable);
 	}
 	
-	//Enable??
-    sendOSCEnable = new ofxUIToggle("send osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
-    sendOSCEnable->setPadding(1);
-    gui->addWidgetRight(sendOSCEnable);
+	if(trackType != "Audio"){ //TODO: audio should send some nice FFT OSC
+		sendOSCEnable = new ofxUIToggle("send osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
+		sendOSCEnable->setPadding(1);
+		gui->addWidgetRight(sendOSCEnable);
+	}
     
     //DELETE ME???
     vector<string> deleteTrack;
@@ -118,13 +126,15 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 //}
 
 bool ofxTLUIHeader::sendOSC(){
-	return sendOSCEnable->getValue();
+	return sendOSCEnable != NULL && sendOSCEnable->getValue();
 }
 
 void ofxTLUIHeader::setSendOSC(bool enable){
-	sendOSCEnable->setValue(enable);
-	
+	if(sendOSCEnable != NULL){
+		sendOSCEnable->setValue(enable);
+	}
 }
+
 bool ofxTLUIHeader::receiveOSC(){
 	return receiveOSCEnable != NULL && receiveOSCEnable->getValue();
 }
@@ -139,12 +149,20 @@ bool ofxTLUIHeader::getShouldDelete(){
     return shouldDelete;
 }
 
+//string ofxTLUIHeader::getPalettePath(){
+//	return customPalettePath;
+//}
+
 ofxTLTrack* ofxTLUIHeader::getTrack(){
 	return trackHeader->getTrack();
 }
 
 ofxTLTrackHeader* ofxTLUIHeader::getTrackHeader(){
 	return trackHeader;
+}
+
+string ofxTLUIHeader::getTrackType(){
+	return trackType;
 }
 
 void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
@@ -176,13 +194,28 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
                deleteDropDown->getSelected()[0]->getName() == "sure?"){
 				//do this because the header gets deleted before our destructor is called
                 ofRemoveListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
-                trackHeader = NULL;
+                trackHeader = NULL; //this is needed to circumvent the problem in the destructor
                 shouldDelete = true;
             }
             deleteDropDown->clearSelected();
             deleteDropDown->close();
         }
     }
+	else if(e.widget == palette && palette->getValue()){
+		ofFileDialogResult r = ofSystemLoadDialog();
+		if(r.bSuccess){
+			ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
+			colorTrack->loadColorPalette(r.getPath());
+		}		
+	}
+	else if(e.widget == audioClip && audioClip->getValue()){
+		ofFileDialogResult r = ofSystemLoadDialog();
+		if(r.bSuccess){
+			ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
+			audioTrack->loadSoundfile(r.getPath());
+		}
+		
+	}
     //this is polled from outside
 //	else if(e.widget->getName() == "send osc"){
 //
