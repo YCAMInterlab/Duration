@@ -125,10 +125,10 @@ void DurationController::setup(){
     
 	
     //SETUP BPM CONTROLS
-	useBPMToggle = new ofxUILabelToggle("BPM", false,0,0,0,0);
+	useBPMToggle = new ofxUILabelToggle(string("初音ミク"), false);
     gui->addWidgetRight(useBPMToggle);
 	bpmDialer = new ofxUINumberDialer(0., 250., 120., 2, "BPM_VALUE", OFX_UI_FONT_MEDIUM);
-    gui->addWidgetEastOf(bpmDialer, "BPM");
+    gui->addWidgetEastOf(bpmDialer, "初音ミク");
     //figure out where to put this
 //	snapToKeysToggle = new ofxUILabelToggle("Snap to Keys",false,0,0,00,OFX_UI_FONT_MEDIUM);
 //	gui->addWidgetSouthOf(snapToKeysToggle, "BPM");
