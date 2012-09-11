@@ -1,13 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-//#include "ofxTimeline.h"
-//#include "ofxOsc.h"
-//#include "ofxTLUIHeader.h"
 #include "DurationController.h"
-
-#define DURATION_VERSION_STRING string("001")
-#define DURATION_VERSION_INT 1
 
 class testApp : public ofBaseApp{
   public:

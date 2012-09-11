@@ -72,6 +72,9 @@
 		E7C659A915FF22260049005B /* buildFTGL.sh in Resources */ = {isa = PBXBuildFile; fileRef = E7C6599215FF22260049005B /* buildFTGL.sh */; };
 		E7C659AA15FF22260049005B /* libftgl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7C6599315FF22260049005B /* libftgl.a */; };
 		E7C659AD15FF22270049005B /* ofxFTGLFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C6599815FF22260049005B /* ofxFTGLFont.cpp */; };
+		E7C659BF15FF46BC0049005B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E7C659BC15FF46BC0049005B /* .gitignore */; };
+		E7C659C015FF46BC0049005B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = E7C659BD15FF46BC0049005B /* README.md */; };
+		E7C659C415FF46D20049005B /* ofxLocalization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C659C215FF46D20049005B /* ofxLocalization.cpp */; };
 		E7D3318615D379E30009192F /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = E7D3316A15D379E20009192F /* kiss_fft.c */; };
 		E7D3318715D379E30009192F /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = E7D3316B15D379E20009192F /* kiss_fftr.c */; };
 		E7D3318815D379E30009192F /* ofOpenALSoundPlayer_TimelineAdditions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7D3316D15D379E20009192F /* ofOpenALSoundPlayer_TimelineAdditions.cpp */; };
@@ -272,6 +275,10 @@
 		E7C6599315FF22260049005B /* libftgl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libftgl.a; sourceTree = "<group>"; };
 		E7C6599815FF22260049005B /* ofxFTGLFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFTGLFont.cpp; sourceTree = "<group>"; };
 		E7C6599915FF22260049005B /* ofxFTGLFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFTGLFont.h; sourceTree = "<group>"; };
+		E7C659BC15FF46BC0049005B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		E7C659BD15FF46BC0049005B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		E7C659C215FF46D20049005B /* ofxLocalization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLocalization.cpp; sourceTree = "<group>"; };
+		E7C659C315FF46D20049005B /* ofxLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLocalization.h; sourceTree = "<group>"; };
 		E7D3316115D379E20009192F /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
 		E7D3316215D379E20009192F /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
 		E7D3316915D379E20009192F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
@@ -397,6 +404,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				E7C659BB15FF46BC0049005B /* ofxLocalization */,
 				E7C6596315FF22260049005B /* ofxFTGL */,
 				E78C29FB15EF1ADA003A9CCB /* ofxRange */,
 				E72B8DAA15D629CA00DB5A38 /* ofxOsc */,
@@ -791,6 +799,26 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		E7C659BB15FF46BC0049005B /* ofxLocalization */ = {
+			isa = PBXGroup;
+			children = (
+				E7C659BC15FF46BC0049005B /* .gitignore */,
+				E7C659BD15FF46BC0049005B /* README.md */,
+				E7C659BE15FF46BC0049005B /* src */,
+			);
+			name = ofxLocalization;
+			path = ../../../addons/ofxLocalization;
+			sourceTree = "<group>";
+		};
+		E7C659BE15FF46BC0049005B /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E7C659C315FF46D20049005B /* ofxLocalization.h */,
+				E7C659C215FF46D20049005B /* ofxLocalization.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		E7D3315E15D379E20009192F /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1147,6 +1175,8 @@
 				E78C29FF15EF1ADA003A9CCB /* .gitignore in Resources */,
 				E7C6599F15FF22260049005B /* .gitignore in Resources */,
 				E7C659A915FF22260049005B /* buildFTGL.sh in Resources */,
+				E7C659BF15FF46BC0049005B /* .gitignore in Resources */,
+				E7C659C015FF46BC0049005B /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1237,6 +1267,7 @@
 				E750F96C15F3460C00B87EA2 /* ofxHotKeys_impl_mac.mm in Sources */,
 				E762B60115FAFD6600459F83 /* ofxRemoveCocoaMenu.mm in Sources */,
 				E7C659AD15FF22270049005B /* ofxFTGLFont.cpp in Sources */,
+				E7C659C415FF46D20049005B /* ofxLocalization.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

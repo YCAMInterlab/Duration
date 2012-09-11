@@ -15,6 +15,7 @@
 #include "ofxMSATimer.h"
 #include "ofxTLUIHeader.h"
 #include "ofxUI.h"
+#include "ofxLocalization.h"
 
 #ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
@@ -121,6 +122,7 @@ class DurationController : public ofThread  {
 	void drawTooltips();
 	void drawTooltipDebug();
 	
+	ofxLocalization translation;
 	ofMutex oscLock;
 	
 	vector<Tooltip> tooltips;

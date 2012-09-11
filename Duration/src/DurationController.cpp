@@ -3,7 +3,7 @@
 //  Duration
 //
 //  Duration is a universal timeline.
-//  Made at YCAM InterLab
+//  Made by obviousjim (jamesgeorge.org) at YCAM InterLab (interlab.ycam.jp)
 //
 //
 
@@ -11,9 +11,6 @@
 
 #define DROP_DOWN_WIDTH 200
 #define TEXT_INPUT_WIDTH 100
-
-#define NEW_PROJECT_TEXT "new project..."
-#define OPEN_PROJECT_TEXT "open project..."
 
 
 DurationController::DurationController(){
@@ -35,10 +32,16 @@ DurationController::~DurationController(){
 
 void DurationController::setup(){
     
+	if(!translation.load("languageFile.csv")){
+		ofLogError("DurationController::setup") << "error setting up translation, unpredictable stuff will happen" << endl;
+	}
+	
+	translation.setCurrentLanguage("japanese");
+	
     //populate projects
     vector<string> projects;
-    projects.push_back(NEW_PROJECT_TEXT);
-    projects.push_back(OPEN_PROJECT_TEXT);
+    projects.push_back(translation.translateKey("new project..."));
+    projects.push_back(translation.translateKey("open project..."));
     
     defaultProjectDirectoryPath = ofToDataPath(ofFilePath::getUserHomeDir() + "/Documents/Duration/");
     ofDirectory projectDirectory = ofDirectory(defaultProjectDirectoryPath);
@@ -83,16 +86,16 @@ void DurationController::setup(){
     gui->addWidgetDown(projectDropDown);
     //ADD TRACKS
     vector<string> trackTypes;
-    trackTypes.push_back("BANGS");
-    trackTypes.push_back("FLAGS");
-    trackTypes.push_back("SWITCHES");
-    trackTypes.push_back("CURVES");
-    trackTypes.push_back("COLORS");
+    trackTypes.push_back(translation.translateKey("BANGS"));
+    trackTypes.push_back(translation.translateKey("FLAGS"));
+    trackTypes.push_back(translation.translateKey("SWITCHES"));
+    trackTypes.push_back(translation.translateKey("CURVES"));
+    trackTypes.push_back(translation.translateKey("COLORS"));
 #ifdef TARGET_OSX
-	trackTypes.push_back("AUDIO");
+	trackTypes.push_back(translation.translateKey("AUDIO"));
 #endif
 	
-    addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "トラックを追加する", trackTypes, OFX_UI_FONT_MEDIUM);
+    addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, translation.translateKey("ADD TRACK"), trackTypes, OFX_UI_FONT_MEDIUM);
     addTrackDropDown->setAllowMultiple(false);
     addTrackDropDown->setAutoClose(true);
 	//    gui->addWidgetRight(addTrackDropDown);
@@ -125,10 +128,10 @@ void DurationController::setup(){
     
 	
     //SETUP BPM CONTROLS
-	useBPMToggle = new ofxUILabelToggle(string("初音ミク"), false);
+	useBPMToggle = new ofxUILabelToggle(translation.translateKey("BPM"), false);
     gui->addWidgetRight(useBPMToggle);
 	bpmDialer = new ofxUINumberDialer(0., 250., 120., 2, "BPM_	VALUE", OFX_UI_FONT_MEDIUM);
-    gui->addWidgetEastOf(bpmDialer, "初音ミク");
+    gui->addWidgetEastOf(bpmDialer, translation.translateKey("BPM"));
     //figure out where to put this
 //	snapToKeysToggle = new ofxUILabelToggle("Snap to Keys",false,0,0,00,OFX_UI_FONT_MEDIUM);
 //	gui->addWidgetSouthOf(snapToKeysToggle, "BPM");
@@ -136,8 +139,8 @@ void DurationController::setup(){
 //    gui->addWidgetSouthOf(snapToBPM, "BPM");
     
     //SETUP OSC CONTROLS
-    enableOSCInToggle = new ofxUILabelToggle("OSC IN",false,0,0,0,0, OFX_UI_FONT_MEDIUM);
-    enableOSCOutToggle = new ofxUILabelToggle("OSC OUT",false,0,0,0,0, OFX_UI_FONT_MEDIUM);
+    enableOSCInToggle = new ofxUILabelToggle(translation.translateKey("OSC IN"),false,0,0,0,0, OFX_UI_FONT_MEDIUM);
+    enableOSCOutToggle = new ofxUILabelToggle(translation.translateKey("OSC OUT"),false,0,0,0,0, OFX_UI_FONT_MEDIUM);
     oscOutIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
     oscOutIPInput->setAutoClear(false);
 	
@@ -466,33 +469,33 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 				lock();
                 string selectedTrackType = addTrackDropDown->getSelected()[0]->getName();
                 ofxTLTrack* newTrack = NULL;
-                if(selectedTrackType == "BANGS"){
+                if(selectedTrackType == translation.translateKey("BANGS")){
                     string name = timeline.confirmedUniqueName("Bangs");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
                     newTrack = timeline.addBangs(name, xmlFile);
                 }
-                else if(selectedTrackType == "FLAGS"){
+                else if(selectedTrackType == translation.translateKey("FLAGS")){
                 	string name = timeline.confirmedUniqueName("Flags");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
                     newTrack = timeline.addFlags(name, xmlFile);
                 }
-                else if(selectedTrackType == "CURVES"){
+                else if(selectedTrackType == translation.translateKey("CURVES")){
                 	string name = timeline.confirmedUniqueName("Curves");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
                     newTrack = timeline.addCurves(name, xmlFile);
                 }
-                else if(selectedTrackType == "SWITCHES"){
+                else if(selectedTrackType == translation.translateKey("SWITCHES")){
                 	string name = timeline.confirmedUniqueName("Switches");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
                     newTrack = timeline.addSwitches(name, xmlFile);
                 }
-                else if(selectedTrackType == "COLORS"){
+                else if(selectedTrackType == translation.translateKey("COLORS")){
                 	string name = timeline.confirmedUniqueName("Colors");
                     string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
                     newTrack = timeline.addColors(name, xmlFile);
                 }
 #ifdef TARGET_OSX
-                else if(selectedTrackType == "AUDIO"){
+                else if(selectedTrackType == translation.translateKey("AUDIO")){
 					if(audioTrack != NULL){
 						ofLogError("DurationController::loadProject") << "Trying to add an additional audio track";
 					}
@@ -524,10 +527,10 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
             timeline.enable();
             if(projectDropDown->getSelected().size() > 0){
                 string selectedProjectName = projectDropDown->getSelected()[0]->getName();
-                if(selectedProjectName == NEW_PROJECT_TEXT){
+                if(selectedProjectName == translation.translateKey("new project...")){
                     shouldCreateNewProject = true;
                 }
-                else if(selectedProjectName == OPEN_PROJECT_TEXT){
+                else if(selectedProjectName == translation.translateKey("open project...")){
                     shouldLoadProject = true;
                 }
                 else {
@@ -792,6 +795,7 @@ void DurationController::newProject(string newProjectPath, string newProjectName
     
     ofDirectory newProjectDirectory(newProjectSettings.path);
     if(newProjectDirectory.exists()){
+		//TODO: translate
     	ofSystemAlertDialog("The folder \"" + newProjectName + "\" already exists.");
         return;
     }
