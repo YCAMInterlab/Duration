@@ -116,13 +116,9 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 	gui->getRect()->x = trackHeader->getTimeline()->getTopRight().x - (gui->getRect()->width + 50);
 }
 
-//bool ofxTLUIHeader::isOSCEnabled(){
-//	return oscEnabledToggle->getValue();
-//}
-//
-//void ofxTLUIHeader::setOSCEnabled(bool enableosc){
-//    oscEnabledToggle->setValue(enableosc);
-//}
+ofxUICanvas* ofxTLUIHeader::getGui(){
+	return gui;
+}
 
 bool ofxTLUIHeader::sendOSC(){
 	return sendOSCEnable != NULL && sendOSCEnable->getValue();

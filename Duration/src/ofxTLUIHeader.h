@@ -43,6 +43,7 @@ class ofxTLUIHeader {
 	ofxTLTrackHeader* getTrackHeader();
 	string getTrackType();
 	ofxLocalization* translation;
+	ofxUICanvas* getGui();
 	
   protected:
     

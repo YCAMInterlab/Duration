@@ -65,9 +65,11 @@ void DurationController::setup(){
     }
 	if(translation.getCurrentLanguage() == "japanese"){
 		tooltipFont.loadFont("GUI/AxisStd-Regular.otf", 5);
+		timeline.setupFont("GUI/AxisStd-Regular.otf", 6);
 	}
 	else{
 		tooltipFont.loadFont("GUI/NewMedia Fett.ttf", 5);
+		timeline.setupFont("GUI/NewMedia Fett.ttf", 6);
 	}
 	
 	//setup timeline
@@ -447,7 +449,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
     
 	//	cout << "name is " << name << " kind is " << kind << endl;
     
-	if(name == "STOP"){
+	if(e.widget == stopButton && stopButton->getValue()){
 		if(timeline.getIsPlaying()){
 	        timeline.stop();
 		}
@@ -656,6 +658,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 void DurationController::update(ofEventArgs& args){
 	gui->update();
 	
+	
 	timeLabel->setLabel(timeline.getCurrentTimecode());
     
 #ifdef TARGET_OSX
@@ -696,6 +699,14 @@ void DurationController::update(ofEventArgs& args){
     //check if we deleted an element this frame
     map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
     while(it != headers.end()){
+		
+		if(timeline.isModal() && it->second->getGui()->isEnabled()){
+			it->second->getGui()->disable();
+		}
+		else if(!timeline.isModal() && !it->second->getGui()->isEnabled()){
+			it->second->getGui()->enable();
+		}
+		
 		if(it->second->getShouldDelete()){
 			lock();
             timeline.removeTrack(it->first);
@@ -741,7 +752,7 @@ void DurationController::draw(ofEventArgs& args){
 	
 	timeline.draw();
 	gui->draw();
-	
+
 	drawTooltips();
 	//drawTooltipDebug();
 }
