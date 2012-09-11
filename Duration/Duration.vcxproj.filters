@@ -184,6 +184,9 @@
     <ClCompile Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.cpp">
       <Filter>addons\ofxTextInputField\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxLocalization\src\ofxLocalization.cpp">
+      <Filter>addons\ofxLocalization\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -290,6 +293,12 @@
     </Filter>
     <Filter Include="addons\ofxTextInputField\src">
       <UniqueIdentifier>{c652bd61-3708-4b5c-923b-a5d6aca79da0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLocalization">
+      <UniqueIdentifier>{ac851c00-53f4-40ff-b529-ca099a6e604a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLocalization\src">
+      <UniqueIdentifier>{fe949539-ef56-4718-bc85-50a42127aa8b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -682,6 +691,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.h">
       <Filter>addons\ofxTextInputField\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxLocalization\src\ofxLocalization.h">
+      <Filter>addons\ofxLocalization\src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
