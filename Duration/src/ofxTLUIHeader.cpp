@@ -67,8 +67,7 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		
     }
 	else if(trackType == "Colors"){
-//		ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
-		palette = new ofxUILabelButton("change palette", false,0,0,0,0, OFX_UI_FONT_SMALL);
+		palette = new ofxUILabelButton(translation->translateKey("change palette"), false,0,0,0,0, OFX_UI_FONT_SMALL);
 		palette->setPadding(0);
 		gui->addWidgetRight(palette);
 	}
@@ -76,28 +75,28 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 #ifdef TARGET_OSX
 	else if(trackType == "Audio"){
 //		ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
-		audioClip = new ofxUILabelButton("select audio", false,0,0,0,0, OFX_UI_FONT_SMALL);
+		audioClip = new ofxUILabelButton(translation->translateKey("select audio"), false,0,0,0,0, OFX_UI_FONT_SMALL);
 		audioClip->setPadding(0);
 		gui->addWidgetRight(audioClip);
 	}
 #endif
 	
 	if(trackType == "Bangs" || trackType == "Curves"){
-		receiveOSCEnable = new ofxUIToggle("receive osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
+		receiveOSCEnable = new ofxUIToggle(translation->translateKey("receive osc"), true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
 		receiveOSCEnable->setPadding(1);
 		gui->addWidgetRight(receiveOSCEnable);
 	}
 	
 	if(trackType != "Audio"){ //TODO: audio should send some nice FFT OSC
-		sendOSCEnable = new ofxUIToggle("send osc", true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
+		sendOSCEnable = new ofxUIToggle(translation->translateKey("send osc"), true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
 		sendOSCEnable->setPadding(1);
 		gui->addWidgetRight(sendOSCEnable);
 	}
     
     //DELETE ME???
     vector<string> deleteTrack;
-    deleteTrack.push_back("sure?");
-    ofxUIDropDownList* dropDown = new ofxUIDropDownList("delete", deleteTrack, 0,0,0, OFX_UI_FONT_SMALL);
+    deleteTrack.push_back(translation->translateKey("sure?"));
+    ofxUIDropDownList* dropDown = new ofxUIDropDownList(translation->translateKey("delete"), deleteTrack, 0,0,0, OFX_UI_FONT_SMALL);
     dropDown->setAllowMultiple(false);
     dropDown->setAutoClose(true);
     dropDown->setPadding(0); //Tweak to make the drop down small enough
@@ -183,7 +182,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         ofxTLCurves* track = (ofxTLCurves*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
     }
-    else if(e.widget->getName() == "delete"){
+    else if(e.widget->getName() == translation->translateKey("delete")){
         ofxUIDropDownList* deleteDropDown = (ofxUIDropDownList*)e.widget;
         if(deleteDropDown->isOpen()){
             trackHeader->getTrack()->disable();
@@ -191,7 +190,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         else{
             trackHeader->getTrack()->enable();
             if(deleteDropDown->getSelected().size() > 0 &&
-               deleteDropDown->getSelected()[0]->getName() == "sure?"){
+               deleteDropDown->getSelected()[0]->getName() == translation->translateKey("sure?")){
 				//do this because the header gets deleted before our destructor is called
                 ofRemoveListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
                 trackHeader = NULL; //this is needed to circumvent the problem in the destructor

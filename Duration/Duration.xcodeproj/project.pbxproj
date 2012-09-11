@@ -793,8 +793,8 @@
 		E7C6599715FF22260049005B /* src */ = {
 			isa = PBXGroup;
 			children = (
-				E7C6599815FF22260049005B /* ofxFTGLFont.cpp */,
 				E7C6599915FF22260049005B /* ofxFTGLFont.h */,
+				E7C6599815FF22260049005B /* ofxFTGLFont.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";

@@ -16,6 +16,7 @@
 #include "ofxTLUIHeader.h"
 #include "ofxUI.h"
 #include "ofxLocalization.h"
+#include "ofxFTGLFont.h"
 
 #ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
@@ -135,10 +136,10 @@ class DurationController : public ofThread  {
 	map<string, ofPtr<ofxTLUIHeader> > headers;
     
 	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
-
+	
 	float oscRate;
 	unsigned long lastOSCBundleSent;
-	ofTrueTypeFont tooltipFont;
+	ofxFTGLFont tooltipFont;
 
 };
 

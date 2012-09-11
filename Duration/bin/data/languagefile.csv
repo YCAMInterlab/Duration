@@ -1,45 +1,35 @@
-KEY,ENGLISH,JAPANESE,,,,,,,,,,
-BANGS,BANGS,スリル,,,,,,,,,,
-FLAGS,FLAGS,旗幟,,,,,,,,,,
-SWITCHES,SWITCHES,切り替える,,,,,,,,,,
-CURVES,CURVES,反り,,,,,,,,,,
-COLORS,COLORS,色,,,,,,,,,,
-AUDIO,AUDIO,オーディオ,,,,,,,,,,
-new project...,new project...,新たなプロジェクト,,,,,,,,,,
-open project...,open project...,開いているプロジェクト,,,,,,,,,,
-BPM,BPM,BPM,,,,,,,,,,
-OSC IN,OSC IN,OSC で,,,,,,,,,,
-OSC OUT,OSC OUT,OSC 外に,,,,,,,,,,
-ADD TRACK,ADD TRACK,トラックを追加する,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
+KEY,ENGLISH,JAPANESE
+BANGS,BANGS,スリル
+FLAGS,FLAGS,旗幟
+SWITCHES,SWITCHES,切り替える
+CURVES,CURVES,反り
+COLORS,COLORS,色
+AUDIO,AUDIO,オーディオ
+new project...,new project...,新たなプロジェクト
+open project...,open project...,開いているプロジェクト
+BPM,BPM,BPM
+OSC IN,OSC IN,OSC で
+OSC OUT,OSC OUT,OSC 外に
+ADD TRACK,ADD TRACK,トラックを追加する
+switch project,switch project,switch project
+save,save,save
+edit duration,edit duration,edit duration
+current time,current time,current time
+play,play,play
+pause,pause,pause
+stop,stop,stop
+toggle loop,toggle loop,toggle loop
+snap to measures,snap to measures,snap to measures
+set beats per minute,set beats per minute,set beats per minute
+enable outgoing OSC,enable outgoing OSC,enable outgoing OSC
+enable incoming OSC,enable incoming OSC,enable incoming OSC
+incoming OSC port,incoming OSC port,incoming OSC port
+remote IP,remote IP,remote IP
+remote port,remote port,remote port
+receive osc,receive osc,receive osc
+delete,delete,delete
+send osc,send osc,send osc
+sure?,sure?,sure?
+change palette,change palette,change palette
+select audio,select audio,select audio
+enable outgoing OSC,,

@@ -4,6 +4,7 @@
 
 #include "ofxTimeline.h"
 #include "ofxUI.h"
+#include "ofxLocalization.h"
 
 class ofxTLUIHeader {
   public:
@@ -41,6 +42,7 @@ class ofxTLUIHeader {
 	ofxTLTrack* getTrack();
 	ofxTLTrackHeader* getTrackHeader();
 	string getTrackType();
+	ofxLocalization* translation;
 	
   protected:
     

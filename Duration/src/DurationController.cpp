@@ -9,7 +9,7 @@
 
 #include "DurationController.h"
 
-#define DROP_DOWN_WIDTH 200
+#define DROP_DOWN_WIDTH 250
 #define TEXT_INPUT_WIDTH 100
 
 
@@ -36,7 +36,7 @@ void DurationController::setup(){
 		ofLogError("DurationController::setup") << "error setting up translation, unpredictable stuff will happen" << endl;
 	}
 	
-	translation.setCurrentLanguage("japanese");
+	translation.setCurrentLanguage("english");
 	
     //populate projects
     vector<string> projects;
@@ -63,8 +63,12 @@ void DurationController::setup(){
             }
         }
     }
-
-	tooltipFont.loadFont("GUI/NewMedia Fett.ttf", 8);
+	if(translation.getCurrentLanguage() == "japanese"){
+		tooltipFont.loadFont("GUI/AxisStd-Regular.otf", 5);
+	}
+	else{
+		tooltipFont.loadFont("GUI/NewMedia Fett.ttf", 5);
+	}
 	
 	//setup timeline
 	timeline.setup();
@@ -1069,6 +1073,7 @@ void DurationController::saveProject(){
 //--------------------------------------------------------------
 ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
     ofxTLUIHeader* headerGui = new ofxTLUIHeader();
+	headerGui->translation = &translation;
     ofxTLTrackHeader* header = timeline.getTrackHeader(track);
     headerGui->setTrackHeader(header);
     headers[track->getName()] = ofPtr<ofxTLUIHeader>( headerGui );
@@ -1077,103 +1082,103 @@ ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
 
 
 void DurationController::createTooltips(){
-	
 
-	ofVec2f zone2 = ofVec2f(420, 55);
 	//switch project
 	Tooltip projectTip;
-	projectTip.text = "switch project";
+	projectTip.text = translation.translateKey("switch project");
 	projectTip.sourceRect = *projectDropDown->getRect();
 	projectTip.displayPoint = ofVec2f(projectTip.sourceRect.x, 55);
 	tooltips.push_back(projectTip);
 	
 	//save
 	Tooltip saveTip;
-	saveTip.text = "save";
+	saveTip.text = translation.translateKey("save");
 	saveTip.sourceRect = *saveButton->getRect();
 	saveTip.displayPoint = ofVec2f(saveTip.sourceRect.x, 55);
 	tooltips.push_back(saveTip);
+		
+	//play/pause
+	Tooltip playpauseTip;
+	playpauseTip.text = translation.translateKey("play")+"/"+translation.translateKey("pause"); //TODO: switch dynamically
+	playpauseTip.sourceRect = *playpauseToggle->getRect();
+	playpauseTip.displayPoint = ofVec2f(playpauseTip.sourceRect.x, 55);
+	tooltips.push_back(playpauseTip);
+
+	ofVec2f zone2 = playpauseTip.displayPoint;
 	
 	//edit duration
 	Tooltip editDurationTip;
-	editDurationTip.text = "edit duration";
+	editDurationTip.text = translation.translateKey("edit duration");
 	editDurationTip.displayPoint = zone2;
 	editDurationTip.sourceRect = *durationLabel->getRect();
 	tooltips.push_back(editDurationTip);
-	
+
 	//current time
 	Tooltip currentTimeTip;
-	currentTimeTip.text = "current time";
+	currentTimeTip.text = translation.translateKey("current time");
 	currentTimeTip.displayPoint = zone2;
 	currentTimeTip.sourceRect = *timeLabel->getRect();
 	tooltips.push_back(currentTimeTip);
 	
-	//play/pause
-	Tooltip playpauseTip;
-	playpauseTip.text = "play/pause"; //TODO: switch dynamically
-	playpauseTip.displayPoint = zone2;
-	playpauseTip.sourceRect = *playpauseToggle->getRect();
-	tooltips.push_back(playpauseTip);
-	
 	//stop
 	Tooltip stopTip;
-	stopTip.text = "stop";
-	stopTip.displayPoint = zone2;
+	stopTip.text = translation.translateKey("stop");
 	stopTip.sourceRect = *stopButton->getRect();
+	stopTip.displayPoint = ofVec2f(stopTip.sourceRect.x, 55);
 	tooltips.push_back(stopTip);
 	
 	//loop
 	Tooltip loopTip;
-	loopTip.text = "toggle loop";
-	loopTip.displayPoint = zone2;
+	loopTip.text = translation.translateKey("toggle loop");
 	loopTip.sourceRect = *loopToggle->getRect();
+	loopTip.displayPoint = ofVec2f(loopTip.sourceRect.x, 55);
 	tooltips.push_back(loopTip);
 
 	//enable Snap to BPM
 	Tooltip bpmTip;
-	bpmTip.text = "snap to measures";
+	bpmTip.text = translation.translateKey("snap to measures");
 	bpmTip.sourceRect = *useBPMToggle->getRect();
 	bpmTip.displayPoint = ofVec2f(bpmTip.sourceRect.x, 55);
 	tooltips.push_back(bpmTip);
 	
 	//set beats per minute
 	Tooltip setBpmTip;
-	setBpmTip.text = "set beats per minute";
+	setBpmTip.text = translation.translateKey("set beats per minute");
 	setBpmTip.sourceRect = *bpmDialer->getRect();
 	setBpmTip.displayPoint = ofVec2f(setBpmTip.sourceRect.x, 55);
 	tooltips.push_back(setBpmTip);
 	
 	//enable OSC
 	Tooltip oscInTip;
-	oscInTip.text = "enable incoming OSC";
+	oscInTip.text = translation.translateKey("enable incoming OSC");
 	oscInTip.sourceRect = *enableOSCInToggle->getRect();
 	oscInTip.displayPoint = ofVec2f(oscInTip.sourceRect.x, 55);
 	tooltips.push_back(oscInTip);
 
 	//osc In Port
 	Tooltip oscInPortTip;
-	oscInPortTip.text = "incoming OSC port";
+	oscInPortTip.text = translation.translateKey("incoming OSC port");
 	oscInPortTip.sourceRect = *oscInPortInput->getRect();
 	oscInPortTip.displayPoint = ofVec2f(oscInPortTip.sourceRect.x, 55);
 	tooltips.push_back(oscInPortTip);
 
 	//osc Out
 	Tooltip oscOutTip;
-	oscOutTip.text = "enable outgoing OSC";
+	oscOutTip.text = translation.translateKey("enable outgoing OSC");
 	oscOutTip.sourceRect = *enableOSCOutToggle->getRect();
 	oscOutTip.displayPoint = ofVec2f(oscOutTip.sourceRect.x, 55);
 	tooltips.push_back(oscOutTip);
 
 	//osc Out IP
 	Tooltip oscOutIPTip;
-	oscOutIPTip.text = "remote IP";
+	oscOutIPTip.text = translation.translateKey("remote IP");
 	oscOutIPTip.sourceRect = *oscOutIPInput->getRect();
 	oscOutIPTip.displayPoint = ofVec2f(oscOutIPTip.sourceRect.x, 55);
 	tooltips.push_back(oscOutIPTip);
 
 	//osc Out IP
 	Tooltip oscOutPortTip;
-	oscOutPortTip.text = "remote port";
+	oscOutPortTip.text = translation.translateKey("remote port");
 	oscOutPortTip.sourceRect = *oscOutPortInput->getRect();
 	oscOutPortTip.displayPoint = ofVec2f(oscOutPortTip.sourceRect.x, 55);
 	tooltips.push_back(oscOutPortTip);
