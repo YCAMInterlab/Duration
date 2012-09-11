@@ -208,14 +208,15 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 			colorTrack->loadColorPalette(r.getPath());
 		}		
 	}
+#ifdef TARGET_OSX
 	else if(e.widget == audioClip && audioClip->getValue()){
 		ofFileDialogResult r = ofSystemLoadDialog();
 		if(r.bSuccess){
 			ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
 			audioTrack->loadSoundfile(r.getPath());
 		}
-		
 	}
+#endif
     //this is polled from outside
 //	else if(e.widget->getName() == "send osc"){
 //

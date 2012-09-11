@@ -19,6 +19,9 @@
     <ClCompile Include="src\testApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxFTGL\src\ofxFTGLFont.cpp">
+      <Filter>addons\ofxFTGL\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxMSATimer\src\ofxMSATimer.cpp">
       <Filter>addons\ofxMSATimer\src</Filter>
     </ClCompile>
@@ -60,9 +63,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.cpp">
-      <Filter>addons\ofxTextInputField\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimecode\src\ofxTimecode.cpp">
       <Filter>addons\ofxTimecode\src</Filter>
@@ -181,6 +181,9 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.cpp">
+      <Filter>addons\ofxTextInputField\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -188,6 +191,24 @@
     </Filter>
     <Filter Include="addons">
       <UniqueIdentifier>{71834f65-f3a9-211e-73b8-dc8563776aec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFTGL">
+      <UniqueIdentifier>{57563682-f5c8-32f7-8507-391bc1f1894f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFTGL\src">
+      <UniqueIdentifier>{dab99e66-bff9-d8fc-4903-714c828d436c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFTGL\libs">
+      <UniqueIdentifier>{a27be0c5-eba8-b296-a7fc-2d5d0a2aca0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFTGL\libs\FTGL">
+      <UniqueIdentifier>{a1802bb1-f112-3ed7-7aa3-2dc0935bd9fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFTGL\libs\FTGL\include">
+      <UniqueIdentifier>{193cbacb-1aee-e0f8-a1b8-adc6019848e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxFTGL\libs\FTGL\include\FTGL">
+      <UniqueIdentifier>{c73df1b7-81e5-1b03-29a4-6b8f3cd35731}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxMSATimer">
       <UniqueIdentifier>{fa2c7f81-95ad-913a-95ee-6d674205f1e6}</UniqueIdentifier>
@@ -228,12 +249,6 @@
     <Filter Include="addons\ofxRange\src">
       <UniqueIdentifier>{afee1af4-3be7-35e2-f89c-feb8f18a60fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxTextInputField">
-      <UniqueIdentifier>{a4b02712-30e4-b504-c110-2c93e13629d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxTextInputField\src">
-      <UniqueIdentifier>{b67afc83-af32-6fe3-281f-ac212c044641}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxTimecode">
       <UniqueIdentifier>{1b5cd1f2-714c-1a5f-97d0-2f9712f8476a}</UniqueIdentifier>
     </Filter>
@@ -270,6 +285,12 @@
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{687714a8-1662-fa1c-261f-50f068335398}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxTextInputField">
+      <UniqueIdentifier>{9d571783-75f9-4c3e-af35-1961f27e2cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTextInputField\src">
+      <UniqueIdentifier>{c652bd61-3708-4b5c-923b-a5d6aca79da0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\testApp.h">
@@ -286,6 +307,75 @@
     </ClInclude>
     <ClInclude Include="src\testApp.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\src\ofxFTGLFont.h">
+      <Filter>addons\ofxFTGL\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTBBox.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTBitmapGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTBuffer.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTBufferFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTBufferGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTExtrdGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\ftgl.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTGLBitmapFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTGLExtrdFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTGLOutlineFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTGLPixmapFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTGLPolygonFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTGLTextureFont.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTLayout.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTOutlineGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTPixmapGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTPoint.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTPolyGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTSimpleLayout.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTTextureGlyph.h">
+      <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxMSATimer\src\ofxMSATimer.h">
       <Filter>addons\ofxMSATimer\src</Filter>
@@ -349,9 +439,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxRange\src\ofRange.h">
       <Filter>addons\ofxRange\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.h">
-      <Filter>addons\ofxTextInputField\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimecode\src\ofxTimecode.h">
       <Filter>addons\ofxTimecode\src</Filter>
@@ -566,6 +653,9 @@
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUISpectrum.h">
       <Filter>addons\ofxUI\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUITextArea.h">
+      <Filter>addons\ofxUI\src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUITextInput.h">
       <Filter>addons\ofxUI\src</Filter>
     </ClInclude>
@@ -589,6 +679,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h">
       <Filter>addons\ofxXmlSettings\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.h">
+      <Filter>addons\ofxTextInputField\src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
