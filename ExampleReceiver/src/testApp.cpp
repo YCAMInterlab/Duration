@@ -31,9 +31,9 @@ void testApp::setup(){
 	
 	//gui...?
 	doGraph = false;
-	maxDistance = 20;
+	maxDistance = 40;
 	minDistance = .2;
-	maxWidth = 10;
+	maxWidth = 50;
 	minWidth = 2;
 	
 				  
@@ -100,8 +100,10 @@ void testApp::threadedFunction(){
 					else if(components[1] == "z" ||
 							components[1] == "inandout")
 					{
-						if(m.getNumArgs() > 1){
+						if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
 							ControlCircle& circle = circleWithName(components[0]);
+							float z = m.getArgAsFloat(0);
+							circle.setZ(ofMap(z, 0, 1.0, 0, 500));
 						}
 					}
 					else if(components[1] == "color"){
@@ -121,33 +123,38 @@ void testApp::threadedFunction(){
 			}
 		}
 		
-		//push updates
-		map<string, ControlCircle>::iterator it;
-		for(it = circles.begin(); it != circles.end(); it++){
-			ControlCircle& circle = it->second;
-			ofVec2f lastPosition = circle.getLastPosition();
-			ofVec2f position = circle.getPosition();
-			if(lastPosition != position){
-				
-				ofColor lastColor = circle.getLastColor();
-				ofColor color = circle.getColor();
-				float dist = lastPosition.distance(position);
-				ControlCircleTrail trail;
-				trail.firstColor = lastColor;
-				trail.lastColor = color;
-				
-				trail.endWidth = ofMap(dist, maxDistance, minDistance, minWidth, maxWidth, true);
-						
-				trail.screenPosStart = lastPosition;
-				trail.screenPosEnd = position;
-				trail.startWidth = circle.lastTrail.endWidth;
-				trail.birthTime = ofGetElapsedTimef();
-				circle.lastTrail = trail;
-				trails.push_back(trail);
+		if(numMessages > 0){
+			//push updates
+			map<string, ControlCircle>::iterator it;
+			for(it = circles.begin(); it != circles.end(); it++){
+				ControlCircle& circle = it->second;
+				ofVec3f lastPosition = circle.getLastPosition();
+				ofVec3f position = circle.getPosition();
+				if(lastPosition != position){
+
+					ofColor color = circle.getColor();
+					float dist = lastPosition.distance(position);
+					
+					ControlCircleTrail trail;
+					trail.color = color;
+					
+					float width =  ofMap(dist, maxDistance, minDistance, minWidth, maxWidth, true);
+					ofVec3f direction = position - lastPosition;
+					ofVec3f left = direction.getCrossed(ofVec3f(0,0,1)).normalized();
+					ofVec3f right = left.getRotated(180, direction);
+					
+					trail.left = position + left*width/2;
+					trail.right = position + right*width/2;
+					
+					trail.birthTime = ofGetElapsedTimef();
+					circle.lastTrail = trail;
+					
+					trails.push_back(trail);
+				}
+
+				//moves position to lastPosition
+				circle.update();
 			}
-			
-			//moves position to lastPosition
-			circle.update();
 		}
 		
 		ofSleepMillis(1);
@@ -176,6 +183,7 @@ void testApp::draw(){
 	fbo.begin();
 	ofClear(30, 30, 130);
 	ofEnableSmoothing();
+	ofEnableAlphaBlending();
 	ofPushStyle();
 //	ofSetColor(30, 30, 130, 1);
 //	ofRect(0, 0, ofGetWidth(), ofGetHeight());
@@ -185,18 +193,15 @@ void testApp::draw(){
 
 	vector<ofVec3f>& vertices = m.getVertices();
 	vector<ofFloatColor>& colors = m.getColors();
-	glBegin(GL_LINES);
+	glBegin(GL_TRIANGLE_STRIP);
 	for(int i = 0; i < trails.size(); i++){
-		glVertex2fv(&trails[i].screenPosStart.x);
-		glVertex2fv(&trails[i].screenPosEnd.x);
-//		colors.push_back(ofFloatColor(trails[i].firstColor/255.));
-//		vertices.push_back(trails[i].screenPosStart);
-//		colors.push_back(ofFloatColor(trails[i].lastColor/255.));
-//		vertices.push_back(trails[i].screenPosEnd);
+		glColor4f(trails[i].color.r/255.0, trails[i].color.g/255.0, trails[i].color.b/255.0,
+				  ofMap(trails[i].birthTime, ofGetElapsedTimef()-20, ofGetElapsedTimef()-60, 1.0, 0, true));
+		glVertex3fv(&trails[i].left.x);
+		glVertex3fv(&trails[i].right.x);
 		
 	}
 	glEnd();
-	m.draw();
 	
 //	cout << "trail size is " << m.getVertices().size() << endl;
 	map<string, ControlCircle>::iterator it;
@@ -214,9 +219,12 @@ void testApp::draw(){
 		ofCircle( circle.getPosition(), CIRCLE_RADIUS*2);
 
 		ofSetColor(255,255,255);
+		ofPushMatrix();
+		ofTranslate(0, 0, circle.getPosition().z);
 		font.drawString(circle.getName(),
 						circle.getPosition().x-CIRCLE_RADIUS*.5,
 						circle.getPosition().y+CIRCLE_RADIUS*.5);
+		ofPopMatrix();
 		ofPopStyle();
 	}
 	

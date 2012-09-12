@@ -173,7 +173,7 @@ void DurationController::setup(){
     //SETUP BPM CONTROLS
 	useBPMToggle = new ofxUILabelToggle(translation.translateKey("BPM"), false);
     gui->addWidgetRight(useBPMToggle);
-	bpmDialer = new ofxUINumberDialer(0., 250., 120., 2, "BPM_	VALUE", OFX_UI_FONT_MEDIUM);
+	bpmDialer = new ofxUINumberDialer(0., 250., 120., 2, "BPM_VALUE", OFX_UI_FONT_MEDIUM);
     gui->addWidgetEastOf(bpmDialer, translation.translateKey("BPM"));
     //figure out where to put this
 //	snapToKeysToggle = new ofxUILabelToggle("Snap to Keys",false,0,0,00,OFX_UI_FONT_MEDIUM);

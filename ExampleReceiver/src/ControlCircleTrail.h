@@ -13,22 +13,15 @@ class ControlCircleTrail {
   public:
 	ControlCircleTrail(){
 		birthTime = ofGetElapsedTimef();
-		startLeft = startRight = ofVec2f(0,0);
-		endLeft = endRight = ofVec2f(0,0);
-		startWidth = 0;
-		endWidth = 0;
-		lastColor = firstColor = ofColor(0,0,0);
+		left = right = ofVec3f(0,0,0);
+		color = ofColor(0,0,0);
 	}
 	
-	ofColor firstColor;
-	ofColor lastColor;
+	ofColor color;
 	float birthTime;
+	float width;
 	
-	ofVec2f startLeft;
-	ofVec2f startRight;
-	ofVec2f endLeft;
-	ofVec2f endRight;
+	ofVec3f left;
+	ofVec3f right;
 	
-	float startWidth;
-	float endWidth;
 };

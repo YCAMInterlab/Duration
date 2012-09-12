@@ -45,4 +45,6 @@ class testApp : public ofBaseApp, public ofThread {
 	bool doGraph;
 	vector<float> xs;
 	vector<float> ys;
+	
+	ofMutex trailMutex;
 };

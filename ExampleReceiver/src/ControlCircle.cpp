@@ -9,7 +9,7 @@
 #include "ControlCircle.h"
 
 ControlCircle::ControlCircle(){
-	position = ofVec2f(0,0);
+	position = lastPosition = ofVec3f(0,0);
 	color = ofColor(200, 200, 50);
 }
 
@@ -18,7 +18,7 @@ void ControlCircle::update(){
 	lastColor = color;
 }
 
-ofVec2f ControlCircle::getLastPosition(){
+ofVec3f ControlCircle::getLastPosition(){
 	return lastPosition;
 }
 
@@ -26,11 +26,11 @@ ofColor ControlCircle::getLastColor(){
 	return lastColor;
 }
 
-ofVec2f ControlCircle::getPosition(){
+ofVec3f ControlCircle::getPosition(){
 	return position;
 }
 
-void ControlCircle::setPosition(ofVec2f pos){
+void ControlCircle::setPosition(ofVec3f pos){
 	position = pos;
 }
 
@@ -40,6 +40,10 @@ void ControlCircle::setX(float x){
 
 void ControlCircle::setY(float y){
 	position.y = y;
+}
+
+void ControlCircle::setZ(float z){
+	position.z = z;
 }
 
 void ControlCircle::setName(string newName){

@@ -16,12 +16,13 @@ class ControlCircle {
 	ControlCircle();
 	
 	void update();
-	void setPosition(ofVec2f pos);
+	void setPosition(ofVec3f pos);
 	void setX(float x);
 	void setY(float y);
+	void setZ(float z);
 	
-	ofVec2f getPosition();
-	ofVec2f getLastPosition();
+	ofVec3f getPosition();
+	ofVec3f getLastPosition();
 	
 	void setName(string name);
 	string getName();
@@ -37,12 +38,13 @@ class ControlCircle {
 	ControlCircleTrail lastTrail;
 	
   protected:
-	ofVec2f lastPosition;
+	ofVec3f lastPosition;
+	ofVec3f position;
+	
 	string currentQuote;
 	float quoteReceivedTime;
 	float lastBangTime;
 	
-	ofVec2f position;
 	float lastTimeMoved;
 	string name;
 	ofColor color;
