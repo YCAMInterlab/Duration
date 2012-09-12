@@ -37,7 +37,14 @@ void testApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-
+	if(key == 'd'){
+		if(controller.isInterfaceEnabled()){
+			controller.disableInterface();
+		}
+		else{
+			controller.enableInterface();
+		}
+	}
 }
 
 //--------------------------------------------------------------

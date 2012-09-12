@@ -6,7 +6,7 @@
 int main(){
 
 	ofAppGlutWindow window;
-//	window.setDoubleBuffering(false);
+	window.setDoubleBuffering(false);
 	ofSetupOpenGL(&window, 640, 480, OF_WINDOW);         // <-------- setup the GL context
 
 	// this kicks off the running of my app

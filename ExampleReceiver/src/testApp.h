@@ -3,12 +3,13 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "ControlCircle.h"
+#include "ControlCircleTrail.h"
 
 // listen on port 12345
-#define PORT 12345
+#define PORT 12348
 #define NUM_MSG_STRINGS 20
 
-class testApp : public ofBaseApp {
+class testApp : public ofBaseApp, public ofThread {
   public:
 
 	void setup();
@@ -24,9 +25,24 @@ class testApp : public ofBaseApp {
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
+	void exit();
 
+	void threadedFunction();
 	ofTrueTypeFont font;
-	ofxOscReceiver receiver;
-	vector<ControlCircle> circles;
 	ofFbo fbo;
+	ofxOscReceiver receiver;
+
+	vector<ControlCircleTrail> trails;
+	map<string, ControlCircle> circles;
+	bool hasCircleWithName(string name);
+	ControlCircle& circleWithName(string name);
+
+	float maxDistance;
+	float minDistance;
+	float maxWidth;
+	float minWidth;
+	
+	bool doGraph;
+	vector<float> xs;
+	vector<float> ys;
 };

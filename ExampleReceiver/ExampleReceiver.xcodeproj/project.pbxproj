@@ -35,6 +35,7 @@
 		E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424610CC5A17004149E2 /* IOKit.framework */; };
 		E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E750F94315F2EC9900B87EA2 /* ControlCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E750F94115F2EC9800B87EA2 /* ControlCircle.cpp */; };
+		E784C28E160061F30020B982 /* ControlCircleTrail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E784C28C160061F20020B982 /* ControlCircleTrail.cpp */; };
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 		a29d8c96ae042eceaa1bd4f3cbbf0c9d /* NetworkingUtilsWin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2a5b1fad3f30c8065c396acbb72e5d95 /* NetworkingUtilsWin.cpp */; };
@@ -116,6 +117,8 @@
 		E4EB6923138AFD0F00A09F29 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
 		E750F94115F2EC9800B87EA2 /* ControlCircle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlCircle.cpp; sourceTree = "<group>"; };
 		E750F94215F2EC9800B87EA2 /* ControlCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlCircle.h; sourceTree = "<group>"; };
+		E784C28C160061F20020B982 /* ControlCircleTrail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlCircleTrail.cpp; sourceTree = "<group>"; };
+		E784C28D160061F30020B982 /* ControlCircleTrail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlCircleTrail.h; sourceTree = "<group>"; };
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		a2aaa8ca403479e6fcdf920ebcd1682b /* OscHostEndianness.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscHostEndianness.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscHostEndianness.h; sourceTree = SOURCE_ROOT; };
@@ -278,6 +281,8 @@
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E750F94215F2EC9800B87EA2 /* ControlCircle.h */,
 				E750F94115F2EC9800B87EA2 /* ControlCircle.cpp */,
+				E784C28D160061F30020B982 /* ControlCircleTrail.h */,
+				E784C28C160061F20020B982 /* ControlCircleTrail.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -450,6 +455,7 @@
 				0546d1a38e13bd319cc9755b5ca7e1a0 /* OscReceivedElements.cpp in Sources */,
 				879a251454401bc0b6e4f238fc63135b /* OscTypes.cpp in Sources */,
 				E750F94315F2EC9900B87EA2 /* ControlCircle.cpp in Sources */,
+				E784C28E160061F30020B982 /* ControlCircleTrail.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,12 +12,12 @@
 #define DROP_DOWN_WIDTH 250
 #define TEXT_INPUT_WIDTH 100
 
-
 DurationController::DurationController(){
 	//TODO: make variable
-	oscRate = (1.0/60.0)*1000; //in millis
+	oscRate = (1.0/30.0)*1000; //in millis
 	lastOSCBundleSent = 0;
 
+	enabled = false;
 	shouldCreateNewProject = false;
     shouldLoadProject = false;
 
@@ -30,13 +30,50 @@ DurationController::~DurationController(){
 
 }
 
+void DurationController::enableInterface(){
+	if(!enabled){
+		enabled = true;
+		ofAddListener(ofEvents().update, this, &DurationController::update);
+		ofAddListener(ofEvents().draw, this, &DurationController::draw);
+		ofAddListener(ofEvents().keyPressed, this, &DurationController::keyPressed);
+		gui->enable();
+		gui->disableAppEventCallbacks();
+		timeline.enable();
+		map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
+		while(it != headers.end()){
+			it->second->getGui()->enable();
+			it++;
+		}
+	}
+}
+
+void DurationController::disableInterface(){
+	if(enabled){
+		enabled = false;
+		ofRemoveListener(ofEvents().update, this, &DurationController::update);
+		ofRemoveListener(ofEvents().draw, this, &DurationController::draw);
+		ofRemoveListener(ofEvents().keyPressed, this, &DurationController::keyPressed);
+		gui->disable();
+		timeline.disable();
+		map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
+		while(it != headers.end()){
+			it->second->getGui()->disable();
+			it++;
+		}
+	}
+}
+
+bool DurationController::isInterfaceEnabled(){
+	return enabled;
+}
+
 void DurationController::setup(){
     
 	if(!translation.load("languageFile.csv")){
 		ofLogError("DurationController::setup") << "error setting up translation, unpredictable stuff will happen" << endl;
 	}
 	
-	translation.setCurrentLanguage("english");
+	translation.setCurrentLanguage("japanese");
 	
     //populate projects
     vector<string> projects;
@@ -163,15 +200,13 @@ void DurationController::setup(){
     gui->addWidgetRight(oscOutPortInput);
 
 	ofAddListener(gui->newGUIEvent, this, &DurationController::guiEvent);
-	gui->disableAppEventCallbacks(); //we want to controld raw 
 	
 	//add events
     ofAddListener(timeline.events().bangFired, this, &DurationController::bangFired);
-	ofAddListener(ofEvents().update, this, &DurationController::update);
-	ofAddListener(ofEvents().draw, this, &DurationController::draw);
-	ofAddListener(ofEvents().keyPressed, this, &DurationController::keyPressed);
 	ofAddListener(ofEvents().exit, this, &DurationController::exit);
 
+	enableInterface();
+	
     //SET UP LISENTERS
     
     ofxXmlSettings defaultSettings;
@@ -658,7 +693,6 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 void DurationController::update(ofEventArgs& args){
 	gui->update();
 	
-	
 	timeLabel->setLabel(timeline.getCurrentTimecode());
     
 #ifdef TARGET_OSX
@@ -849,7 +883,6 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     ofxXmlSettings projectSettings;
 	string projectDataPath = ofToDataPath(projectPath+"/.durationproj");
 	if(!projectSettings.loadFile(projectDataPath)){
-		cout << "load failed" << endl;
         if(forceCreate){
             newProject(projectPath, projectName);
         }
@@ -866,7 +899,6 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     timeline.reset();
     timeline.setWorkingFolder(projectPath);
 	
-    cout << "successfully loaded project " << projectPath << endl;
     //LOAD ALL TRACKS
     projectSettings.pushTag("tracks");
     int numPages = projectSettings.getNumTags("page");
@@ -900,8 +932,6 @@ void DurationController::loadProject(string projectPath, string projectName, boo
                 curves->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
                                               projectSettings.getValue("max", 1.0)));
                 newTrack = curves;
-				
-
             }
             else if(trackType == "Switches"){
                 newTrack = timeline.addSwitches(trackName, trackFilePath);
@@ -1072,7 +1102,8 @@ void DurationController::saveProject(){
     projectSettings.addValue("oscOutEnabled", settings.oscOutEnabled);
     projectSettings.addValue("oscInPort", settings.oscInPort);
     projectSettings.addValue("oscIP", settings.oscIP);
-    projectSettings.addValue("oscInPort", settings.oscOutPort);
+    projectSettings.addValue("oscOutPort", settings.oscOutPort);
+	
 //	projectSettings.addValue("zoomViewMin",timeline.getZoomer()->getSelectedRange().min);
 //	projectSettings.addValue("zoomViewMax",timeline.getZoomer()->getSelectedRange().max);
 

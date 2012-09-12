@@ -53,11 +53,18 @@ class DurationController : public ofThread  {
 	~DurationController();
 	
 	void setup();
+		
+	void enableInterface();
+	void disableInterface();
+	bool isInterfaceEnabled();
+	
 	void update(ofEventArgs& args);
 	void draw(ofEventArgs& args);
 	
 	void keyPressed(ofKeyEventArgs& keyArgs);
 		
+	ofxTimeline& getTimeline();
+	
     ofRectangle canvasRectangle;
     ofxUICanvas* gui;
 	void guiEvent(ofxUIEventArgs& e);
@@ -115,6 +122,7 @@ class DurationController : public ofThread  {
 	void threadedFunction();
 	void handleOscOut();
 	void handleOscIn();
+	bool enabled;
 	
 	unsigned long recordTimeOffset;
 	ofxMSATimer recordTimer;

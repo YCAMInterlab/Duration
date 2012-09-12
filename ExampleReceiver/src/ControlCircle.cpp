@@ -14,7 +14,16 @@ ControlCircle::ControlCircle(){
 }
 
 void ControlCircle::update(){
-	
+	lastPosition = position;
+	lastColor = color;
+}
+
+ofVec2f ControlCircle::getLastPosition(){
+	return lastPosition;
+}
+
+ofColor ControlCircle::getLastColor(){
+	return lastColor;
 }
 
 ofVec2f ControlCircle::getPosition(){
@@ -47,4 +56,13 @@ ofColor ControlCircle::getColor(){
 
 void ControlCircle::setColor(ofColor newColor){
 	color = newColor;
+}
+
+void ControlCircle::bang(){
+	lastBangTime = ofGetElapsedTimef();
+}
+
+void ControlCircle::setQuote(string quote){
+	quoteReceivedTime = ofGetElapsedTimef();
+	currentQuote = quote;
 }

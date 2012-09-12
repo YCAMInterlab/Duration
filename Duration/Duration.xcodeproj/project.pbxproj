@@ -68,7 +68,6 @@
 		E78C29FA15EF1AB3003A9CCB /* ofxTLZoomer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E78C29E515EF1AB3003A9CCB /* ofxTLZoomer.cpp */; };
 		E78C29FF15EF1ADA003A9CCB /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E78C29FC15EF1ADA003A9CCB /* .gitignore */; };
 		E78C2A0315EF1BC2003A9CCB /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78C2A0215EF1BC2003A9CCB /* Accelerate.framework */; };
-		E7C6599F15FF22260049005B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E7C6596415FF22260049005B /* .gitignore */; };
 		E7C659A915FF22260049005B /* buildFTGL.sh in Resources */ = {isa = PBXBuildFile; fileRef = E7C6599215FF22260049005B /* buildFTGL.sh */; };
 		E7C659AA15FF22260049005B /* libftgl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7C6599315FF22260049005B /* libftgl.a */; };
 		E7C659AD15FF22270049005B /* ofxFTGLFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C6599815FF22260049005B /* ofxFTGLFont.cpp */; };
@@ -248,7 +247,6 @@
 		E78C29FC15EF1ADA003A9CCB /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		E78C29FE15EF1ADA003A9CCB /* ofRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRange.h; sourceTree = "<group>"; };
 		E78C2A0215EF1BC2003A9CCB /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		E7C6596415FF22260049005B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		E7C6597A15FF22260049005B /* FTBBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTBBox.h; sourceTree = "<group>"; };
 		E7C6597B15FF22260049005B /* FTBitmapGlyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTBitmapGlyph.h; sourceTree = "<group>"; };
 		E7C6597C15FF22260049005B /* FTBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTBuffer.h; sourceTree = "<group>"; };
@@ -711,7 +709,6 @@
 		E7C6596315FF22260049005B /* ofxFTGL */ = {
 			isa = PBXGroup;
 			children = (
-				E7C6596415FF22260049005B /* .gitignore */,
 				E7C6597615FF22260049005B /* libs */,
 				E7C6599715FF22260049005B /* src */,
 			);
@@ -1173,7 +1170,6 @@
 				E7DFB45315D0E37E00CD5CF1 /* easing_terms_of_use.html in Resources */,
 				E72B8DD415D629CB00DB5A38 /* install.xml in Resources */,
 				E78C29FF15EF1ADA003A9CCB /* .gitignore in Resources */,
-				E7C6599F15FF22260049005B /* .gitignore in Resources */,
 				E7C659A915FF22260049005B /* buildFTGL.sh in Resources */,
 				E7C659BF15FF46BC0049005B /* .gitignore in Resources */,
 				E7C659C015FF46BC0049005B /* README.md in Resources */,
