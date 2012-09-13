@@ -14,7 +14,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	
-//	ofSetFrameRate(60);
+	ofSetFrameRate(30);
 	ofSetVerticalSync(true);
 	ofBackground(30, 30, 130);
 	ofEnableAlphaBlending();
@@ -60,7 +60,17 @@ void testApp::update(){
 	}
 	trailMutex.unlock();
 	
+//	particleLock.lock();
+//	particles.purge();
+//	particleLock.unlock();
 	particles.update();
+//	circleLock.lock();
+	for(it = circles.begin(); it != circles.end(); it++){
+		if( ofGetElapsedTimef() - it->second.lastMessageReceived > 30){
+			circles.erase(it);
+		}
+	}
+//	circleLock.unlock();
 }
 
 void testApp::threadedFunction(){
@@ -89,6 +99,7 @@ void testApp::threadedFunction(){
 
 				if(m.getNumArgs() == 0){
 					//bang!
+					cout << "BANG!" << endl;
 					ControlCircle& circle = circleWithName(components[0]);
 					circle.bang();
 				}
@@ -145,17 +156,17 @@ void testApp::threadedFunction(){
 				ControlCircle& circle = it->second;
 				ofVec3f lastPosition = circle.getLastPosition();
 				ofVec3f position = circle.getPosition();
+				ofColor color = circle.getColor();
 				if(lastPosition != position){
 
-					ofColor color = circle.getColor();
 					float dist = lastPosition.distance(position);
 					
 					ControlCircleTrail trail;
 					trail.color = color;
 					
 					float width =  ofMap(dist, maxDistance, minDistance, minWidth, maxWidth, true);
-					ofVec3f direction = position - lastPosition;
-					ofVec3f left = direction.getCrossed(ofVec3f(0,0,1)).normalized();
+					ofVec3f direction = (position - lastPosition).normalized();
+					ofVec3f left = direction.getCrossed(ofVec3f(0,0,1));
 					ofVec3f right = left.getRotated(180, direction);
 					
 					trail.left = position + left*width/2;
@@ -167,21 +178,34 @@ void testApp::threadedFunction(){
 					trailMutex.unlock();
 					for(int i = 0; i < 5; i++){
 						ColorParticle p;
-						p.birthTime = trail.birthTime;
+						p.birthTime = trail.birthTime + ofRandom(0,4);
 						p.color = color;
-						p.velocity = ofVec3f(0,0,0);//(direction*(maxWidth-width)).rotated(ofRandom(-20,20), ofVec3f(0,0,1));
+						p.velocity = (direction*(maxWidth-width)).rotated(ofRandom(-20,20), ofVec3f(0,0,1))*.2;
 						p.origin = position;
 						p.position = position + ofVec3f(ofRandom(-30,30),ofRandom(-30,30), 0);
 						newParticles.push_back(p);
 					}
 				}
 				
-				particleLock.lock();
-				particles.addParticles(newParticles);
-				particleLock.unlock();
+				if(circle.didBang()){
+					for(int i = 0; i < 1000; i++){
+						ColorParticle p;
+						p.birthTime = ofGetElapsedTimef() + ofRandom(0,10);
+						p.color = color;
+						p.velocity = ofVec3f(0,1,0).getRotated(ofRandomf()*360, ofVec3f(0,0,1))*5;
+						p.origin = position;
+						p.position = position + ofVec3f(ofRandom(-30,30),ofRandom(-30,30), 0);
+						newParticles.push_back(p);
+					}
+				}
+				
+//				particleLock.lock();
+//				particleLock.unlock();
 				//moves position to lastPosition
 				circle.update();
 			}
+			particles.addParticles(newParticles);
+
 		}
 		
 		ofSleepMillis(1);
@@ -197,18 +221,18 @@ bool testApp::hasCircleWithName(string name){
 //--------------------------------------------------------------
 ControlCircle& testApp::circleWithName(string name){
 	if(!hasCircleWithName(name)){
-		cout << "Creating circle with name" << name << endl;
 		circles[name] = ControlCircle();
 		circles[name].setName(name);
 		circles[name].setPosition(ofVec2f(.5,.5));
 	}
+	circles[name].lastMessageReceived = ofGetElapsedTimef();
 	return circles[name];
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	fbo.begin();
-	ofClear(30, 30, 130);
+	ofClear(10, 10, 70);
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	ofPushStyle();
@@ -257,13 +281,12 @@ void testApp::draw(){
 		ofPopMatrix();
 		ofPopStyle();
 
-	}
-	
+	}	
 	particles.draw();
 
 	
+	font.drawString(ofToString(ofGetFrameRate()), 30, 30);
 	if(doGraph){
-		font.drawString(ofToString(ofGetFrameRate()), 30, 30);
 		ofPolyline p;
 		for(int i = 0; i < MIN(xs.size(), ofGetWidth()); i++){
 			p.addVertex(i,xs[xs.size()-i-1]*ofGetHeight()/2);

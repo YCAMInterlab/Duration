@@ -11,6 +11,8 @@
 ControlCircle::ControlCircle(){
 	position = lastPosition = ofVec3f(0,0);
 	color = ofColor(200, 200, 50);
+	lastMessageReceived = ofGetElapsedTimef();
+	receivedbang = true;
 }
 
 void ControlCircle::update(){
@@ -62,7 +64,14 @@ void ControlCircle::setColor(ofColor newColor){
 	color = newColor;
 }
 
+bool ControlCircle::didBang(){
+	bool b = receivedbang;
+	receivedbang = false;
+	return b;
+}
+
 void ControlCircle::bang(){
+	receivedbang = true;
 	lastBangTime = ofGetElapsedTimef();
 }
 

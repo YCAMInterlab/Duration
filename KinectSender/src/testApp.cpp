@@ -30,8 +30,7 @@ void testApp::setup() {
 	angle = 0;
 	//kinect->setCameraTiltAngle(angle);
 	currentIp = "localhost";
-	currentPort = 1235;
-	setupOSC();
+	currentPort = 12345;
 	
 	drawCursor = false;
 
@@ -45,6 +44,7 @@ void testApp::setup() {
 	
 	ui->loadSettings("GUI/guiSettings.xml");
 	ofAddListener(ui->newGUIEvent, this, &testApp::guiEvent);
+	setupOSC();
 
 }
 

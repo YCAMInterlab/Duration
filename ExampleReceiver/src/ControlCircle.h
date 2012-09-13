@@ -31,8 +31,8 @@ class ControlCircle {
 	ofColor getLastColor();
 	
 	void setColor(ofColor color);
-	
-
+	float lastMessageReceived;
+	bool didBang();
 	void bang();
 	void setQuote(string quote);
 	vector<ControlCircleTrail> trail;
@@ -40,7 +40,7 @@ class ControlCircle {
   protected:
 	ofVec3f lastPosition;
 	ofVec3f position;
-	
+	bool receivedbang;
 	string currentQuote;
 	float quoteReceivedTime;
 	float lastBangTime;

@@ -50,4 +50,5 @@ class testApp : public ofBaseApp, public ofThread {
 	
 	ofMutex particleLock;
 	ofMutex trailMutex;
+	ofMutex circleLock;
 };
