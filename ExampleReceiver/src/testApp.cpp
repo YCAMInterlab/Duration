@@ -184,25 +184,7 @@ void testApp::draw(){
 	ofEnableSmoothing();
 	ofEnableAlphaBlending();
 	ofPushStyle();
-//	ofSetColor(30, 30, 130, 1);
-//	ofRect(0, 0, ofGetWidth(), ofGetHeight());
-//	ofPopStyle();
 	
-	ofMesh m;
-
-//	vector<ofVec3f>& vertices = m.getVertices();
-//	vector<ofFloatColor>& colors = m.getColors();
-//	glBegin(GL_TRIANGLE_STRIP);
-//	for(int i = 0; i < trails.size(); i++){
-//		glColor4f(trails[i].color.r/255.0, trails[i].color.g/255.0, trails[i].color.b/255.0,
-//				  ofMap(trails[i].birthTime, ofGetElapsedTimef()-20, ofGetElapsedTimef()-60, 1.0, 0, true));
-//		glVertex3fv(&trails[i].left.x);
-//		glVertex3fv(&trails[i].right.x);
-//		
-//	}
-//	glEnd();
-	
-//	cout << "trail size is " << m.getVertices().size() << endl;
 	map<string, ControlCircle>::iterator it;
 	for(it = circles.begin(); it != circles.end(); it++){
 		ControlCircle& circle = it->second;
