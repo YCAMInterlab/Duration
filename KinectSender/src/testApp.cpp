@@ -127,8 +127,6 @@ void testApp::update() {
 				}
 			}
 			
-			
-			
 			ofVec2f pointtosend = ofVec2f(ofMap(contourFinder.blobs[maxBlob].centroid.x,drawableArea.getMinX(), drawableArea.getMaxX(), 0.0, 1.0, true),
 										  ofMap(contourFinder.blobs[maxBlob].centroid.y,drawableArea.getMinY(), drawableArea.getMaxY(), 0.0, 1.0, true));
 			ofxOscMessage mx;
@@ -184,13 +182,13 @@ void testApp::draw() {
 	vector<ofVec2f> points;
 	vector<ofFloatColor> colors;
 	for(int i = 1; i < sentPoints.size(); i++){
-		sentPoints[i].y += .01*powf(1.-1.0*i/sentPoints.size(), 3.0);
+		sentPoints[i].y += .01*powf(1.-1.0*i/sentPoints.size(), 3.0); //fall
 		ofVec2f screenpoint = drawingRect.getMin() +  sentPoints[i-1]*ofVec2f(drawingRect.width,drawingRect.height);
 		ofFloatColor color = ofFloatColor(1.0,1.0,1.0, powf(ofMap(i, 0, sentPoints.size(), 0, 1.0), 2.0));
-		colors.push_back(color);
-		colors.push_back(color);
 		ofVec2f direction = (sentPoints[i-1] - sentPoints[i]).getNormalized();
 		float width = powf(ofMap(i, 0, sentPoints.size(), 0, 1.0), 3.0)*60;
+		colors.push_back(color);
+		colors.push_back(color);
 		points.push_back(screenpoint + direction.getRotated(90)*width/2);
 		points.push_back(screenpoint - direction.getRotated(90)*width/2);
 	}
@@ -215,25 +213,8 @@ void testApp::draw() {
 		ofCircle(center, 30);
 	}
 
-	ofPopStyle();
-	
-//	// draw instructions
-//	ofSetColor(255, 255, 255);
-//	stringstream reportStream;
-//	reportStream << "accel is: " << ofToString(kinect->getMksAccel().x, 2) << " / "
-//	<< ofToString(kinect->getMksAccel().y, 2) << " / "
-//	<< ofToString(kinect->getMksAccel().z, 2) << endl
-//	<< "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
-//	<< "using opencv threshold = " << bThreshWithOpenCV <<" (press spacebar)" << endl
-//	<< "set near threshold " << nearThreshold << " (press: + -)" << endl
-//	<< "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
-//	<< ", fps: " << ofGetFrameRate() << endl
-//	<< "press c to close the connection and o to open it again, connection is: " << kinect->isConnected() << endl
-//	<< "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-//	<< "press 1-5 & 0 to change the led mode (mac/linux only)" << endl;
-//	ofDrawBitmapString(reportStream.str(),20,652);
+	ofPopStyle();	
 }
-
 
 //--------------------------------------------------------------
 void testApp::exit() {

@@ -47,6 +47,20 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	
+	trailMutex.lock();
+	map<string, ControlCircle>::iterator it;	
+	for(it = circles.begin(); it != circles.end(); it++){
+		ControlCircle& circle = it->second;
+		for(int i = circle.trail.size()-1; i >= 0; i--){
+			if(circle.trail[i].birthTime < ofGetElapsedTimef()-20){
+				circle.trail.erase(circle.trail.begin()+i);
+			}
+		}
+	}
+	trailMutex.unlock();
+	
+	particles.update();
 }
 
 void testApp::threadedFunction(){
@@ -123,6 +137,7 @@ void testApp::threadedFunction(){
 			}
 		}
 		
+		vector<ColorParticle> newParticles;
 		if(numMessages > 0){
 			//push updates
 			map<string, ControlCircle>::iterator it;
@@ -147,10 +162,23 @@ void testApp::threadedFunction(){
 					trail.right = position + right*width/2;
 					
 					trail.birthTime = ofGetElapsedTimef();
+					trailMutex.lock();
 					circle.trail.push_back(trail);
-					//trails.push_back(trail);
+					trailMutex.unlock();
+					for(int i = 0; i < 5; i++){
+						ColorParticle p;
+						p.birthTime = trail.birthTime;
+						p.color = color;
+						p.velocity = ofVec3f(0,0,0);//(direction*(maxWidth-width)).rotated(ofRandom(-20,20), ofVec3f(0,0,1));
+						p.origin = position;
+						p.position = position + ofVec3f(ofRandom(-30,30),ofRandom(-30,30), 0);
+						newParticles.push_back(p);
+					}
 				}
-
+				
+				particleLock.lock();
+				particles.addParticles(newParticles);
+				particleLock.unlock();
 				//moves position to lastPosition
 				circle.update();
 			}
@@ -158,7 +186,7 @@ void testApp::threadedFunction(){
 		
 		ofSleepMillis(1);
 	}
-//	cout << "num messages " << numMessages << endl;
+
 }
 
 //--------------------------------------------------------------
@@ -188,9 +216,6 @@ void testApp::draw(){
 	map<string, ControlCircle>::iterator it;
 	for(it = circles.begin(); it != circles.end(); it++){
 		ControlCircle& circle = it->second;
-		
-
-		
 		vector<ofVec3f> vertices;
 		vector<ofFloatColor> colors;
 		for(int i = 1; i < circle.trail.size(); i++){
@@ -233,6 +258,9 @@ void testApp::draw(){
 		ofPopStyle();
 
 	}
+	
+	particles.draw();
+
 	
 	if(doGraph){
 		font.drawString(ofToString(ofGetFrameRate()), 30, 30);

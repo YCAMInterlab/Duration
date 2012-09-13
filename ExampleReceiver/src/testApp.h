@@ -4,6 +4,7 @@
 #include "ofxOsc.h"
 #include "ControlCircle.h"
 #include "ControlCircleTrail.h"
+#include "ColorParticleController.h"
 
 // listen on port 12345
 #define PORT 12348
@@ -31,7 +32,8 @@ class testApp : public ofBaseApp, public ofThread {
 	ofTrueTypeFont font;
 	ofFbo fbo;
 	ofxOscReceiver receiver;
-
+	ColorParticleController particles;
+	
 //	vector<ControlCircleTrail> trails;
 	map<string, ControlCircle> circles;
 	bool hasCircleWithName(string name);
@@ -46,5 +48,6 @@ class testApp : public ofBaseApp, public ofThread {
 	vector<float> xs;
 	vector<float> ys;
 	
+	ofMutex particleLock;
 	ofMutex trailMutex;
 };

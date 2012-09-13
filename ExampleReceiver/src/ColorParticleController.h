@@ -9,7 +9,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ColorParticle.h"
 
 class ColorParticle {
   public:
@@ -35,32 +34,47 @@ class ColorParticleController {
 
   public:
 	
-	ColorParticleController {
+	ColorParticleController() {
 		currentOffset = 0;
 		amplitude = 0;
 		density = 0;
 		speed = 0;
 	};
 	
-	vector<ColorParticle> particles;
+	void addParticles(vector<ColorParticle>& newParticles){
+		for(int i = 0; i < newParticles.size(); i++){
+			particles.push_back(newParticles[i]);
+		}
+	}
+	
 	void update(){
-		
+		float amplitude = .4;
+		float density = 400;
+		float speed = .001;
+		currentOffset += speed;
+		mesh.clear();
 		for(int i = 0; i < particles.size(); i++){
-			ColorParticle& p = particles[p];
+			ColorParticle& p = particles[i];
+			ofVec3f& pos = p.position;
             p.force =  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,
 							   ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+1000)*amplitude,
                                ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+2000)*amplitude );
 			
 			p.velocity += p.force;
 			p.position += p.velocity;
+			mesh.addVertex(p.position);
+			mesh.addColor(p.color);
 		}
 	}
 	
 	void draw(){
+		glPointSize(2.0);
 		mesh.drawVertices();
+
 	}
 	
 	ofMesh mesh;
+	vector<ColorParticle> particles;
 	float currentOffset;
     float amplitude;
     float density;
