@@ -21,12 +21,20 @@ class testApp : public ofBaseApp {
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 	
+	void guiEvent(ofxUIEventArgs &e);
+
 	ofxUICanvas* ui;
 	ofxOscSender sender;
 	
 	ofxKinect* kinect;
 		
 	ofxCvColorImage colorImg;
+	ofxUITextInput* ip;
+	ofxUITextInput* port;
+	string currentIp;
+	int currentPort;
+	
+	void setupOSC();
 	
 	bool shouldCaptureBackground;
 	ofxCvGrayscaleImage background;
@@ -40,5 +48,8 @@ class testApp : public ofBaseApp {
 	float farThreshold;
 	
 	int angle;
+	ofRectangle drawingRect;
+	bool drawCursor;
 	vector<ofVec2f> sentPoints;
+	ofRectangle kinectRect;
 };

@@ -1,10 +1,15 @@
 <Widget>
-    <Kind>4</Kind>
-    <Name>MINIMAL</Name>
-    <Value>37.1711</Value>
+    <Kind>5</Kind>
+    <Name>far threshold</Name>
+    <Value>176</Value>
 </Widget>
 <Widget>
-    <Kind>4</Kind>
-    <Name>STANDARD</Name>
-    <Value>74.6711</Value>
+    <Kind>12</Kind>
+    <Name>IP</Name>
+    <Value>localhost</Value>
+</Widget>
+<Widget>
+    <Kind>12</Kind>
+    <Name>PORT</Name>
+    <Value>12345</Value>
 </Widget>
