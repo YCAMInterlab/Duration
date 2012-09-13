@@ -35,7 +35,7 @@ class ControlCircle {
 
 	void bang();
 	void setQuote(string quote);
-	ControlCircleTrail lastTrail;
+	vector<ControlCircleTrail> trail;
 	
   protected:
 	ofVec3f lastPosition;

@@ -31,7 +31,7 @@ void testApp::setup(){
 	
 	//gui...?
 	doGraph = false;
-	maxDistance = 40;
+	maxDistance = 80;
 	minDistance = .2;
 	maxWidth = 50;
 	minWidth = 2;
@@ -147,9 +147,8 @@ void testApp::threadedFunction(){
 					trail.right = position + right*width/2;
 					
 					trail.birthTime = ofGetElapsedTimef();
-					circle.lastTrail = trail;
-					
-					trails.push_back(trail);
+					circle.trail.push_back(trail);
+					//trails.push_back(trail);
 				}
 
 				//moves position to lastPosition
@@ -191,33 +190,57 @@ void testApp::draw(){
 	
 	ofMesh m;
 
-	vector<ofVec3f>& vertices = m.getVertices();
-	vector<ofFloatColor>& colors = m.getColors();
-	glBegin(GL_TRIANGLE_STRIP);
-	for(int i = 0; i < trails.size(); i++){
-		glColor4f(trails[i].color.r/255.0, trails[i].color.g/255.0, trails[i].color.b/255.0,
-				  ofMap(trails[i].birthTime, ofGetElapsedTimef()-20, ofGetElapsedTimef()-60, 1.0, 0, true));
-		glVertex3fv(&trails[i].left.x);
-		glVertex3fv(&trails[i].right.x);
-		
-	}
-	glEnd();
+//	vector<ofVec3f>& vertices = m.getVertices();
+//	vector<ofFloatColor>& colors = m.getColors();
+//	glBegin(GL_TRIANGLE_STRIP);
+//	for(int i = 0; i < trails.size(); i++){
+//		glColor4f(trails[i].color.r/255.0, trails[i].color.g/255.0, trails[i].color.b/255.0,
+//				  ofMap(trails[i].birthTime, ofGetElapsedTimef()-20, ofGetElapsedTimef()-60, 1.0, 0, true));
+//		glVertex3fv(&trails[i].left.x);
+//		glVertex3fv(&trails[i].right.x);
+//		
+//	}
+//	glEnd();
 	
 //	cout << "trail size is " << m.getVertices().size() << endl;
 	map<string, ControlCircle>::iterator it;
 	for(it = circles.begin(); it != circles.end(); it++){
 		ControlCircle& circle = it->second;
 		
+
+		
+		vector<ofVec3f> vertices;
+		vector<ofFloatColor> colors;
+		for(int i = 1; i < circle.trail.size(); i++){
+			ofFloatColor c = ofFloatColor(circle.trail[i].color.r/255.0,
+							 			  circle.trail[i].color.g/255.0,
+										  circle.trail[i].color.b/255.0,
+										  ofMap(circle.trail[i].birthTime, ofGetElapsedTimef(), ofGetElapsedTimef()-20, 1.0, 0, true));
+			colors.push_back(c);
+			colors.push_back(c);
+			vertices.push_back(circle.trail[i].left);
+			vertices.push_back(circle.trail[i].right);
+		}
+		
+		ofEnableAlphaBlending();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(4, GL_FLOAT, sizeof(ofFloatColor), &(colors[0].r));
+		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &(vertices[0].x));
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		
 		ofPushStyle();
 		ofFill();
 		ofSetColor( circle.getColor());
 		ofCircle( circle.getPosition(), CIRCLE_RADIUS*2);
-
+		
 		ofNoFill();
 		ofSetLineWidth(3);
 		ofSetColor(0);
 		ofCircle( circle.getPosition(), CIRCLE_RADIUS*2);
-
+		
 		ofSetColor(255,255,255);
 		ofPushMatrix();
 		ofTranslate(0, 0, circle.getPosition().z);
@@ -226,6 +249,7 @@ void testApp::draw(){
 						circle.getPosition().y+CIRCLE_RADIUS*.5);
 		ofPopMatrix();
 		ofPopStyle();
+
 	}
 	
 	if(doGraph){

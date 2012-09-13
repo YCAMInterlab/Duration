@@ -32,7 +32,7 @@ class testApp : public ofBaseApp, public ofThread {
 	ofFbo fbo;
 	ofxOscReceiver receiver;
 
-	vector<ControlCircleTrail> trails;
+//	vector<ControlCircleTrail> trails;
 	map<string, ControlCircle> circles;
 	bool hasCircleWithName(string name);
 	ControlCircle& circleWithName(string name);
