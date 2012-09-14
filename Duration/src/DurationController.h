@@ -149,6 +149,7 @@ class DurationController : public ofThread  {
 	float oscRate;
 	unsigned long lastOSCBundleSent;
 	ofxFTGLFont tooltipFont;
-
+	bool needsSave;
+	
 };
 

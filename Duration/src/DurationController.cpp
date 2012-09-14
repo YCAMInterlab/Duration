@@ -8,6 +8,7 @@
 //
 
 #include "DurationController.h"
+#include "ofxHotKeys.h"
 
 #define DROP_DOWN_WIDTH 250
 #define TEXT_INPUT_WIDTH 100
@@ -184,13 +185,13 @@ void DurationController::setup(){
     //SETUP OSC CONTROLS
     enableOSCInToggle = new ofxUILabelToggle(translation.translateKey("OSC IN"),false,0,0,0,0, OFX_UI_FONT_MEDIUM);
     enableOSCOutToggle = new ofxUILabelToggle(translation.translateKey("OSC OUT"),false,0,0,0,0, OFX_UI_FONT_MEDIUM);
-    oscOutIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscOutIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH*1.5,0,0,0, OFX_UI_FONT_MEDIUM);
     oscOutIPInput->setAutoClear(false);
 	
-    oscInPortInput = new ofxUITextInput("OSCINPORT", "12346",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscInPortInput = new ofxUITextInput("OSCINPORT", "12346",TEXT_INPUT_WIDTH*.8,0,0,0, OFX_UI_FONT_MEDIUM);
     oscInPortInput->setAutoClear(false);
 
-    oscOutPortInput = new ofxUITextInput("OSCOUTPORT", "12345",TEXT_INPUT_WIDTH,0,0,0, OFX_UI_FONT_MEDIUM);
+    oscOutPortInput = new ofxUITextInput("OSCOUTPORT", "12345",TEXT_INPUT_WIDTH*.8,0,0,0, OFX_UI_FONT_MEDIUM);
     oscOutPortInput->setAutoClear(false);
 
 	gui->addWidgetRight(enableOSCInToggle);
@@ -499,6 +500,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
         string newDuration = durationLabel->getTextString();
         timeline.setDurationInTimecode(newDuration);
         durationLabel->setTextString(timeline.getDurationInTimecode());
+		needsSave = true;
     }
     else if(e.widget == addTrackDropDown){
         if(addTrackDropDown->isOpen()){
@@ -551,6 +553,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 #endif
                 if(newTrack != NULL){
                     createHeaderForTrack(newTrack);
+					needsSave = true;
                 }
 				
 				unlock();
@@ -591,15 +594,20 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
     //LOOP
     else if(e.widget == loopToggle){
         timeline.setLoopType(loopToggle->getValue() ? OF_LOOP_NORMAL : OF_LOOP_NONE);
+		needsSave = true;
     }
     //BPM
 	else if(e.widget == bpmDialer){
-    	timeline.setBPM(settings.bpm = bpmDialer->getValue());
+		if(settings.bpm != bpmDialer->getValue()){
+	    	timeline.setBPM(settings.bpm = bpmDialer->getValue());
+			needsSave = true;
+		}
 	}
     else if(e.widget == useBPMToggle){
         settings.useBPM = useBPMToggle->getValue();
         timeline.setShowBPMGrid(settings.useBPM);
         timeline.enableSnapToBPM(settings.useBPM);
+		needsSave = true;
     }
 	else if(e.widget == snapToKeysToggle){
 		timeline.enableSnapToOtherKeyframes(snapToKeysToggle->getValue());
@@ -612,6 +620,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
             receiver.setup(settings.oscInPort);
 			oscLock.unlock();
         }
+		needsSave = true;		
     }
 	//INCOMING PORT
 	else if(e.widget == oscInPortInput){
@@ -624,6 +633,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			oscLock.lock();
 	        receiver.setup(settings.oscInPort);
 			oscLock.unlock();
+			needsSave = true;
         }
         else {
             oscInPortInput->setTextString( ofToString(settings.oscInPort) );
@@ -637,6 +647,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			oscLock.lock();
             sender.setup(settings.oscIP, settings.oscOutPort);
 			oscLock.unlock();
+			needsSave = true;			
         }
     }
 
@@ -672,6 +683,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			oscLock.lock();
 			sender.setup(settings.oscIP, settings.oscOutPort);
 			oscLock.unlock();
+			needsSave = true;			
 		}
 		oscOutIPInput->setTextString(settings.oscIP);
     }
@@ -686,6 +698,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			oscLock.lock();
 			sender.setup(settings.oscIP, settings.oscOutPort);
 			oscLock.unlock();
+			needsSave = true;			
         }
         else {
             oscOutPortInput->setTextString( ofToString(settings.oscOutPort) );
@@ -744,6 +757,8 @@ void DurationController::update(ofEventArgs& args){
     map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
     while(it != headers.end()){
 		
+		needsSave |= it->second->getModified();
+		
 		if(timeline.isModal() && it->second->getGui()->isEnabled()){
 			it->second->getGui()->disable();
 		}
@@ -768,6 +783,7 @@ void DurationController::update(ofEventArgs& args){
 #endif
             headers.erase(it);
 			unlock();
+			needsSave = true;
             break;
         }
         it++;
@@ -778,25 +794,30 @@ void DurationController::update(ofEventArgs& args){
 void DurationController::draw(ofEventArgs& args){
 
 	//go through and draw all the overlay backgrounds to indicate 'hot' track sfor recording
-//	if(settings.oscInEnabled){
-		ofPushStyle();
-		map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
-		for(trackit = headers.begin(); trackit != headers.end(); trackit++){
-			//TODO: check to make sure recording is enabled on this track
-			//TODO: find a way to illustrate 'invalid' output sent to this track
-			float timeSinceInput = recordTimer.getAppTimeSeconds() - trackit->second->lastInputReceivedTime;
-			if(timeSinceInput > 0 && timeSinceInput < 1.0){
-				//oscilating red to indicate active
-				ofSetColor(200,20,0,(1-timeSinceInput)*(80 + (20*sin(ofGetElapsedTimef()*8)*.5+.5)));
-				ofRect(trackit->second->getTrack()->getDrawRect());
-			}
+	ofPushStyle();
+	map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
+	for(trackit = headers.begin(); trackit != headers.end(); trackit++){
+		//TODO: check to make sure recording is enabled on this track
+		//TODO: find a way to illustrate 'invalid' output sent to this track
+		float timeSinceInput = recordTimer.getAppTimeSeconds() - trackit->second->lastInputReceivedTime;
+		if(timeSinceInput > 0 && timeSinceInput < 1.0){
+			//oscilating red to indicate active
+			ofSetColor(200,20,0,(1-timeSinceInput)*(80 + (20*sin(ofGetElapsedTimef()*8)*.5+.5)));
+			ofRect(trackit->second->getTrack()->getDrawRect());
 		}
-		ofPopStyle();
-//	}
+	}
+	ofPopStyle();
 	
 	timeline.draw();
 	gui->draw();
 
+	if(needsSave || timeline.hasUnsavedChanges()){
+		ofPushStyle();
+		ofSetColor(200,20,0, 40);
+		ofFill();
+		ofRect(*saveButton->getRect());
+		ofPopStyle();
+	}
 	drawTooltips();
 	//drawTooltipDebug();
 }
@@ -814,6 +835,7 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
     int key = keyArgs.key;
 	if(key == ' '){
         timeline.togglePlay();
+		playpauseToggle->toggleValue();
     }
     
     if(key == 'i'){
@@ -823,6 +845,10 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
     if(key == 'o'){
         timeline.setOutPointAtPlayhead();
     }
+	
+	if(ofGetModifierShortcutKeyPressed() && (key == 's' || key=='s'-96) ){
+		saveProject();
+	}
 }
 
 //--------------------------------------------------------------
@@ -889,7 +915,6 @@ void DurationController::loadProject(string projectPath, bool forceCreate){
 //--------------------------------------------------------------
 void DurationController::loadProject(string projectPath, string projectName, bool forceCreate){
     
-	
     ofxXmlSettings projectSettings;
 	string projectDataPath = ofToDataPath(projectPath+"/.durationproj");
 	if(!projectSettings.loadFile(projectDataPath)){
@@ -905,7 +930,6 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 	lock();
 	
     headers.clear(); //smart pointers will call destructor
-    
     timeline.reset();
     timeline.setWorkingFolder(projectPath);
 	
@@ -1039,6 +1063,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     defaultSettings.setValue("lastProjectPath", settings.path);
     defaultSettings.setValue("lastProjectName", settings.name);
     defaultSettings.saveFile();
+	
+	needsSave = false;
 }
 
 //--------------------------------------------------------------
@@ -1120,6 +1146,7 @@ void DurationController::saveProject(){
 	projectSettings.popTag(); //projectSettings
     projectSettings.saveFile(settings.settingsPath);
 	
+	needsSave = false;
 }
 
 //--------------------------------------------------------------

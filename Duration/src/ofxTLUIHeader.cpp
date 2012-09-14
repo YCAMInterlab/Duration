@@ -21,7 +21,7 @@ ofxTLUIHeader::ofxTLUIHeader(){
 	maxDialer = NULL;
     sendOSCEnable = NULL;
 	receiveOSCEnable = NULL;
-
+	modified = false;
 
 }
 
@@ -144,9 +144,11 @@ bool ofxTLUIHeader::getShouldDelete(){
     return shouldDelete;
 }
 
-//string ofxTLUIHeader::getPalettePath(){
-//	return customPalettePath;
-//}
+bool ofxTLUIHeader::getModified(){
+	bool b = modified;
+	modified = false;
+	return b;
+}
 
 ofxTLTrack* ofxTLUIHeader::getTrack(){
 	return trackHeader->getTrack();
@@ -170,6 +172,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         ofRange newValueRange = ofRange(newMinValue, maxDialer->getValue());
         ofxTLCurves* track = (ofxTLCurves*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
+		modified = true;
     }
 	else if(e.widget->getName() == "max"){
         float newMaxValue = MAX(minDialer->getValue(), maxDialer->getValue());
@@ -177,6 +180,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         ofRange newValueRange = ofRange(minDialer->getValue(), newMaxValue);
         ofxTLCurves* track = (ofxTLCurves*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
+		modified = true;
     }
     else if(e.widget->getName() == translation->translateKey("delete")){
         ofxUIDropDownList* deleteDropDown = (ofxUIDropDownList*)e.widget;
@@ -201,6 +205,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 		if(r.bSuccess){
 			ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
 			colorTrack->loadColorPalette(r.getPath());
+			modified = true;
 		}		
 	}
 #ifdef TARGET_OSX
@@ -209,12 +214,16 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 		if(r.bSuccess){
 			ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
 			audioTrack->loadSoundfile(r.getPath());
+			modified = true;
 		}
 	}
 #endif
     //this is polled from outside
-//	else if(e.widget->getName() == "send osc"){
-//
-//    }
+	else if(e.widget == sendOSCEnable){
+		modified = true;
+    }
+	else if(e.widget == receiveOSCEnable){
+		modified = true;
+    }
 }
 
