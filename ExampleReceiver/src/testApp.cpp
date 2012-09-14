@@ -18,7 +18,7 @@ void testApp::setup(){
 	ofSetVerticalSync(true);
 	ofBackground(30, 30, 130);
 	ofEnableAlphaBlending();
-	
+	showFPS = false;
 	ofToggleFullscreen();
 	
 	ofSetCircleResolution(200);
@@ -118,7 +118,7 @@ void testApp::threadedFunction(){
 					{
 						if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
 							ControlCircle& circle = circleWithName(components[0]);
-							float y = m.getArgAsFloat(0);
+							float y = 1-m.getArgAsFloat(0);
 							circle.setY(ofMap(y, 0, 1.0, CIRCLE_RADIUS, ofGetHeight()-CIRCLE_RADIUS));
 						}
 					}
@@ -285,7 +285,7 @@ void testApp::draw(){
 	particles.draw();
 
 	
-	font.drawString(ofToString(ofGetFrameRate()), 30, 30);
+	if(showFPS) font.drawString(ofToString(ofGetFrameRate()), 30, 30);
 	if(doGraph){
 		ofPolyline p;
 		for(int i = 0; i < MIN(xs.size(), ofGetWidth()); i++){
@@ -311,7 +311,12 @@ void testApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-
+	if(key == 'f'){
+		ofToggleFullscreen();
+	}
+	if(key == 's'){
+		showFPS = !showFPS;
+	}
 }
 
 //--------------------------------------------------------------

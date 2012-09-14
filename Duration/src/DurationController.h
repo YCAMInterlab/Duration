@@ -115,7 +115,8 @@ class DurationController : public ofThread  {
 	
     bool shouldCreateNewProject;
     bool shouldLoadProject;
-		
+	string projectToLoad;
+	
 	ofxOscReceiver receiver;
 	ofxOscSender sender;
 	
@@ -148,6 +149,7 @@ class DurationController : public ofThread  {
 	float oscRate;
 	unsigned long lastOSCBundleSent;
 	ofxFTGLFont tooltipFont;
-
+	bool needsSave;
+	
 };
 

@@ -44,6 +44,7 @@ class testApp : public ofBaseApp, public ofThread {
 	float maxWidth;
 	float minWidth;
 	
+	bool showFPS;
 	bool doGraph;
 	vector<float> xs;
 	vector<float> ys;

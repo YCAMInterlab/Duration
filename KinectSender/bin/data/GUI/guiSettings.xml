@@ -1,12 +1,12 @@
 <Widget>
-    <Kind>5</Kind>
+    <Kind>4</Kind>
     <Name>far threshold</Name>
-    <Value>186.4</Value>
+    <Value>200</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>IP</Name>
-    <Value>localhost</Value>
+    <Value>localhost&#x1B;</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>

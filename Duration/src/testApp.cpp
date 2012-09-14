@@ -11,7 +11,8 @@ void testApp::setup(){
     ofBackground(.15*255);
     ofEnableAlphaBlending();
     ofEnableSmoothing();
-
+	ofSetEscapeQuitsApp(false);
+	
 	controller.setup();
 #ifdef TARGET_OSX	
 	removeCocoaMenuFromGlut();

@@ -34,8 +34,10 @@ void testApp::setup() {
 	
 	drawCursor = false;
 
-	ui = new ofxUICanvas();
-	ui->addWidgetRight( new ofxUISlider("far threshold", 0, 200, &farThreshold, 10, 250) );
+	
+	ui = new ofxUICanvas(0,0, ofGetWidth(), 75);
+	ui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
+	ui->addSlider("far threshold", 0, 200, &farThreshold, 250, 10);
 	
 	ip = ui->addTextInput("IP", "localhost", 200);
 	ip->setAutoClear(false);
@@ -227,6 +229,10 @@ void testApp::exit() {
 void testApp::keyPressed (int key) {
 	if(key == ' '){
 		shouldCaptureBackground = true;
+	}
+	
+	if(key == 'f'){
+		ofToggleFullscreen();
 	}
 }
 
