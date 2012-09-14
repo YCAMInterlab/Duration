@@ -462,7 +462,7 @@ void DurationController::stopRecording(){
 //--------------------------------------------------------------
 void DurationController::bangFired(ofxTLBangEventArgs& bang){
 // 	ofLogNotice() << "Bang from " << bang.track->getDisplayName() << " at time " << bang.currentTime << " with flag " << bang.flag;
-	if(settings.oscOutEnabled){
+	if(!settings.oscOutEnabled){
 		return;
 	}
     string trackType = bang.track->getTrackType();
