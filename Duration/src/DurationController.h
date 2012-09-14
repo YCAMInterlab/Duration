@@ -115,7 +115,8 @@ class DurationController : public ofThread  {
 	
     bool shouldCreateNewProject;
     bool shouldLoadProject;
-		
+	string projectToLoad;
+	
 	ofxOscReceiver receiver;
 	ofxOscSender sender;
 	

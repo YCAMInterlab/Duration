@@ -100,14 +100,14 @@ void DurationController::setup(){
             }
         }
     }
-	if(translation.getCurrentLanguage() == "japanese"){
-		tooltipFont.loadFont("GUI/AxisStd-Regular.otf", 5);
-		timeline.setupFont("GUI/AxisStd-Regular.otf", 6);
-	}
-	else{
-		tooltipFont.loadFont("GUI/NewMedia Fett.ttf", 5);
-		timeline.setupFont("GUI/NewMedia Fett.ttf", 6);
-	}
+//	if(translation.getCurrentLanguage() == "japanese"){
+		tooltipFont.loadFont("GUI/mplus-1c-regular.ttf", 5);
+		timeline.setupFont("GUI/mplus-1c-regular.ttf", 6);
+//	}
+//	else{
+//		tooltipFont.loadFont("GUI/NewMedia Fett.ttf", 5);
+//		timeline.setupFont("GUI/NewMedia Fett.ttf", 6);
+//	}
 	
 	//setup timeline
 	timeline.setup();
@@ -556,15 +556,17 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 				unlock();
 				
                 addTrackDropDown->clearSelected();
-
             }
         }
     }
     else if(e.widget == projectDropDown){
         if(projectDropDown->isOpen()){
             timeline.disable();
+			addTrackDropDown->setVisible(false);
         }
 		else {
+			addTrackDropDown->setVisible(true);
+			addTrackDropDown->close();
             timeline.enable();
             if(projectDropDown->getSelected().size() > 0){
                 string selectedProjectName = projectDropDown->getSelected()[0]->getName();
@@ -573,9 +575,11 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
                 }
                 else if(selectedProjectName == translation.translateKey("open project...")){
                     shouldLoadProject = true;
+					projectToLoad = "";
                 }
                 else {
-                    loadProject(ofToDataPath(defaultProjectDirectoryPath+selectedProjectName), selectedProjectName);
+					shouldLoadProject = true;
+					projectToLoad = ofToDataPath(defaultProjectDirectoryPath+selectedProjectName);
                 }
                 projectDropDown->clearSelected();
             }
@@ -716,10 +720,16 @@ void DurationController::update(ofEventArgs& args){
 	}
     if(shouldLoadProject){
         shouldLoadProject = false;
-        ofFileDialogResult r = ofSystemLoadDialog("Load Project", true);
-        if(r.bSuccess){
-	        loadProject(r.getPath(), r.getName());
-        }
+		if(projectToLoad != ""){
+			loadProject(projectToLoad);
+			projectToLoad = "";
+		}
+		else{
+			ofFileDialogResult r = ofSystemLoadDialog("Load Project", true);
+			if(r.bSuccess){
+				loadProject(r.getPath(), r.getName());
+			}
+		}
     }
     
     if(shouldCreateNewProject){
