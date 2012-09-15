@@ -13,11 +13,15 @@ ControlCircle::ControlCircle(){
 	color = ofColor(200, 200, 50);
 	lastMessageReceived = ofGetElapsedTimef();
 	receivedbang = true;
+	drawTail = false;
+	drawParticles = false;
+	tailSwitched = false;
 }
 
 void ControlCircle::update(){
 	lastPosition = position;
 	lastColor = color;
+	tailSwitched = false;
 }
 
 ofVec3f ControlCircle::getLastPosition(){
@@ -78,4 +82,19 @@ void ControlCircle::bang(){
 void ControlCircle::setQuote(string quote){
 	quoteReceivedTime = ofGetElapsedTimef();
 	currentQuote = quote;
+}
+
+void ControlCircle::setDrawTail(bool draw){
+	if(draw != drawTail){
+		tailSwitched = true;
+		drawTail = draw;
+	}
+}
+bool ControlCircle::getDrawTail(){
+	return drawTail;
+}
+
+bool ControlCircle::didTailSwitch(){
+	bool b = tailSwitched;
+	return tailSwitched;
 }

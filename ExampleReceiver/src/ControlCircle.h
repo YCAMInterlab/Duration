@@ -36,7 +36,11 @@ class ControlCircle {
 	void bang();
 	void setQuote(string quote);
 	vector<ControlCircleTrail> trail;
+	void setDrawTail(bool draw);
+	bool getDrawTail();
+	bool didTailSwitch();
 	
+	bool drawParticles;
   protected:
 	ofVec3f lastPosition;
 	ofVec3f position;
@@ -44,7 +48,8 @@ class ControlCircle {
 	string currentQuote;
 	float quoteReceivedTime;
 	float lastBangTime;
-	
+	bool drawTail;
+	bool tailSwitched;
 	float lastTimeMoved;
 	string name;
 	ofColor color;

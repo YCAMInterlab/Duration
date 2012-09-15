@@ -13,6 +13,7 @@
 class ColorParticle {
   public:
 	ColorParticle(){
+		lifeSpanMultiplier = 1.0;;
 //		float birthTime;
 //		ofColor color = ofColo4(0,0,0);
 //		ofVec3f position = ofVec3f(0,0,0);
@@ -26,6 +27,8 @@ class ColorParticle {
 	ofVec3f velocity;
 	ofVec3f force;
 	ofVec3f origin;
+	float lifeSpanMultiplier;
+	bool hero;
 	//todo connect them and have them break away
 	vector<ColorParticle> nearNeighbors;
 };
@@ -33,17 +36,23 @@ class ColorParticle {
 class ColorParticleController {
 
   public:
-	
+	float lifeSpanMin;
+	float lifeSpanMax;
+	float sparkleSpan;
+	float lifeSpanMultiplier;
 	ColorParticleController() {
 		currentOffset = 0;
 		amplitude = 0;
 		density = 0;
 		speed = 0;
+		lifeSpanMin = 1.0;
+		lifeSpanMax = 4;
+		sparkleSpan = .05;
+
 	};
-	
 	void addParticles(vector<ColorParticle>& newParticles){
 		for(int i = particles.size()-1; i >= 0; i--){
-			if(ofGetElapsedTimef() - particles[i].birthTime > 5){
+			if(ofGetElapsedTimef() - particles[i].birthTime > particles[i].lifeSpanMultiplier*(lifeSpanMax + sparkleSpan)){
 				particles.erase(particles.begin()+i);
 			}
 		}
@@ -57,33 +66,55 @@ class ColorParticleController {
 	}
 	
 	void update(){
-		float amplitude = .08;
-		float density = 600;
-		float speed = .007;
+
+		float amplitude = .4;
+		float density = 300;
+		float speed = .018;
 		currentOffset += speed;
 		mesh.clear();
+		heroMesh.clear();
 //		for(int i = 0; i < particles.size(); i++){
 		for(int i = particles.size()-1; i >= 0; i--){
 			ColorParticle& p = particles[i];
-			ofVec3f& pos = p.position;
-			p.force =  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,
-							   ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+1000)*amplitude,
-							   ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+2000)*amplitude );
-			
-			p.velocity += p.force;
-			p.position += p.velocity;
-			mesh.addVertex(p.position);
-			p.color.a = ofMap(p.birthTime, ofGetElapsedTimef()-5, ofGetElapsedTimef()-10, 255, 0);
-			mesh.addColor(p.color);
+			float time = ofGetElapsedTimef() - p.birthTime;
+			if(time > 0){
+				ofVec3f& pos = p.position;
+				p.force =  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,
+								   ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+1000)*amplitude,
+								   ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+2000)*amplitude );
+				
+				p.velocity += p.force;
+				p.position += p.velocity;
+				if(time > p.lifeSpanMultiplier*lifeSpanMax){
+					p.color.a = 255;
+				}
+				else{
+					p.color.a = ofMap(time, p.lifeSpanMultiplier*lifeSpanMin, p.lifeSpanMultiplier*lifeSpanMax, 255, 0, true);
+				}
+				//p.color.a = 255;
+				//cout << "birth time " << time << " alpha " << int(p.color.a) << endl;
+				if(p.hero){
+					heroMesh.addColor(p.color);
+					heroMesh.addVertex(p.position);
+				}
+				else{
+					mesh.addColor(p.color);
+					mesh.addVertex(p.position);
+				}
+			}
+
 		}
 	}
 	
 	void draw(){
-		glPointSize(4.0);
+		glPointSize(6.0);
 		mesh.drawVertices();
+		glPointSize(10.0);
+		heroMesh.drawVertices();
 	}
 	
 	ofMesh mesh;
+	ofMesh heroMesh;
 	vector<ColorParticle> particles;
 	float currentOffset;
     float amplitude;

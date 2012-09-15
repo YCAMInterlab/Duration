@@ -89,7 +89,12 @@ void testApp::threadedFunction(){
 			vector<string> components = ofSplitString(ofToLower(m.getAddress()),"/", true,true);
 			if(components.size() == 1){
 				//check for flag quotes
-				if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING && hasCircleWithName(components[0])){
+				if(m.getNumArgs() == 0){
+					//bang!
+					ControlCircle& circle = circleWithName(components[0]);
+					circle.bang();
+				}
+				else if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING && hasCircleWithName(components[0])){
 					circleWithName(components[0]).setQuote(m.getArgAsString(0));
 				}
 				//check for global events
@@ -97,49 +102,54 @@ void testApp::threadedFunction(){
 			//check for commands
 			else if(components.size() == 2){
 
-				if(m.getNumArgs() == 0){
-					//bang!
-					cout << "BANG!" << endl;
-					ControlCircle& circle = circleWithName(components[0]);
-					circle.bang();
+				if(components[1] == "x" ||
+				   components[1] == "sidetoside")
+				{
+					if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+						ControlCircle& circle = circleWithName(components[0]);
+						float x = m.getArgAsFloat(0);
+						circle.setX(ofMap(x, 0, 1.0, CIRCLE_RADIUS, ofGetWidth()-CIRCLE_RADIUS));
+					}
 				}
-				else {
-					if(components[1] == "x" ||
-					   components[1] == "sidetoside")
-					{
-						if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
-							ControlCircle& circle = circleWithName(components[0]);
-							float x = m.getArgAsFloat(0);
-							circle.setX(ofMap(x, 0, 1.0, CIRCLE_RADIUS, ofGetWidth()-CIRCLE_RADIUS));
-						}
+				else if(components[1] == "y" ||
+						components[1] == "upanddown")
+				{
+					if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+						ControlCircle& circle = circleWithName(components[0]);
+						float y = 1-m.getArgAsFloat(0);
+						circle.setY(ofMap(y, 0, 1.0, CIRCLE_RADIUS, ofGetHeight()-CIRCLE_RADIUS));
 					}
-					else if(components[1] == "y" ||
-							components[1] == "upanddown")
-					{
-						if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
-							ControlCircle& circle = circleWithName(components[0]);
-							float y = 1-m.getArgAsFloat(0);
-							circle.setY(ofMap(y, 0, 1.0, CIRCLE_RADIUS, ofGetHeight()-CIRCLE_RADIUS));
-						}
+				}
+				else if(components[1] == "z" ||
+						components[1] == "inandout")
+				{
+					if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+						ControlCircle& circle = circleWithName(components[0]);
+						float z = m.getArgAsFloat(0);
+						circle.setZ(ofMap(z, 0, 1.0, 0, 500));
 					}
-					else if(components[1] == "z" ||
-							components[1] == "inandout")
+				}
+				else if(components[1] == "color"){
+					if(m.getNumArgs() >= 3 &&
+					   m.getArgType(0) == OFXOSC_TYPE_INT32 &&
+					   m.getArgType(1) == OFXOSC_TYPE_INT32 &&
+					   m.getArgType(2) == OFXOSC_TYPE_INT32)
 					{
-						if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
-							ControlCircle& circle = circleWithName(components[0]);
-							float z = m.getArgAsFloat(0);
-							circle.setZ(ofMap(z, 0, 1.0, 0, 500));
-						}
+						ControlCircle& circle = circleWithName(components[0]);
+						circle.setColor(ofColor(m.getArgAsInt32(0),m.getArgAsInt32(1),m.getArgAsInt32(2)));
+					}						
+				}
+				//switch on and off tail
+				else if(components[1] == "tail"){
+					if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_INT32){
+						ControlCircle& circle = circleWithName(components[0]);
+						circle.setDrawTail(m.getArgAsInt32(0) == 1);
 					}
-					else if(components[1] == "color"){
-						if(m.getNumArgs() >= 3 &&
-						   m.getArgType(0) == OFXOSC_TYPE_INT32 &&
-						   m.getArgType(1) == OFXOSC_TYPE_INT32 &&
-						   m.getArgType(2) == OFXOSC_TYPE_INT32)
-						{
-							ControlCircle& circle = circleWithName(components[0]);
-							circle.setColor(ofColor(m.getArgAsInt32(0),m.getArgAsInt32(1),m.getArgAsInt32(2)));
-						}						
+				}
+				else if(components[1] == "particles"){
+					if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_INT32){
+						ControlCircle& circle = circleWithName(components[0]);
+						circle.drawParticles = m.getArgAsInt32(0) == 1;
 					}
 				}
 			}
@@ -159,42 +169,82 @@ void testApp::threadedFunction(){
 				ofColor color = circle.getColor();
 				if(lastPosition != position){
 
+					//tail params
 					float dist = lastPosition.distance(position);
-					
-					ControlCircleTrail trail;
-					trail.color = color;
-					
-					float width =  ofMap(dist, maxDistance, minDistance, minWidth, maxWidth, true);
 					ofVec3f direction = (position - lastPosition).normalized();
 					ofVec3f left = direction.getCrossed(ofVec3f(0,0,1));
 					ofVec3f right = left.getRotated(180, direction);
+					float width =  ofMap(dist, maxDistance, minDistance, minWidth, maxWidth, true);
+					float startTime = ofGetElapsedTimef();
 					
-					trail.left = position + left*width/2;
-					trail.right = position + right*width/2;
+					if(circle.getDrawTail() && circle.didTailSwitch()){
+						ControlCircleTrail trail;
+						trail.color = ofColor(color, 0);
+						trail.left = position + left*width/2;
+						trail.right = position + right*width/2;
+						trail.birthTime = startTime;
+						
+						trailMutex.lock();
+						circle.trail.push_back(trail);
+						trailMutex.unlock();
+					}
 					
-					trail.birthTime = ofGetElapsedTimef();
-					trailMutex.lock();
-					circle.trail.push_back(trail);
-					trailMutex.unlock();
-					for(int i = 0; i < 5; i++){
-						ColorParticle p;
-						p.birthTime = trail.birthTime + ofRandom(0,4);
-						p.color = color;
-						p.velocity = (direction*(maxWidth-width)).rotated(ofRandom(-20,20), ofVec3f(0,0,1))*.2;
-						p.origin = position;
-						p.position = position + ofVec3f(ofRandom(-30,30),ofRandom(-30,30), 0);
-						newParticles.push_back(p);
+					if(circle.getDrawTail() || circle.didTailSwitch()){
+						ControlCircleTrail trail;
+						trail.color = color;
+						
+						trail.left = position + left*width/2;
+						trail.right = position + right*width/2;
+						trail.birthTime = startTime;
+						
+						trailMutex.lock();
+						circle.trail.push_back(trail);
+						trailMutex.unlock();
+					}
+					
+					if(!circle.getDrawTail() && circle.didTailSwitch()){
+						ControlCircleTrail trail;
+						trail.color = ofColor(color, 0);
+						
+						trail.left = position + left*width/2;
+						trail.right = position + right*width/2;
+						trail.birthTime = startTime;
+						
+						trailMutex.lock();
+						circle.trail.push_back(trail);
+						trailMutex.unlock();
+					}
+
+					if(circle.drawParticles){
+						for(int i = 0; i < 30; i++){
+							ColorParticle p;
+							p.birthTime = startTime + ofRandom(0,2);
+							p.hero = ofRandomuf() > .9;
+							p.color = ofColor(ofClamp(color.r + ofRandomf()*40, 0, 255),
+											  ofClamp(color.g + ofRandomf()*40, 0, 255),
+											  ofClamp(color.b + ofRandomf()*40, 0, 255), 0);
+
+							p.velocity = (direction*(maxWidth-width)).rotated(ofRandom(-20,20), ofVec3f(0,0,1))*.2;
+							p.origin = position;
+							p.lifeSpanMultiplier = 1.0;
+							p.position = position + ofVec3f(ofRandom(-30,30),ofRandom(-30,30), 0);
+							newParticles.push_back(p);
+						}
 					}
 				}
 				
 				if(circle.didBang()){
-					for(int i = 0; i < 1000; i++){
+					for(int i = 0; i < 2000; i++){
 						ColorParticle p;
-						p.birthTime = ofGetElapsedTimef() + ofRandom(0,10);
-						p.color = color;
-						p.velocity = ofVec3f(0,1,0).getRotated(ofRandomf()*360, ofVec3f(0,0,1))*5;
+						p.hero = ofRandomuf() > .65;
+						p.birthTime = ofGetElapsedTimef() + powf(ofRandomuf(),2)*.5;
+						p.color = ofColor(ofClamp(color.r + ofRandomuf()*90, 0, 255),
+										  ofClamp(color.g + ofRandomuf()*90, 0, 255),
+										  ofClamp(color.b + ofRandomuf()*90, 0, 255), 0);
+						p.velocity = ofVec3f(0,1,0).getRotated(ofRandomf()*360, ofVec3f(0,0,1))*ofRandom(8.,12.);
 						p.origin = position;
 						p.position = position + ofVec3f(ofRandom(-30,30),ofRandom(-30,30), 0);
+						p.lifeSpanMultiplier = .5;
 						newParticles.push_back(p);
 					}
 				}
@@ -237,6 +287,8 @@ void testApp::draw(){
 	ofEnableAlphaBlending();
 	ofPushStyle();
 	
+	particles.draw();
+
 	map<string, ControlCircle>::iterator it;
 	for(it = circles.begin(); it != circles.end(); it++){
 		ControlCircle& circle = it->second;
@@ -246,7 +298,7 @@ void testApp::draw(){
 			ofFloatColor c = ofFloatColor(circle.trail[i].color.r/255.0,
 							 			  circle.trail[i].color.g/255.0,
 										  circle.trail[i].color.b/255.0,
-										  ofMap(circle.trail[i].birthTime, ofGetElapsedTimef(), ofGetElapsedTimef()-20, 1.0, 0, true));
+										  circle.trail[i].color.a == 0 ? 0 : powf(ofMap(circle.trail[i].birthTime, ofGetElapsedTimef(), ofGetElapsedTimef()-10, 1.0, 0, true),2.0));
 			colors.push_back(c);
 			colors.push_back(c);
 			vertices.push_back(circle.trail[i].left);
@@ -282,7 +334,6 @@ void testApp::draw(){
 		ofPopStyle();
 
 	}	
-	particles.draw();
 
 	
 	if(showFPS) font.drawString(ofToString(ofGetFrameRate()), 30, 30);
