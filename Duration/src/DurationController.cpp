@@ -80,12 +80,16 @@ void DurationController::setup(){
     vector<string> projects;
     projects.push_back(translation.translateKey("new project..."));
     projects.push_back(translation.translateKey("open project..."));
-    
+   
+#ifdef TARGET_WIN32
+    defaultProjectDirectoryPath = ofToDataPath(ofFilePath::getUserHomeDir() + "\\Documents\\Duration\\");
+#else
     defaultProjectDirectoryPath = ofToDataPath(ofFilePath::getUserHomeDir() + "/Documents/Duration/");
-    ofDirectory projectDirectory = ofDirectory(defaultProjectDirectoryPath);
+#endif
+	ofDirectory projectDirectory = ofDirectory(defaultProjectDirectoryPath);
 	
     if(!projectDirectory.exists()){
-        projectDirectory.create();
+        projectDirectory.create(true);
     }
     
     projectDirectory.listDir();
@@ -880,14 +884,16 @@ void DurationController::newProject(string newProjectPath, string newProjectName
     newProjectSettings.name = newProjectName;
     newProjectSettings.path = ofToDataPath(newProjectPath);
     newProjectSettings.settingsPath = ofToDataPath(newProjectSettings.path + "/.durationproj");
-    
+#ifdef TARGET_WIN32
+	ofStringReplace(newProjectSettings.path,"/", "\\");
+#endif
     ofDirectory newProjectDirectory(newProjectSettings.path);
     if(newProjectDirectory.exists()){
 		//TODO: translate
     	ofSystemAlertDialog(translation.translateKey("Error creating new project. The folder already exists.")+" " + newProjectSettings.path);
         return;
     }
-    if(!newProjectDirectory.create()){
+    if(!newProjectDirectory.create(true)){
     	ofSystemAlertDialog(translation.translateKey("Error creating new project. The folder could not be created.")+" " + newProjectSettings.path);
         return;
     }
@@ -911,7 +917,11 @@ void DurationController::newProject(string newProjectPath, string newProjectName
 void DurationController::loadProject(string projectPath, bool forceCreate){
 	//scrape off the last component of the filename for the project name
 	projectPath = ofFilePath::removeTrailingSlash(projectPath);
+#ifdef TARGET_WIN32
+	vector<string> pathComponents = ofSplitString(projectPath, "\\");
+#else
 	vector<string> pathComponents = ofSplitString(projectPath, "/");
+#endif	
 	loadProject(projectPath, pathComponents[pathComponents.size()-1], forceCreate);
 }
 
@@ -1304,6 +1314,7 @@ void DurationController::drawTooltipDebug(){
 
 void DurationController::exit(ofEventArgs& e){
 	lock();
+	timeline.removeFromThread();
 	headers.clear();
 	timeline.reset();
 	unlock();
