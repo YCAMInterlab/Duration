@@ -437,6 +437,7 @@ void DurationController::handleOscOut(){
 	
 	//any bangs that came our way this frame send them out too
 	for(int i = 0; i < bangsReceived.size(); i++){
+//		cout << "FOUND BANGS!" << endl;
 		bundle.addMessage(bangsReceived[i]);
 	}
 	numMessages += bangsReceived.size();
@@ -465,16 +466,18 @@ void DurationController::bangFired(ofxTLBangEventArgs& bang){
 	if(!settings.oscOutEnabled){
 		return;
 	}
+	
     string trackType = bang.track->getTrackType();
     if(!headers[bang.track->getName()]->sendOSC()){
         return;
     }
     ofxOscMessage m;
     m.setAddress( ofFilePath::addLeadingSlash(bang.track->getDisplayName()) );
-    m.addIntArg(bang.currentMillis);
+
     if(trackType == "Flags"){
         m.addStringArg(bang.flag);
     }
+
 	bangsReceived.push_back(m);	
 }
 
