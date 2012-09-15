@@ -884,11 +884,11 @@ void DurationController::newProject(string newProjectPath, string newProjectName
     ofDirectory newProjectDirectory(newProjectSettings.path);
     if(newProjectDirectory.exists()){
 		//TODO: translate
-    	ofSystemAlertDialog("The folder \"" + newProjectName + "\" already exists.");
+    	ofSystemAlertDialog(translation.translateKey("Error creating new project. The folder already exists.")+" " + newProjectSettings.path);
         return;
     }
     if(!newProjectDirectory.create()){
-    	ofSystemAlertDialog("The folder \"" + newProjectSettings.path + "\" could not be created.");
+    	ofSystemAlertDialog(translation.translateKey("Error creating new project. The folder could not be created.")+" " + newProjectSettings.path);
         return;
     }
     

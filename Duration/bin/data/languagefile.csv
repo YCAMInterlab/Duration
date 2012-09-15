@@ -34,3 +34,5 @@ remote port,remote port,remote port
 receive osc,receive osc,receive osc
 change palette,change palette,change palette
 select audio,select audio,select audio
+Error creating new project. The folder could not be created.,Error creating new project. The folder could not be created.,Error creating new project. The folder could not be created.
+Error creating new project. The folder already exists.,Error creating new project. The folder already exists.,Error creating new project. The folder already exists.
