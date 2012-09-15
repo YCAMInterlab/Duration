@@ -44,6 +44,7 @@ class ofxTLUIHeader {
 	string getTrackType();
 	ofxLocalization* translation;
 	ofxUICanvas* getGui();
+	bool getModified();
 	
   protected:
     
@@ -61,4 +62,5 @@ class ofxTLUIHeader {
 	
 	string trackType;
     bool shouldDelete;
+	bool modified;
 };

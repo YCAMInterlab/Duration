@@ -9,6 +9,7 @@ openFrameworks.a
 openFrameworksDebug.a
 openFrameworksUniversal.a
 *.app/`
+DerivedData
 
 #codeblocks files
 apps/*/*/*.layout
