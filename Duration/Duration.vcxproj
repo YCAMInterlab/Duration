@@ -75,7 +75,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);OFX_UI_FONT_RENDERER=ofxFTGLFont;OFX_UI_FONT_INCLUDE=&lt;ofxFTGLFont.h&gt;;OFX_UI_FONT_NAME="GUI/AxisStd-Regular.otf"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);OFX_UI_FONT_RENDERER=ofxFTGLFont;OFX_UI_FONT_INCLUDE=&lt;ofxFTGLFont.h&gt;;OFX_UI_FONT_NAME="GUI/AxisStd-Regular.otf";OFX_TEXTFIELD_FONT_RENDERER=ofxFTGLFont;OFX_TEXTFIELD_FONT_INCLUDE=&lt;ofxFTGLFont.h&gt;;OFX_TIMELINE_FONT_RENDERER=ofxFTGLFont;OFX_TIMELINE_FONT_INCLUDE=&lt;ofxFTGLFont.h&gt;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>

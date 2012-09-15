@@ -79,12 +79,16 @@ void DurationController::setup(){
     vector<string> projects;
     projects.push_back(translation.translateKey("new project..."));
     projects.push_back(translation.translateKey("open project..."));
-    
+   
+#ifdef TARGET_WIN32
+    defaultProjectDirectoryPath = ofToDataPath(ofFilePath::getUserHomeDir() + "\\Documents\\Duration\\");
+#else
     defaultProjectDirectoryPath = ofToDataPath(ofFilePath::getUserHomeDir() + "/Documents/Duration/");
-    ofDirectory projectDirectory = ofDirectory(defaultProjectDirectoryPath);
+#endif
+	ofDirectory projectDirectory = ofDirectory(defaultProjectDirectoryPath);
 	
     if(!projectDirectory.exists()){
-        projectDirectory.create();
+        projectDirectory.create(true);
     }
     
     projectDirectory.listDir();
@@ -841,14 +845,16 @@ void DurationController::newProject(string newProjectPath, string newProjectName
     newProjectSettings.name = newProjectName;
     newProjectSettings.path = ofToDataPath(newProjectPath);
     newProjectSettings.settingsPath = ofToDataPath(newProjectSettings.path + "/.durationproj");
-    
+#ifdef TARGET_WIN32
+	ofStringReplace(newProjectSettings.path,"/", "\\");
+#endif
     ofDirectory newProjectDirectory(newProjectSettings.path);
     if(newProjectDirectory.exists()){
 		//TODO: translate
     	ofSystemAlertDialog("The folder \"" + newProjectName + "\" already exists.");
         return;
     }
-    if(!newProjectDirectory.create()){
+    if(!newProjectDirectory.create(true)){
     	ofSystemAlertDialog("The folder \"" + newProjectSettings.path + "\" could not be created.");
         return;
     }
