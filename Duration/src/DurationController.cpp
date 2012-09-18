@@ -74,7 +74,14 @@ void DurationController::setup(){
 		ofLogError("DurationController::setup") << "error setting up translation, unpredictable stuff will happen" << endl;
 	}
 	
-	translation.setCurrentLanguage("japanese");
+	ofxXmlSettings defaultSettings;
+	bool settingsLoaded = defaultSettings.loadFile("settings.xml");	;
+	translation.setCurrentLanguage(defaultSettings.getValue("language", "english"));
+	
+	if(!settingsLoaded){
+		defaultSettings.setValue("language", "english");
+		defaultSettings.saveFile();
+	}
 	
     //populate projects
     vector<string> projects;
@@ -105,18 +112,14 @@ void DurationController::setup(){
             }
         }
     }
-//	if(translation.getCurrentLanguage() == "japanese"){
-		tooltipFont.loadFont("GUI/mplus-1c-regular.ttf", 5);
-		timeline.setupFont("GUI/mplus-1c-regular.ttf", 6);
-//	}
-//	else{
-//		tooltipFont.loadFont("GUI/NewMedia Fett.ttf", 5);
-//		timeline.setupFont("GUI/NewMedia Fett.ttf", 6);
-//	}
+	
+	tooltipFont.loadFont("GUI/mplus-1c-regular.ttf", 5);
+	timeline.setupFont("GUI/mplus-1c-regular.ttf", 6);
 	
 	//setup timeline
 	timeline.setup();
 //	timeline.curvesUseBinary = true; //ELOI SWITCH THIS HERE
+//	timeline.enableUndo(false);
     timeline.setFrameRate(30);
 	timeline.setDurationInSeconds(30);
 	timeline.setOffset(ofVec2f(0, 90));
@@ -210,12 +213,10 @@ void DurationController::setup(){
     ofAddListener(timeline.events().bangFired, this, &DurationController::bangFired);
 	ofAddListener(ofEvents().exit, this, &DurationController::exit);
 
+    //SET UP LISENTERS
 	enableInterface();
 	
-    //SET UP LISENTERS
-    
-    ofxXmlSettings defaultSettings;
-    if(defaultSettings.loadFile("settings.xml")){
+    if(settingsLoaded){
         string lastProjectPath = defaultSettings.getValue("lastProjectPath", "");
         string lastProjectName = defaultSettings.getValue("lastProjectName", "");
         if(lastProjectPath != "" && lastProjectName != "" && ofDirectory(lastProjectPath).exists()){
@@ -889,7 +890,6 @@ void DurationController::newProject(string newProjectPath, string newProjectName
 #endif
     ofDirectory newProjectDirectory(newProjectSettings.path);
     if(newProjectDirectory.exists()){
-		//TODO: translate
     	ofSystemAlertDialog(translation.translateKey("Error creating new project. The folder already exists.")+" " + newProjectSettings.path);
         return;
     }

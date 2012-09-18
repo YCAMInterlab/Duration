@@ -151,7 +151,7 @@ void testApp::draw(){
 	
 	p.clear();
 	for(int i = 0; i < noisebuf.size(); i++){
-		p.addVertex(ofVec2f(noise.x + (noisebuf.size()-i),
+		p.addVertex(ofVec2f(noise.x + (noise.width - noisebuf.size()+i),
 				 			noise.getMaxY()-noisebuf[i]*noise.height));
 	}
 	p.draw();
@@ -165,7 +165,7 @@ void testApp::draw(){
 	
 	p.clear();
 	for(int i = 0; i < sinbuf.size(); i++){
-		p.addVertex(ofVec2f(sineWave.x + (sinbuf.size()-i),
+		p.addVertex(ofVec2f(sineWave.x + (sineWave.width - sinbuf.size() + i),
 				 			sineWave.getMaxY()-sinbuf[i]*sineWave.height));
 	}
 	
@@ -198,9 +198,10 @@ void testApp::draw(){
 	ofSetColor(255);
 	font.drawString("/sine", sineWave.x+10, sineWave.y+20);
 	font.drawString("/freedraw/x + /freedraw/y", freeDraw.x+10, freeDraw.y+20);
-	font.drawString("/bang", clickBang.x+20, clickBang.y+20);
-	font.drawString("/noise", noise.x+20, noise.y+20);
-	
+	font.drawString("/bang", clickBang.x+10, clickBang.y+20);
+	font.drawString("/noise", noise.x+10, noise.y+20);
+
+	font.drawString("sending to localhost:12346", clickBang.x+10, clickBang.getMaxY() - 5);
 	ofPopStyle();
 }
 
