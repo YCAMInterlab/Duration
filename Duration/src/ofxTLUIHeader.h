@@ -16,6 +16,7 @@ class ofxTLUIHeader {
     virtual void guiEvent(ofxUIEventArgs &e);
     
 	virtual bool getShouldDelete();
+	virtual void setShouldDelete(bool del);
 	
     virtual bool sendOSC();
     virtual void setSendOSC(bool enable);

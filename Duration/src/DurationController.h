@@ -70,6 +70,8 @@ class DurationController : public ofThread  {
 	void guiEvent(ofxUIEventArgs& e);
     void exit(ofEventArgs& e);
 	
+	ofxTLTrack* addTrack(string trackType, string trackName = "", string xmlFileName = "");
+	
     //control elements
     ofxUIDropDownList* projectDropDown;
 	ofxUIMultiImageButton* saveButton;
@@ -145,11 +147,17 @@ class DurationController : public ofThread  {
 	map<string, ofPtr<ofxTLUIHeader> > headers;
     
 	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
+	ofPtr<ofxTLUIHeader> getHeaderWithDisplayName(string name);
 	
 	float oscRate;
 	unsigned long lastOSCBundleSent;
 	ofxFTGLFont tooltipFont;
 	bool needsSave;
+	
+	bool receivedAddTrack;
+	string oscTrackTypeReceived;
+	string oscTrackNameReceived;
+	string oscTrackFilePathReceived;
 	
 };
 

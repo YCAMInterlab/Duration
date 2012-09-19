@@ -173,7 +173,6 @@ void testApp::draw(){
 	//end sine
 	
 	//draw bang
-	
 	float bangFade = ofMap(ofGetElapsedTimef(), bangTime, bangTime+.33, 1.0, 0, true);
 	if(bangFade > 0){
 		ofFill();

@@ -19,9 +19,13 @@ cd ofxUI/
 git checkout develop
 cd ..
 
+${PREFIX}obviousjim/ofxLocalization.git
+
 ${PREFIX}obviousjim/ofxMSATimer.git
 
 ${PREFIX}Flightphase/ofxTextInputField.git
+
+${PREFIX}Flightphase/ofxRange.git
 
 ${PREFIX}Flightphase/ofxRange.git
 

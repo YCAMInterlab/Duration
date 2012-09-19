@@ -1,10 +1,10 @@
 KEY,ENGLISH,JAPANESE
-BANGS,BANGS,バン
-FLAGS,FLAGS,フラグ
-SWITCHES,SWITCHES,スイッチ
-CURVES,CURVES,カーブ
-COLORS,COLORS,カラー
-AUDIO,AUDIO,オーディオ
+bangs,BANGS,バン
+flags,FLAGS,フラグ
+switches,SWITCHES,スイッチ
+curves,CURVES,カーブ
+colors,COLORS,カラー
+audio,AUDIO,オーディオ
 new project...,new project...,新規プロジェクト
 open project...,open project...,プロジェクトを開く
 BPM,BPM,BPM

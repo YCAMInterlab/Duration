@@ -140,6 +140,14 @@ void ofxTLUIHeader::setReceiveOSC(bool enable){
 	}
 }
 
+void ofxTLUIHeader::setShouldDelete(bool del){
+	shouldDelete = del;
+	if(shouldDelete){
+		ofRemoveListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
+		trackHeader = NULL; //this is needed to circumvent the problem in the destructor
+	}
+}
+
 bool ofxTLUIHeader::getShouldDelete(){
     return shouldDelete;
 }
@@ -192,9 +200,8 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
             if(deleteDropDown->getSelected().size() > 0 &&
                deleteDropDown->getSelected()[0]->getName() == translation->translateKey("sure?")){
 				//do this because the header gets deleted before our destructor is called
-                ofRemoveListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
-                trackHeader = NULL; //this is needed to circumvent the problem in the destructor
-                shouldDelete = true;
+				setShouldDelete(true);
+                //shouldDelete = true;
             }
             deleteDropDown->clearSelected();
             deleteDropDown->close();

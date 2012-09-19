@@ -137,13 +137,13 @@ void DurationController::setup(){
     gui->addWidgetDown(projectDropDown);
     //ADD TRACKS
     vector<string> trackTypes;
-    trackTypes.push_back(translation.translateKey("BANGS"));
-    trackTypes.push_back(translation.translateKey("FLAGS"));
-    trackTypes.push_back(translation.translateKey("SWITCHES"));
-    trackTypes.push_back(translation.translateKey("CURVES"));
-    trackTypes.push_back(translation.translateKey("COLORS"));
+    trackTypes.push_back(translation.translateKey("bangs"));
+    trackTypes.push_back(translation.translateKey("flags"));
+    trackTypes.push_back(translation.translateKey("switches"));
+    trackTypes.push_back(translation.translateKey("curves"));
+    trackTypes.push_back(translation.translateKey("colors"));
 #ifdef TARGET_OSX
-	trackTypes.push_back(translation.translateKey("AUDIO"));
+	trackTypes.push_back(translation.translateKey("audio"));
 #endif
 	
     addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, translation.translateKey("ADD TRACK"), trackTypes, OFX_UI_FONT_MEDIUM);
@@ -232,7 +232,6 @@ void DurationController::setup(){
         loadProject(ofToDataPath(defaultProjectDirectoryPath+"Sample Project"), "Sample Project", true);
     }
 
-
 	createTooltips();
 	
 	startThread();
@@ -256,6 +255,7 @@ void DurationController::handleOscIn(){
 		return;
 	}
 	
+	//TODO: move parsing and receing to separate different threads?
 	long timelineStartTime = timeline.getCurrentTimeMillis();
 	while(receiver.hasWaitingMessages()){
 
@@ -313,12 +313,42 @@ void DurationController::handleOscIn(){
 				loadProject(defaultProjectDirectoryPath+m.getArgAsString(0));
 			}
 		}
+		else if(m.getAddress() == "/duration/setduration"){
+			if(m.getNumArgs() == 1){
+				//seconds
+				if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+					timeline.setDurationInSeconds(m.getArgAsFloat(0));
+					durationLabel->setTextString(timeline.getDurationInTimecode());					
+				}
+				//timecode
+				else if(m.getArgType(0) == OFXOSC_TYPE_STRING){
+					timeline.setDurationInTimecode(m.getArgAsString(0));
+					durationLabel->setTextString(timeline.getDurationInTimecode());
+				}
+				//millis
+				else if(m.getArgType(0) == OFXOSC_TYPE_INT32){
+					timeline.setDurationInMillis(m.getArgAsInt32(0));
+					durationLabel->setTextString(timeline.getDurationInTimecode());					
+				}
+				else if(m.getArgType(0) == OFXOSC_TYPE_INT64){
+					timeline.setDurationInMillis(m.getArgAsInt64(0));
+					durationLabel->setTextString(timeline.getDurationInTimecode());
+				}
+			}
+			else {
+				ofLogError("Duration:OSC") << " Set Duration failed - must have one argument. seconds as float, timecode string HH:MM:SS:MILS, or integer as milliseconds";
+			}
+		}
 		else if(m.getAddress() == "/duration/play"){
 			timeline.play();
 		}
 		else if(m.getAddress() == "/duration/stop"){
-			timeline.stop();
-			//TODO: stop record mode
+			if(timeline.getIsPlaying()){
+				timeline.stop();
+			}
+			else{
+				timeline.setCurrentTimeMillis(0);
+			}
 		}
 		else if(m.getAddress() == "/duration/record"){
 			timeline.play();
@@ -335,7 +365,7 @@ void DurationController::handleOscIn(){
 		else if(m.getAddress() == "/duration/seektoposition"){
 			if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
 				float percent = ofClamp(m.getArgAsFloat(0),0.0,1.0);
-				timeline.setCurrentTimeSeconds(percent);
+				timeline.setPercentComplete(percent);
 			}
 			else{
 				ofLogError("Duration:OSC") << " Seek to Position failed: first argument must be a float between 0.0 and 1.0";
@@ -352,7 +382,7 @@ void DurationController::handleOscIn(){
 				ofLogError("Duration:OSC") << " Seek to Millis failed: first argument must be a int 32 or in 64";
 			}
 		}
-		else if(m.getAddress() == "/druation/seektotimecode"){
+		else if(m.getAddress() == "/duration/seektotimecode"){
 			if(m.getArgType(0) == OFXOSC_TYPE_STRING){
 				long millis = ofxTimecode::millisForTimecode(m.getArgAsString(0));
 				if(millis > 0){
@@ -365,6 +395,99 @@ void DurationController::handleOscIn(){
 			else{
 				ofLogError("Duration:OSC") << " Seek to Timecode failed: first argument must be a string";
 			}
+		}
+		//enable and disable OSC
+		else if(m.getAddress() == "/duration/enableoscout"){
+			//system wide
+			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_INT32){
+				
+			}
+			//per track
+			else if(m.getNumArgs() == 2 && m.getArgType(0) == OFXOSC_TYPE_STRING && m.getArgType(1) == OFXOSC_TYPE_INT32){
+				
+			}
+			else{
+				ofLogError("Duration:OSC") << " Enable OSC out incorrectly formatted arguments. usage: /duration/enableoscout enable:int32 == (1 or 0), or /duration/enableoscout trackname:string enable:int32 (1 or 0)";
+			}
+		}
+		else if(m.getAddress() == "/duration/enableoscin"){
+			//system wide
+			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_INT32){
+				
+			}
+			//per track
+			else if(m.getNumArgs() == 2 && m.getArgType(0) == OFXOSC_TYPE_STRING && m.getArgType(1) == OFXOSC_TYPE_INT32){
+				
+			}
+			else{
+				ofLogError("Duration:OSC") << "Enable OSC in incorrectly formatted arguments. usage: /duration/enableoscout enable:int32 == (1 or 0), or /duration/enableoscout trackname:string enable:int32 (1 or 0)";
+			}
+		}		
+		//adding and removing tracks
+		else if(m.getAddress() == "/duration/addtrack"){
+			//type,
+			receivedAddTrack = false;
+			oscTrackTypeReceived = "";
+			oscTrackNameReceived = "";
+			oscTrackFilePathReceived = "";
+			//type
+			if(m.getNumArgs() > 0 && m.getArgType(0) == OFXOSC_TYPE_STRING) {
+				oscTrackTypeReceived = m.getArgAsString(0);
+				receivedAddTrack = true;
+			}
+			//type, name
+			if(m.getNumArgs() > 1 &&m.getArgType(1) == OFXOSC_TYPE_STRING) {
+				oscTrackNameReceived = m.getArgAsString(1);
+				receivedAddTrack = true;
+			}
+			//type, name, file path
+			if(m.getNumArgs() > 2 && m.getArgType(2) == OFXOSC_TYPE_STRING)
+			{
+				oscTrackFilePathReceived = m.getArgAsString(2);
+				receivedAddTrack = true;
+			}
+			if(!receivedAddTrack){
+				ofLogError("Duration:OSC") << "Add track failed, incorrectly formatted arguments. \n usage: /duration/addtrack type:string [optional name:string ] [optional filepath:string ]";
+			}
+		}
+		else if(m.getAddress() == "/duration/removetrack"){
+			if(m.getArgType(0) == OFXOSC_TYPE_STRING){
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					header->setShouldDelete(true);
+				}
+				else{
+					ofLogError("Duration:OSC") << "Remove track failed, could not find track " << trackName;
+				}
+			}
+			else {
+				ofLogError("Duration:OSC") << "Remove track failed, incorrectly formatted arguments. \n usage: /duration/removetrack name:string";
+			}
+		}
+		else if(m.getAddress() == "/duration/trackname"){
+			if(m.getArgType(0) == OFXOSC_TYPE_STRING)		{
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					header->getTrackHeader()->setDisplayName(trackName);
+				}
+			}
+		}
+		else if(m.getAddress() == "/duration/trackrange"){
+			
+		}
+		else if(m.getAddress() == "/duration/trackrange/min"){
+			
+		}
+		else if(m.getAddress() == "/duration/trackrange/max"){
+			
+		}
+		else if(m.getAddress() == "/duration/trackpalette"){
+			
+		}
+		else if(m.getAddress() == "/duration/tracksound"){
+			
 		}
 	}
 }
@@ -519,51 +642,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
             if(addTrackDropDown->getSelected().size() > 0){
 				lock();
                 string selectedTrackType = addTrackDropDown->getSelected()[0]->getName();
-                ofxTLTrack* newTrack = NULL;
-                if(selectedTrackType == translation.translateKey("BANGS")){
-                    string name = timeline.confirmedUniqueName("Bangs");
-                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addBangs(name, xmlFile);
-                }
-                else if(selectedTrackType == translation.translateKey("FLAGS")){
-                	string name = timeline.confirmedUniqueName("Flags");
-                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addFlags(name, xmlFile);
-                }
-                else if(selectedTrackType == translation.translateKey("CURVES")){
-                	string name = timeline.confirmedUniqueName("Curves");
-                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addCurves(name, xmlFile);
-                }
-                else if(selectedTrackType == translation.translateKey("SWITCHES")){
-                	string name = timeline.confirmedUniqueName("Switches");
-                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addSwitches(name, xmlFile);
-                }
-                else if(selectedTrackType == translation.translateKey("COLORS")){
-                	string name = timeline.confirmedUniqueName("Colors");
-                    string xmlFile = ofToDataPath(settings.path + "/" + name + "_.xml");
-                    newTrack = timeline.addColors(name, xmlFile);
-                }
-#ifdef TARGET_OSX
-                else if(selectedTrackType == translation.translateKey("AUDIO")){
-					if(audioTrack != NULL){
-						ofLogError("DurationController::loadProject") << "Trying to add an additional audio track";
-					}
-					else{
-						string name = timeline.confirmedUniqueName("Audio");
-						audioTrack = new ofxTLAudioTrack();
-						timeline.addTrack(name, audioTrack);
-						timeline.bringTrackToTop(audioTrack);
-						newTrack = audioTrack;
-					}
-                }
-#endif
-                if(newTrack != NULL){
-                    createHeaderForTrack(newTrack);
-					needsSave = true;
-                }
-				
+				addTrack(selectedTrackType);
 				unlock();
 				
                 addTrackDropDown->clearSelected();
@@ -715,6 +794,59 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 }
 
 //--------------------------------------------------------------
+ofxTLTrack* DurationController::addTrack(string trackType, string trackName, string xmlFileName){
+	ofxTLTrack* newTrack = NULL;
+	
+	trackType = ofToLower(trackType);
+	if(trackName == ""){
+		trackName = trackType;
+	}
+	
+	if(xmlFileName == ""){
+		string uniqueName = timeline.confirmedUniqueName(trackName);
+		xmlFileName = ofToDataPath(settings.path + "/" + uniqueName + "_.xml");
+	}
+	
+	if(trackType == translation.translateKey("bangs") || trackType == "bangs"){
+		newTrack = timeline.addBangs(trackName, xmlFileName);
+	}
+	else if(trackType == translation.translateKey("flags") || trackType == "flags"){
+		newTrack = timeline.addFlags(trackName, xmlFileName);
+	}
+	else if(trackType == translation.translateKey("curves") || trackType == "curves"){
+		newTrack = timeline.addCurves(trackName, xmlFileName);
+	}
+	else if(trackType == translation.translateKey("switches")|| trackType == "switches"){
+		newTrack = timeline.addSwitches(trackName, xmlFileName);
+	}
+	else if(trackType == translation.translateKey("colors") || trackType == "colors"){
+		newTrack = timeline.addColors(trackName, xmlFileName);
+	}
+#ifdef TARGET_OSX
+	else if(trackType == translation.translateKey("audio") || trackType == "audio"){
+		if(audioTrack != NULL){
+			ofLogError("DurationController::loadProject") << "Trying to add an additional audio track";
+		}
+		else{
+			audioTrack = new ofxTLAudioTrack();
+			timeline.addTrack(trackName, audioTrack);
+			timeline.bringTrackToTop(audioTrack);
+			newTrack = audioTrack;
+		}
+	}
+#endif
+	else {
+		ofLogError("DurationController::addTrack") << "Unsupported track type: " << trackType;
+	}
+	
+	if(newTrack != NULL){
+		createHeaderForTrack(newTrack);
+		needsSave = true;
+	}
+	return newTrack;
+}
+
+//--------------------------------------------------------------
 void DurationController::update(ofEventArgs& args){
 	gui->update();
 	
@@ -760,6 +892,13 @@ void DurationController::update(ofEventArgs& args){
             newProject(r.getPath(), r.getName());
         }
     }
+	
+	if(receivedAddTrack){
+		lock();
+		receivedAddTrack = false;
+		addTrack(oscTrackTypeReceived, oscTrackNameReceived, oscTrackFilePathReceived);
+		unlock();
+	}
     
     //check if we deleted an element this frame
     map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
@@ -796,6 +935,17 @@ void DurationController::update(ofEventArgs& args){
         }
         it++;
     }
+}
+
+//--------------------------------------------------------------
+ofPtr<ofxTLUIHeader> DurationController::getHeaderWithDisplayName(string name){
+	map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
+	for(trackit = headers.begin(); trackit != headers.end(); trackit++){
+		if(trackit->second->getTrack()->getDisplayName() == name){
+			return trackit->second;
+		}
+	}
+	return ofPtr<ofxTLUIHeader>();
 }
 
 //--------------------------------------------------------------
@@ -944,6 +1094,10 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 	
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
+	if(audioTrack != NULL){
+		delete audioTrack;
+		audioTrack = NULL;
+	}
     timeline.setWorkingFolder(projectPath);
 	
     //LOAD ALL TRACKS
@@ -962,58 +1116,51 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         int numTracks = projectSettings.getNumTags("track");
         for(int i = 0; i < numTracks; i++){
             projectSettings.pushTag("track", i);
-            string trackType = projectSettings.getValue("type", "");
-            ofxTLTrack* newTrack = NULL;
+            string trackType = ofToLower(projectSettings.getValue("type", ""));
             string xmlFileName = projectSettings.getValue("xmlFileName", "");
             string trackName = projectSettings.getValue("trackName","");
             string trackFilePath = ofToDataPath(projectPath + "/" + xmlFileName);
+            ofxTLTrack* newTrack = addTrack(trackType, trackName, trackFilePath);
 			
-            if(trackType == "Bangs"){
-                newTrack = timeline.addBangs(trackName, trackFilePath);
-            }
-            else if(trackType == "Flags"){
-                newTrack = timeline.addFlags(trackName, trackFilePath);
-            }
-            else if(trackType == "Curves"){
-                ofxTLCurves* curves = timeline.addCurves(trackName, trackFilePath);
-                curves->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
-                                              projectSettings.getValue("max", 1.0)));
-                newTrack = curves;
-            }
-            else if(trackType == "Switches"){
-                newTrack = timeline.addSwitches(trackName, trackFilePath);
-            }
-            else if(trackType == "Colors"){
-				string paletteFilePath  = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
-                newTrack = timeline.addColorsWithPalette(trackName,trackFilePath,paletteFilePath);
-            }
-#ifdef TARGET_OSX
-			else if(trackType == "Audio"){
-				if(audioTrack != NULL){
-					ofLogError("DurationController::loadProject") << "Trying to add an additional audio track";
+			if(newTrack != NULL){
+//				if(newTrack->getTrackType() == "Bangs"){
+//					newTrack = timeline.addBangs(trackName, trackFilePath);
+//				}
+//				else if(trackType == "Flags"){
+//					newTrack = timeline.addFlags(trackName, trackFilePath);
+//				}
+				if(newTrack->getTrackType() == "Curves"){
+					ofxTLCurves* curves = (ofxTLCurves*)newTrack;
+					curves->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
+												  projectSettings.getValue("max", 1.0)));
 				}
-				else{
+//				else if(trackType == "Switches"){
+//					newTrack = timeline.addSwitches(trackName, trackFilePath);
+//				}
+				else if(newTrack->getTrackType() == "Colors"){
+					ofxTLColorTrack* colors = (ofxTLColorTrack*)newTrack;
+					colors->loadColorPalette(projectSettings.getValue("palette", timeline.getDefaultColorPalettePath()));
+//					string paletteFilePath  = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
+//					newTrack = timeline.addColorsWithPalette(trackName,trackFilePath,paletteFilePath);
+				}
+				#ifdef TARGET_OSX
+				else if(newTrack->getTrackType() == "Audio"){
 					string clipPath = projectSettings.getValue("clip", "");
-
-					audioTrack = new ofxTLAudioTrack();
-					timeline.addTrack(trackName, audioTrack);
-					timeline.bringTrackToTop(audioTrack);
 					if(clipPath != ""){
 						audioTrack->loadSoundfile(clipPath);
 					}
-					newTrack = audioTrack;
 				}
-			}
-#endif
-            if(newTrack != NULL){
-                string displayName = projectSettings.getValue("displayName","");
-                if(displayName != ""){
-	                newTrack->setDisplayName(displayName);
-                }
-				ofxTLUIHeader* headerTrack = createHeaderForTrack(newTrack);
-            	headerTrack->setSendOSC(projectSettings.getValue("sendOSC", true));
+				#endif
+
+				string displayName = projectSettings.getValue("displayName","");
+				if(displayName != ""){
+					newTrack->setDisplayName(displayName);
+				}
+//				ofxTLUIHeader* headerTrack = createHeaderForTrack(newTrack);
+				ofPtr<ofxTLUIHeader> headerTrack = headers[newTrack->getName()];
+				headerTrack->setSendOSC(projectSettings.getValue("sendOSC", true));
 				headerTrack->setReceiveOSC(projectSettings.getValue("receiveOSC", true));
-            }
+			}
             projectSettings.popTag(); //track
         }
         projectSettings.popTag(); //page
