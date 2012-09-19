@@ -10,8 +10,8 @@ void testApp::setup(){
 	gui = new ofxUICanvas(0,0, ofGetWidth(), ofGetHeight());
 	gui->setWidgetFontSize(OFX_UI_FONT_LARGE);
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-	gui->addTextInput("IP", "localhost", 300);
-	gui->addTextInput("PORT", "12346", 150);
+	ipInput = gui->addTextInput("IP", "localhost", 300);
+	portInput = gui->addTextInput("PORT", "12346", 150);
 	
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
 	commandInput = gui->addTextInput("COMMAND", "/duration/command", 300);
@@ -79,13 +79,26 @@ void testApp::setup(){
 //number test from http://stackoverflow.com/questions/4654636/how-to-determine-if-a-string-is-a-number-with-c
 bool isNumber(const string& s){
 	std::string::const_iterator it = s.begin();
-    while (it != s.end() && (std::isdigit(*it) || *it == '.')) ++it;
-    return !s.empty() && it == s.end();
+    while (it != s.end() && (std::isdigit(*it) || *it == '.' || *it == '-')) ++it;
+	bool isnumber = !s.empty() && it == s.end();
+    return isnumber;
 }
 
 //--------------------------------------------------------------
 void testApp::guiEvent(ofxUIEventArgs &e){
-	if(e.widget == sendButton && sendButton->getValue()){
+	
+	if(e.widget == ipInput){
+		//this check could be smarter but o well
+		if(isNumber(ipInput->getTextString())){
+			sender.setup(ipInput->getTextString(), ofToInt(portInput->getTextString()));
+		}
+	}
+	else if(e.widget == portInput){
+		if(isNumber(portInput->getTextString())){
+			sender.setup(ipInput->getTextString(), ofToInt(portInput->getTextString()));
+		}
+	}
+	else if(e.widget == sendButton && sendButton->getValue()){
 		sendCurrentCommand();
 	}
 	else if(e.widget == playButton && playButton->getValue()){
@@ -140,10 +153,10 @@ void testApp::sendCurrentCommand(){
 				break;
 			}
 			
-			 if( isNumber(args[i]) ){
+			if( isNumber(args[i]) ){
 				if(args[i].find(".") != string::npos){
-					cout << " added " << args[i] << " as float " << endl;
 					m.addFloatArg(ofToFloat(args[i]));
+					cout << " added " << args[i] << " as float " << endl;
 				}
 				else{
 					m.addIntArg(ofToInt(args[i]));

@@ -40,6 +40,8 @@
 		E72B8DDF15D629CB00DB5A38 /* ofxOscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72B8DCE15D629CB00DB5A38 /* ofxOscMessage.cpp */; };
 		E72B8DE015D629CB00DB5A38 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72B8DD015D629CB00DB5A38 /* ofxOscReceiver.cpp */; };
 		E72B8DE115D629CB00DB5A38 /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72B8DD215D629CB00DB5A38 /* ofxOscSender.cpp */; };
+		E736445C1609FFF4001BB3CE /* DurationOSCManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E736445A1609FFF4001BB3CE /* DurationOSCManager.cpp */; };
+		E736445F160A001A001BB3CE /* DurationProjectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E736445D160A0019001BB3CE /* DurationProjectManager.cpp */; };
 		E750F89C15EF313500B87EA2 /* DurationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E750F89A15EF313500B87EA2 /* DurationController.cpp */; };
 		E750F8B715F0AF2600B87EA2 /* ofxTLColorTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E750F8B515F0AF1E00B87EA2 /* ofxTLColorTrack.cpp */; };
 		E750F96C15F3460C00B87EA2 /* ofxHotKeys_impl_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E750F96A15F3460C00B87EA2 /* ofxHotKeys_impl_mac.mm */; };
@@ -190,6 +192,10 @@
 		E72B8DD115D629CB00DB5A38 /* ofxOscReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscReceiver.h; sourceTree = "<group>"; };
 		E72B8DD215D629CB00DB5A38 /* ofxOscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscSender.cpp; sourceTree = "<group>"; };
 		E72B8DD315D629CB00DB5A38 /* ofxOscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscSender.h; sourceTree = "<group>"; };
+		E736445A1609FFF4001BB3CE /* DurationOSCManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DurationOSCManager.cpp; sourceTree = "<group>"; };
+		E736445B1609FFF4001BB3CE /* DurationOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DurationOSCManager.h; sourceTree = "<group>"; };
+		E736445D160A0019001BB3CE /* DurationProjectManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DurationProjectManager.cpp; sourceTree = "<group>"; };
+		E736445E160A0019001BB3CE /* DurationProjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DurationProjectManager.h; sourceTree = "<group>"; };
 		E750F89A15EF313500B87EA2 /* DurationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DurationController.cpp; sourceTree = "<group>"; };
 		E750F89B15EF313500B87EA2 /* DurationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DurationController.h; sourceTree = "<group>"; };
 		E750F8B515F0AF1E00B87EA2 /* ofxTLColorTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTLColorTrack.cpp; sourceTree = "<group>"; };
@@ -490,6 +496,10 @@
 				E775F6AE15D7898A006E2E59 /* ofxTLUIHeader.cpp */,
 				E750F89B15EF313500B87EA2 /* DurationController.h */,
 				E750F89A15EF313500B87EA2 /* DurationController.cpp */,
+				E736445B1609FFF4001BB3CE /* DurationOSCManager.h */,
+				E736445A1609FFF4001BB3CE /* DurationOSCManager.cpp */,
+				E736445E160A0019001BB3CE /* DurationProjectManager.h */,
+				E736445D160A0019001BB3CE /* DurationProjectManager.cpp */,
 				E762B60015FAFD6600459F83 /* ofxRemoveCocoaMenu.h */,
 				E762B5FF15FAFD6600459F83 /* ofxRemoveCocoaMenu.mm */,
 			);
@@ -1264,6 +1274,8 @@
 				E762B60115FAFD6600459F83 /* ofxRemoveCocoaMenu.mm in Sources */,
 				E7C659AD15FF22270049005B /* ofxFTGLFont.cpp in Sources */,
 				E7C659C415FF46D20049005B /* ofxLocalization.cpp in Sources */,
+				E736445C1609FFF4001BB3CE /* DurationOSCManager.cpp in Sources */,
+				E736445F160A001A001BB3CE /* DurationProjectManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

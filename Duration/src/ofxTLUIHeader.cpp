@@ -116,6 +116,38 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 	gui->getRect()->x = trackHeader->getTimeline()->getTopRight().x - (gui->getRect()->width + 50);
 }
 
+void ofxTLUIHeader::setValueRange(ofRange range){
+	if(getTrackType() == "Curves"){
+		minDialer->setValue(range.min);
+		maxDialer->setValue(range.max);
+		((ofxTLCurves*)getTrack())->setValueRange(range);
+	}
+	else{
+		ofLogError("ofxTLUIHeader::setValueMax") << "Cannot set value range on tracks that aren't curves";
+	}	
+}
+
+void ofxTLUIHeader::setValueMin(float min){
+	if(getTrackType() == "Curves"){
+		minDialer->setValue(min);
+		((ofxTLCurves*)getTrack())->setValueRangeMin(min);
+	}
+	else{
+		ofLogError("ofxTLUIHeader::setValueMax") << "Cannot set min value on tracks that aren't curves";
+	}
+}
+
+void ofxTLUIHeader::setValueMax(float max){
+	if(getTrackType() == "Curves"){
+		maxDialer->setValue(max);
+		((ofxTLCurves*)getTrack())->setValueRangeMin(max);
+	}
+	else{
+		ofLogError("ofxTLUIHeader::setValueMax") << "Cannot set max value on tracks that aren't curves";
+	}
+}
+
+
 ofxUICanvas* ofxTLUIHeader::getGui(){
 	return gui;
 }

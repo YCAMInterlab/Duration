@@ -31,6 +31,11 @@ class testApp : public ofBaseApp{
 	ofxOscSender sender;
 
 	ofxUICanvas* gui;
+	
+	//ROW 0 IP settings
+	ofxUITextInput* ipInput;
+	ofxUITextInput* portInput;
+	
 	//ROW 1 commands
 	ofxUITextInput* commandInput;
 	ofxUITextInput* arg1;

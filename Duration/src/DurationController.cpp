@@ -313,6 +313,9 @@ void DurationController::handleOscIn(){
 				loadProject(defaultProjectDirectoryPath+m.getArgAsString(0));
 			}
 		}
+		if(m.getAddress() == "/duration/save"){
+			saveProject();
+		}
 		else if(m.getAddress() == "/duration/setduration"){
 			if(m.getNumArgs() == 1){
 				//seconds
@@ -451,7 +454,7 @@ void DurationController::handleOscIn(){
 			}
 		}
 		else if(m.getAddress() == "/duration/removetrack"){
-			if(m.getArgType(0) == OFXOSC_TYPE_STRING){
+			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING){
 				string trackName = m.getArgAsString(0);
 				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
 				if(header != NULL){
@@ -466,29 +469,123 @@ void DurationController::handleOscIn(){
 			}
 		}
 		else if(m.getAddress() == "/duration/trackname"){
-			if(m.getArgType(0) == OFXOSC_TYPE_STRING)		{
+			if(m.getNumArgs() == 2 && m.getArgType(0) == OFXOSC_TYPE_STRING && m.getArgType(1) == OFXOSC_TYPE_STRING){
 				string trackName = m.getArgAsString(0);
 				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
 				if(header != NULL){
-					header->getTrackHeader()->setDisplayName(trackName);
+					header->getTrackHeader()->setDisplayName(m.getArgAsString(1));
 				}
 			}
 		}
-		else if(m.getAddress() == "/duration/trackrange"){
-			
+		else if(m.getAddress() == "/duration/valuerange"){
+			if(m.getNumArgs() == 3 &&
+			   m.getArgType(0) == OFXOSC_TYPE_STRING && //track name
+			   m.getArgType(1) == OFXOSC_TYPE_FLOAT && //min
+			   m.getArgType(2) == OFXOSC_TYPE_FLOAT) //max
+			{
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					if(header->getTrackType() == "Curves"){
+						header->setValueRange(ofRange(m.getArgAsFloat(1),m.getArgAsFloat(2)));
+					}
+					else {
+						ofLogError("Duration:OSC") << "Set value range failed, track is not a Curves track " << trackName;
+					}
+				}
+				else{
+					ofLogError("Duration:OSC") << "Set value range failed, could not find track " << trackName;
+				}
+			}
+			else {
+				ofLogError("Duration:OSC") << "Set value range failed, incorrectly formatted message. \n usage: /duration/valuerange trackname:string min:float max:float";
+			}
 		}
-		else if(m.getAddress() == "/duration/trackrange/min"){
-			
+		else if(m.getAddress() == "/duration/valuerange/min"){
+			if(m.getNumArgs() == 2 &&
+			   m.getArgType(0) == OFXOSC_TYPE_STRING && //track name
+			   m.getArgType(1) == OFXOSC_TYPE_FLOAT) //min
+			{
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					if(header->getTrackType() == "Curves"){
+						header->setValueMin(m.getArgAsFloat(1));
+					}
+					else{
+						ofLogError("Duration:OSC") << "Set value range min failed, track is not a Curves track " << trackName;
+					}
+				}
+				else{
+					ofLogError("Duration:OSC") << "Set value range min failed, could not find track " << trackName;
+				}
+			}
+			else{
+				ofLogError("Duration:OSC") << "Set value range min failed. Incorrectly formatted arguments \n usage: /duration/valuerange/min trackname:string";
+			}
 		}
-		else if(m.getAddress() == "/duration/trackrange/max"){
-			
+		else if(m.getAddress() == "/duration/valuerange/max"){
+			if(m.getNumArgs() == 2 &&
+			   m.getArgType(0) == OFXOSC_TYPE_STRING && //track name
+			   m.getArgType(1) == OFXOSC_TYPE_FLOAT) //max
+			{
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					if(header->getTrackType() == "Curves"){
+						header->setValueMax(m.getArgAsFloat(1));
+					}
+					else{
+						ofLogError("Duration:OSC") << "Set value range max failed, track is not a Curves track " << trackName;
+					}
+				}
+				else{
+					ofLogError("Duration:OSC") << "Set value range min failed, could not find track " << trackName;
+				}
+			}
+			else{
+				ofLogError("Duration:OSC") << "Set value range min failed. Incorrectly formatted arguments \n usage: /duration/valuerange/min trackname:string";
+			}
 		}
-		else if(m.getAddress() == "/duration/trackpalette"){
-			
+		else if(m.getAddress() == "/duration/colorpalette"){
+			if(m.getNumArgs() == 2 &&
+			   m.getArgType(0) == OFXOSC_TYPE_STRING && //track name
+			   m.getArgType(1) == OFXOSC_TYPE_STRING) //file path
+			{
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					if(header->getTrackType() == "Colors"){
+						if( ! ((ofxTLColorTrack*)header->getTrack())->loadColorPalette(m.getArgAsString(1)) ){
+							ofLogError("Duration:OSC") << "Set color palette failed, file not found";
+						}
+					}
+				}
+				else {
+					ofLogError("Duration:OSC") << "Set color palette failed, could not find track " << trackName;
+				}
+			}
+			else{
+				ofLogError("Duration:OSC") << "Set color palette failed, incorrectly formatted arguments \n usage: /duration/colorpalette trackname:string imagefilepath:string";
+			}
 		}
-		else if(m.getAddress() == "/duration/tracksound"){
-			
+#ifdef TARGET_API_MAC_OSX
+		else if(m.getAddress() == "/duration/audioclip"){
+			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING){
+				if(audioTrack != NULL){
+					if(!audioTrack->loadSoundfile(m.getArgAsString(0))){
+						ofLogError("Duration:OSC") << "Set audio clip failed, clip failed to load. " << m.getArgAsString(0);
+					}
+				}
+				else {
+					ofLogError("Duration:OSC") << "Set audio clip failed, first add an audio track to the composition.";
+				}
+			}
+			else{
+				ofLogError("Duration:OSC") << "Set audio clip failed, incorrectly formatted arguments. \n usage /duration/audioclip filepath:string ";
+			}
 		}
+#endif
 	}
 }
 
@@ -941,7 +1038,9 @@ void DurationController::update(ofEventArgs& args){
 ofPtr<ofxTLUIHeader> DurationController::getHeaderWithDisplayName(string name){
 	map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
 	for(trackit = headers.begin(); trackit != headers.end(); trackit++){
+		cout << "Track name is " << trackit->second->getTrack()->getDisplayName() << " our name is " << name << endl;
 		if(trackit->second->getTrack()->getDisplayName() == name){
+
 			return trackit->second;
 		}
 	}

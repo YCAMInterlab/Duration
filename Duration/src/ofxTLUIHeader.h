@@ -46,6 +46,10 @@ class ofxTLUIHeader {
 	ofxLocalization* translation;
 	ofxUICanvas* getGui();
 	bool getModified();
+
+	void setValueRange(ofRange range);
+	void setValueMin(float min);
+	void setValueMax(float max);
 	
   protected:
     
