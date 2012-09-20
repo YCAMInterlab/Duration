@@ -403,24 +403,43 @@ void DurationController::handleOscIn(){
 		else if(m.getAddress() == "/duration/enableoscout"){
 			//system wide
 			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_INT32){
-				
+				settings.oscOutEnabled = m.getArgAsInt32(0) != 0;
+				enableOSCOutToggle->setValue(settings.oscOutEnabled);
 			}
 			//per track
-			else if(m.getNumArgs() == 2 && m.getArgType(0) == OFXOSC_TYPE_STRING && m.getArgType(1) == OFXOSC_TYPE_INT32){
-				
+			else if(m.getNumArgs() == 2 &&
+					m.getArgType(0) == OFXOSC_TYPE_STRING &&
+					m.getArgType(1) == OFXOSC_TYPE_INT32)
+			{
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					header->setSendOSC(m.getArgAsInt32(1) != 0);
+				}
+				else {
+					ofLogError("Duration:OSC") << " Enable OSC out failed. track not found " << trackName;
+				}
 			}
 			else{
 				ofLogError("Duration:OSC") << " Enable OSC out incorrectly formatted arguments. usage: /duration/enableoscout enable:int32 == (1 or 0), or /duration/enableoscout trackname:string enable:int32 (1 or 0)";
 			}
 		}
 		else if(m.getAddress() == "/duration/enableoscin"){
-			//system wide
+			//system wide -- don't quite know what to do as this will turn off all osc
 			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_INT32){
-				
+				settings.oscInEnabled = m.getArgAsInt32(0) != 0;
+				enableOSCInToggle->setValue(settings.oscInEnabled);
 			}
 			//per track
 			else if(m.getNumArgs() == 2 && m.getArgType(0) == OFXOSC_TYPE_STRING && m.getArgType(1) == OFXOSC_TYPE_INT32){
-				
+				string trackName = m.getArgAsString(0);
+				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
+				if(header != NULL){
+					header->setReceiveOSC(m.getArgAsInt32(1) == 1);
+				}
+				else {
+					ofLogError("Duration:OSC") << " Enable in out failed. track not found " << trackName;
+				}
 			}
 			else{
 				ofLogError("Duration:OSC") << "Enable OSC in incorrectly formatted arguments. usage: /duration/enableoscout enable:int32 == (1 or 0), or /duration/enableoscout trackname:string enable:int32 (1 or 0)";
