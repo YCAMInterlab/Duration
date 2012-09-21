@@ -32,6 +32,7 @@ typedef struct {
     bool snapToBPM;
     bool snapToKeys;
     
+	float oscRate; // BUNDLES PER SECOND
     bool oscInEnabled;
 	bool oscOutEnabled;
 	int oscInPort;
@@ -115,6 +116,10 @@ class DurationController : public ofThread  {
     void bangFired(ofxTLBangEventArgs& bang);
 	vector<string> trackAddresses;
 	
+	void startPlayback();
+	void sendInfoMessage();
+	bool refreshAllOscOut;
+	
     bool shouldCreateNewProject;
     bool shouldLoadProject;
 	string projectToLoad;
@@ -149,7 +154,7 @@ class DurationController : public ofThread  {
 	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
 	ofPtr<ofxTLUIHeader> getHeaderWithDisplayName(string name);
 	
-	float oscRate;
+	float oscFrequency; // 1 / BUNDLES PER SECOND * 1000
 	unsigned long lastOSCBundleSent;
 	ofxFTGLFont tooltipFont;
 	bool needsSave;

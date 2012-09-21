@@ -22,7 +22,6 @@ ofxTLUIHeader::ofxTLUIHeader(){
     sendOSCEnable = NULL;
 	receiveOSCEnable = NULL;
 	modified = false;
-
 }
 
 ofxTLUIHeader::~ofxTLUIHeader(){

@@ -633,6 +633,7 @@
 					"-lpthread",
 					"-mtune=native",
 				);
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -667,6 +668,7 @@
 					"-lpthread",
 					"-mtune=native",
 				);
+				SDKROOT = macosx10.6;
 			};
 			name = Release;
 		};

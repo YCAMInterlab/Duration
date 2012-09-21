@@ -14,8 +14,6 @@
 #define TEXT_INPUT_WIDTH 100
 
 DurationController::DurationController(){
-	//TODO: make variable
-	oscRate = (1.0/30.0)*1000; //in millis
 	lastOSCBundleSent = 0;
 
 	enabled = false;
@@ -103,7 +101,7 @@ void DurationController::setup(){
     for(int i = 0; i < projectDirectory.size(); i++){
         if(projectDirectory.getFile(i).isDirectory()){
             ofDirectory subDir = ofDirectory(projectDirectory.getPath(i));
-			//            cout << "checking path " << projectDirectory.getPath(i) << endl;
+			//cout << "checking path " << projectDirectory.getPath(i) << endl;
             subDir.allowExt("durationproj");
             subDir.setShowHidden(true);
             subDir.listDir();
@@ -273,7 +271,7 @@ void DurationController::handleOscIn(){
 				if(header->receiveOSC() && m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
 					
 					if(timeline.getIsPlaying() ){ //TODO: change to isPlaying() && isRecording()
-						if(track->getTrackType() == "Curves" ){
+						if(track->getTrackType() == "Curves"){
 							ofxTLCurves* curves = (ofxTLCurves*)track;
 //							cout << "adding value " << m.getArgAsFloat(0) << endl;
 							if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
@@ -343,7 +341,9 @@ void DurationController::handleOscIn(){
 			}
 		}
 		else if(m.getAddress() == "/duration/play"){
-			timeline.play();
+			if(!timeline.getIsPlaying()){
+				startPlayback();
+			}
 		}
 		else if(m.getAddress() == "/duration/stop"){
 			if(timeline.getIsPlaying()){
@@ -354,8 +354,8 @@ void DurationController::handleOscIn(){
 			}
 		}
 		else if(m.getAddress() == "/duration/record"){
-			timeline.play();
 			//TODO: turn on record mode
+			startPlayback();
 		}
 		else if(m.getAddress() == "/duration/seektosecond"){
 			if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
@@ -422,6 +422,25 @@ void DurationController::handleOscIn(){
 			}
 			else{
 				ofLogError("Duration:OSC") << " Enable OSC out incorrectly formatted arguments. usage: /duration/enableoscout enable:int32 == (1 or 0), or /duration/enableoscout trackname:string enable:int32 (1 or 0)";
+			}
+		}
+		else if(m.getAddress() == "/duration/oscrate"){
+			if(m.getNumArgs() == 1){
+				if(m.getArgType(0) == OFXOSC_TYPE_INT32){
+					settings.oscRate = m.getArgAsInt32(0);
+					oscFrequency = 1000*1/settings.oscRate;
+				}
+				else if(m.getArgType(0) == OFXOSC_TYPE_INT64){
+					settings.oscRate = m.getArgAsInt64(0);
+					oscFrequency = 1000*1/settings.oscRate;
+				}
+				else if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+					settings.oscRate = m.getArgAsFloat(0);
+					oscFrequency = 1000*1/settings.oscRate;
+				}
+				else {
+					ofLogError("Duration:OSC") << " Set OSC rate failed. must specify an int or a float as the first parameter";
+				}
 			}
 		}
 		else if(m.getAddress() == "/duration/enableoscin"){
@@ -615,9 +634,10 @@ void DurationController::handleOscOut(){
 	}
 	
 	unsigned long bundleTime = recordTimer.getAppTimeMillis();
-	if(lastOSCBundleSent+oscRate > bundleTime){
+	if(lastOSCBundleSent+oscFrequency > bundleTime){
 		return;
 	}
+	//cout << "OSC RATE IS " << settings.oscRate << " osc FREQUENCY is " << oscFrequency << " sending num at record timer " << recordTimer.getAppTimeMillis() << endl;
 	
 	unsigned long sampleMillis = timeline.getCurrentTimeMillis();
 	int numMessages = 0;
@@ -640,7 +660,7 @@ void DurationController::handleOscOut(){
 				if(trackType == "Curves"){
 					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
 					float value = curves->getValueAtTimeInMillis(sampleMillis);
-					if(value != header->lastFloatSent || !header->hasSentValue){
+					if(value != header->lastFloatSent || !header->hasSentValue || refreshAllOscOut){
 						m.addFloatArg(value);
 						header->lastFloatSent = value;
 						header->hasSentValue = true;
@@ -650,7 +670,7 @@ void DurationController::handleOscOut(){
 				else if(trackType == "Switches"){
 					ofxTLSwitches* switches = (ofxTLSwitches*)tracks[t];
 					bool on = switches->isOnAtMillis(sampleMillis);
-					if(on != header->lastBoolSent || !header->hasSentValue){
+					if(on != header->lastBoolSent || !header->hasSentValue || refreshAllOscOut){
 						m.addIntArg(on ? 1 : 0);
 						header->lastBoolSent = on;
 						header->hasSentValue = true;
@@ -660,7 +680,7 @@ void DurationController::handleOscOut(){
 				else if(trackType == "Colors"){
 					ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
 					ofColor color = colors->getColorAtMillis(sampleMillis);
-					if(color != header->lastColorSent || !header->hasSentValue){
+					if(color != header->lastColorSent || !header->hasSentValue || refreshAllOscOut){
 						m.addIntArg(color.r);
 						m.addIntArg(color.g);
 						m.addIntArg(color.b);
@@ -673,6 +693,7 @@ void DurationController::handleOscOut(){
 					m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
 					bundle.addMessage(m);
 					numMessages++;
+					refreshAllOscOut = false;
 				}
 			}
 		}
@@ -697,7 +718,8 @@ void DurationController::handleOscOut(){
 void DurationController::startRecording(){
 	recordTimer.setStartTime();
 	recordTimeOffset = timeline.getCurrentTimeMillis();
-	timeline.play();
+	//timeline.play();
+	startPlayback();
 }
 
 void DurationController::stopRecording(){
@@ -741,7 +763,12 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 		}
     }
     else if(name == "PLAYPAUSE"){
-        timeline.togglePlay();
+		if(!timeline.getIsPlaying()){
+			startPlayback();
+		}
+		else{
+			timeline.stop();
+		}
     }
     else if(name == "DURATION"){
         string newDuration = durationLabel->getTextString();
@@ -941,7 +968,7 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 #ifdef TARGET_OSX
 	else if(trackType == translation.translateKey("audio") || trackType == "audio"){
 		if(audioTrack != NULL){
-			ofLogError("DurationController::loadProject") << "Trying to add an additional audio track";
+			ofLogError("DurationController::addTrack") << "Trying to add an additional audio track";
 		}
 		else{
 			audioTrack = new ofxTLAudioTrack();
@@ -967,7 +994,8 @@ void DurationController::update(ofEventArgs& args){
 	gui->update();
 	
 	timeLabel->setLabel(timeline.getCurrentTimecode());
-    
+	playpauseToggle->setValue(timeline.getIsPlaying());
+
 #ifdef TARGET_OSX
 	if(audioTrack != NULL && audioTrack->isSoundLoaded()){
 		
@@ -1057,12 +1085,11 @@ void DurationController::update(ofEventArgs& args){
 ofPtr<ofxTLUIHeader> DurationController::getHeaderWithDisplayName(string name){
 	map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
 	for(trackit = headers.begin(); trackit != headers.end(); trackit++){
-		cout << "Track name is " << trackit->second->getTrack()->getDisplayName() << " our name is " << name << endl;
 		if(trackit->second->getTrack()->getDisplayName() == name){
-
 			return trackit->second;
 		}
 	}
+	//same as null
 	return ofPtr<ofxTLUIHeader>();
 }
 
@@ -1110,8 +1137,12 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
 	
     int key = keyArgs.key;
 	if(key == ' '){
-        timeline.togglePlay();
-		playpauseToggle->toggleValue();
+		if(!timeline.getIsPlaying()){
+			startPlayback();
+		}
+		else{
+			timeline.stop();
+		}
     }
     
     if(key == 'i'){
@@ -1128,6 +1159,36 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
 }
 
 //--------------------------------------------------------------
+void DurationController::startPlayback(){
+	if(!timeline.getIsPlaying()){
+		sendInfoMessage();
+		timeline.play();
+	}
+}
+
+//--------------------------------------------------------------
+void DurationController::sendInfoMessage(){
+	if(settings.oscOutEnabled){
+		ofxOscMessage m;
+		m.setAddress("/duration/info");
+		map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
+		for(trackit = headers.begin(); trackit != headers.end(); trackit++){
+			m.addStringArg(trackit->second->getTrackType());
+			m.addStringArg(ofFilePath::addLeadingSlash( trackit->second->getTrack()->getDisplayName() ));
+			if(trackit->second->getTrackType() == "Curves"){
+				ofxTLCurves* curves = (ofxTLCurves*)trackit->second->getTrack();
+				m.addFloatArg(curves->getValueRange().min);
+				m.addFloatArg(curves->getValueRange().max);
+			}
+		}
+		oscLock.lock();
+		sender.sendMessage(m);
+		oscLock.unlock();
+		refreshAllOscOut = true;
+	}
+}
+
+//--------------------------------------------------------------
 DurationProjectSettings DurationController::defaultProjectSettings(){
     DurationProjectSettings settings;
     
@@ -1139,6 +1200,7 @@ DurationProjectSettings DurationController::defaultProjectSettings(){
     settings.snapToBPM = false;
     settings.snapToKeys = true;
     
+	settings.oscRate = 30;
     settings.oscOutEnabled = true;
 	settings.oscInEnabled = true;
     settings.oscInPort = 12346;
@@ -1194,8 +1256,7 @@ void DurationController::loadProject(string projectPath, bool forceCreate){
 }
 
 //--------------------------------------------------------------
-void DurationController::loadProject(string projectPath, string projectName, bool forceCreate){
-    
+void DurationController::loadProject(string projectPath, string projectName, bool forceCreate){    
     ofxXmlSettings projectSettings;
 	string projectDataPath = ofToDataPath(projectPath+"/.durationproj");
 	if(!projectSettings.loadFile(projectDataPath)){
@@ -1238,28 +1299,21 @@ void DurationController::loadProject(string projectPath, string projectName, boo
             string xmlFileName = projectSettings.getValue("xmlFileName", "");
             string trackName = projectSettings.getValue("trackName","");
             string trackFilePath = ofToDataPath(projectPath + "/" + xmlFileName);
-            ofxTLTrack* newTrack = addTrack(trackType, trackName, trackFilePath);
 			
+			//add the track
+            ofxTLTrack* newTrack = addTrack(trackType, trackName, trackFilePath);
+
+			//custom setup
 			if(newTrack != NULL){
-//				if(newTrack->getTrackType() == "Bangs"){
-//					newTrack = timeline.addBangs(trackName, trackFilePath);
-//				}
-//				else if(trackType == "Flags"){
-//					newTrack = timeline.addFlags(trackName, trackFilePath);
-//				}
+				ofPtr<ofxTLUIHeader> headerTrack = headers[newTrack->getName()];
 				if(newTrack->getTrackType() == "Curves"){
 					ofxTLCurves* curves = (ofxTLCurves*)newTrack;
-					curves->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
-												  projectSettings.getValue("max", 1.0)));
+					headerTrack->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
+													   projectSettings.getValue("max", 1.0)));
 				}
-//				else if(trackType == "Switches"){
-//					newTrack = timeline.addSwitches(trackName, trackFilePath);
-//				}
 				else if(newTrack->getTrackType() == "Colors"){
 					ofxTLColorTrack* colors = (ofxTLColorTrack*)newTrack;
 					colors->loadColorPalette(projectSettings.getValue("palette", timeline.getDefaultColorPalettePath()));
-//					string paletteFilePath  = projectSettings.getValue("palette", timeline.getDefaultColorPalettePath());
-//					newTrack = timeline.addColorsWithPalette(trackName,trackFilePath,paletteFilePath);
 				}
 				#ifdef TARGET_OSX
 				else if(newTrack->getTrackType() == "Audio"){
@@ -1274,8 +1328,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 				if(displayName != ""){
 					newTrack->setDisplayName(displayName);
 				}
-//				ofxTLUIHeader* headerTrack = createHeaderForTrack(newTrack);
-				ofPtr<ofxTLUIHeader> headerTrack = headers[newTrack->getName()];
+
 				headerTrack->setSendOSC(projectSettings.getValue("sendOSC", true));
 				headerTrack->setReceiveOSC(projectSettings.getValue("receiveOSC", true));
 			}
@@ -1314,6 +1367,8 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     oscInPortInput->setTextString( ofToString(newSettings.oscInPort = projectSettings.getValue("oscInPort", 12346)) );
     oscOutIPInput->setTextString( newSettings.oscIP = projectSettings.getValue("oscIP", "localhost") );
     oscOutPortInput->setTextString( ofToString(newSettings.oscOutPort = projectSettings.getValue("oscOutPort", 12345)) );
+	newSettings.oscRate = projectSettings.getValue("oscRate", 30.0);
+	oscFrequency = 1000 * 1/newSettings.oscRate; //frequence in millis
 	
     projectSettings.popTag(); //project settings;
 	
@@ -1343,6 +1398,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     defaultSettings.saveFile();
 	
 	needsSave = false;
+	sendInfoMessage();
 }
 
 //--------------------------------------------------------------
@@ -1417,6 +1473,7 @@ void DurationController::saveProject(){
     projectSettings.addValue("oscInPort", settings.oscInPort);
     projectSettings.addValue("oscIP", settings.oscIP);
     projectSettings.addValue("oscOutPort", settings.oscOutPort);
+	projectSettings.addValue("oscRate", settings.oscRate);
 	
 //	projectSettings.addValue("zoomViewMin",timeline.getZoomer()->getSelectedRange().min);
 //	projectSettings.addValue("zoomViewMax",timeline.getZoomer()->getSelectedRange().max);

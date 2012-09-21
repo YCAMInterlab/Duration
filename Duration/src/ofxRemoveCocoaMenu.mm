@@ -1,11 +1,3 @@
-//
-//  ofxRemoveCocoaMenu.cpp
-//  Duration
-//
-//  Created by Jim on 9/8/12.
-//
-//
-
 
 //sourced from here:
 // http://stackoverflow.com/questions/6690743/glut-window-menu-bar-in-mac-osx
@@ -18,7 +10,7 @@ void removeCocoaMenuFromGlut(){
 	if (NSApp){
 		NSMenu      *menu;
 		NSMenuItem  *menuItem;
-		
+		NSAutoreleasePool* p = [[NSAutoreleasePool alloc] init];
 //		NSLog(@"%@",[[NSApp mainMenu] description]);
 //
 		[NSApp setMainMenu:[[NSMenu alloc] init]];
@@ -32,6 +24,8 @@ void removeCocoaMenuFromGlut(){
 		[menuItem setSubmenu:menu];
 		[[NSApp mainMenu] addItem:menuItem];
 		[NSApp performSelector:@selector(setAppleMenu:) withObject:menu];
+		
+		[p release];
 	}
 #endif
 }

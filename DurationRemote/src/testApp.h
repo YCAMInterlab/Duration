@@ -19,6 +19,7 @@ class testApp : public ofBaseApp{
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
+	void exit();
 	
 	void guiEvent(ofxUIEventArgs &e);
 	void sendCurrentCommand();
@@ -46,21 +47,24 @@ class testApp : public ofBaseApp{
 	//ROW 2 time and playback
 	ofxUILabelButton* playButton;
 	ofxUILabelButton* stopButton;
+	ofxUILabelButton* saveButton;
 	ofxUILabelButton* setDurationButton;
 	ofxUITextInput* durationInput;
 
 	//ROW 3 add track
+	ofxUITextInput* trackNameInput;
 	ofxUIDropDownList* addTrackDropdown;
-	ofxUITextInput* addTrackNameInput;
 	ofxUITextInput* filePathInput;
 	ofxUILabelButton* addTrackButton;
 
 	//ROW 4 configure track
 	
 	//ROW 5 remove track
-	ofxUITextInput* removeTrackNameInput;
+//	ofxUITextInput* removeTrackNameInput;
 	ofxUILabelButton* removeTrackButton;
 
+	string currentIP;
+	int currentPort;
 	
 	ofRectangle seekRect;
 	bool hoveringSeek;

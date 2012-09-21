@@ -8,17 +8,19 @@ void testApp::setup(){
 	ofBackground(255*.15);
 	
 	gui = new ofxUICanvas(0,0, ofGetWidth(), ofGetHeight());
-	gui->setWidgetFontSize(OFX_UI_FONT_LARGE);
+	gui->setWidgetFontSize(OFX_UI_FONT_MEDIUM);
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
 	ipInput = gui->addTextInput("IP", "localhost", 300);
+	ipInput->setAutoClear(false);
 	portInput = gui->addTextInput("PORT", "12346", 150);
+	portInput->setAutoClear(false);
 	
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
 	commandInput = gui->addTextInput("COMMAND", "/duration/command", 300);
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-	arg1 = gui->addTextInput("ARG1", "arg1", 150);
-	arg2 = gui->addTextInput("ARG2", "arg2", 150);
-	arg3 = gui->addTextInput("ARG3", "arg3", 150);
+	arg1 = gui->addTextInput("ARG1", " ", 150);
+	arg2 = gui->addTextInput("ARG2", " ", 150);
+	arg3 = gui->addTextInput("ARG3", " ", 150);
 	sendButton = gui->addLabelButton("send >>", false);
 	commandInput->setAutoClear(false);
 	arg1->setAutoClear(false);
@@ -27,11 +29,11 @@ void testApp::setup(){
 	
 	//play controls
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
-	playButton = gui->addLabelButton("play", false);
+	playButton = gui->addLabelButton("PLAY", false);
 	
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-	stopButton = gui->addLabelButton("stop", false);
-
+	stopButton = gui->addLabelButton("STOP", false);
+	saveButton = gui->addLabelButton("SAVE", false);
 
 	//TODO add duration setting
 	//ADD TRACKS
@@ -44,27 +46,28 @@ void testApp::setup(){
 	trackTypes.push_back("audio");
 	
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
+	trackNameInput = gui->addTextInput("TRACK NAME", "track name", 200);
+	trackNameInput->setAutoClear(false);
+	
+	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
     addTrackDropdown = gui->addDropDownList("track type", trackTypes);
 	addTrackDropdown->setAutoClose(true);
 	addTrackDropdown->setAllowMultiple(false);
-	
-	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-	addTrackNameInput = gui->addTextInput("TRACK NAME", "track name", 200);
-	addTrackNameInput->setAutoClear(false);
 	filePathInput = gui->addTextInput("TRACK FILEPATH", "track filepath [optional]", 200);
 	filePathInput->setAutoClear(false);
 	addTrackButton = gui->addLabelButton("add track >>", false);
 	
 	//REMOVE track
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);	
-	removeTrackNameInput = gui->addTextInput("REMOVE TRACK", "remove track name", 200);
-	removeTrackNameInput->setAutoClear(false);
+//	removeTrackNameInput = gui->addTextInput("REMOVE TRACK", "remove track name", 200);
+//	removeTrackNameInput->setAutoClear(false);
 	
 	gui->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
 	removeTrackButton = gui->addLabelButton("remove track >>", false);
 
 	seekRect = ofRectangle(10, 250, ofGetWidth()-20, 50);
 	
+	gui->loadSettings("GUI/guiSettings.xml");
 	ofAddListener(gui->newGUIEvent, this, &testApp::guiEvent);
 	
 	gui->enable();
@@ -73,7 +76,10 @@ void testApp::setup(){
 	blueColor = redColor.getInverted();
 	seekPercent = 0;
 	hoveringSeek = false;
-	sender.setup("localhost", 12346);
+	currentIP = ipInput->getTextString();
+	currentPort = ofToInt(portInput->getTextString());
+
+	sender.setup(currentIP, currentPort);
 }
 
 //number test from http://stackoverflow.com/questions/4654636/how-to-determine-if-a-string-is-a-number-with-c
@@ -89,13 +95,22 @@ void testApp::guiEvent(ofxUIEventArgs &e){
 	
 	if(e.widget == ipInput){
 		//this check could be smarter but o well
-		if(isNumber(ipInput->getTextString())){
-			sender.setup(ipInput->getTextString(), ofToInt(portInput->getTextString()));
+		if(ipInput->getTextString() != currentIP && isNumber(ipInput->getTextString())){
+			currentIP = ipInput->getTextString();
+			sender.setup(currentIP, currentPort);
+		}
+		else{
+			ipInput->setTextString(currentIP);
 		}
 	}
 	else if(e.widget == portInput){
-		if(isNumber(portInput->getTextString())){
-			sender.setup(ipInput->getTextString(), ofToInt(portInput->getTextString()));
+		int newPort = ofToInt(portInput->getTextString());
+		if(newPort != currentPort && isNumber(portInput->getTextString())){
+			currentPort = newPort;
+			sender.setup(currentIP, currentPort);
+		}
+		else{
+			portInput->setTextString(ofToString(currentPort));
 		}
 	}
 	else if(e.widget == sendButton && sendButton->getValue()){
@@ -111,18 +126,23 @@ void testApp::guiEvent(ofxUIEventArgs &e){
 		commandInput->setTextString("/duration/stop");
 		sendCurrentCommand();
 	}
+	else if(e.widget == saveButton && saveButton->getValue()){
+		clearArgs();
+		commandInput->setTextString("/duration/save");
+		sendCurrentCommand();
+	}
 	else if(e.widget == addTrackDropdown && !addTrackDropdown->isOpen() && addTrackDropdown->getSelected().size() == 1){
 		addTrackDropdown->setLabelText(addTrackDropdown->getSelected()[0]->getName());
 	}
 	else if(e.widget == addTrackButton &&
 			addTrackButton->getValue() &&
 			addTrackDropdown->getSelected().size() == 1 &&
-			addTrackNameInput->getTextString() != "")
+			trackNameInput->getTextString() != "")
 	{
 		clearArgs();
 		commandInput->setTextString("/duration/addtrack");
 		arg1->setTextString(addTrackDropdown->getSelected()[0]->getName());
-		arg2->setTextString(addTrackNameInput->getTextString());
+		arg2->setTextString(trackNameInput->getTextString());
 		if(filePathInput->getTextString().find(".xml") != string::npos){
 			arg3->setTextString(filePathInput->getTextString());
 		}
@@ -131,7 +151,7 @@ void testApp::guiEvent(ofxUIEventArgs &e){
 	else if(e.widget == removeTrackButton && removeTrackButton->getValue()){
 		clearArgs();
 		commandInput->setTextString("/duration/removetrack");
-		arg1->setTextString(removeTrackNameInput->getTextString());
+		arg1->setTextString(trackNameInput->getTextString());
 		sendCurrentCommand();
 	}
 }
@@ -254,4 +274,9 @@ void testApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+//--------------------------------------------------------------
+void testApp::exit(){
+	gui->saveSettings("GUI/guiSettings.xml");
 }

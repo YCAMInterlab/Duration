@@ -1,10 +1,70 @@
 <Widget>
-    <Kind>4</Kind>
-    <Name>MINIMAL</Name>
-    <Value>37.1711</Value>
+    <Kind>12</Kind>
+    <Name>IP</Name>
+    <Value>localhost</Value>
 </Widget>
 <Widget>
-    <Kind>4</Kind>
-    <Name>STANDARD</Name>
-    <Value>74.6711</Value>
+    <Kind>12</Kind>
+    <Name>PORT</Name>
+    <Value>12346</Value>
+</Widget>
+<Widget>
+    <Kind>12</Kind>
+    <Name>COMMAND</Name>
+    <Value>/duration/oscrate</Value>
+</Widget>
+<Widget>
+    <Kind>12</Kind>
+    <Name>ARG1</Name>
+    <Value>30</Value>
+</Widget>
+<Widget>
+    <Kind>12</Kind>
+    <Name>ARG2</Name>
+    <Value> </Value>
+</Widget>
+<Widget>
+    <Kind>12</Kind>
+    <Name>ARG3</Name>
+    <Value> </Value>
+</Widget>
+<Widget>
+    <Kind>12</Kind>
+    <Name>TRACK NAME</Name>
+    <Value>Floob</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>bangs</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>flags</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>switches</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>curves</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>colors</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>audio</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>12</Kind>
+    <Name>TRACK FILEPATH</Name>
+    <Value>track filepath [optional]</Value>
 </Widget>
