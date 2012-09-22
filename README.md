@@ -242,6 +242,36 @@ Duration's OSC input is always listening for you to tell it what to do next.
         <td>TrackType (String); TrackName (String,Optional); XMLFile (String,Optional)</td>
         <td>Creates a new track of type TrackType (bangs, flags, switches, curves, colors or audio. Optionally set the name and a path to an external XML file to load.</td>
     </tr>
+    <tr>
+        <td>Set Range</td>
+        <td>/duration/valuerange</td>
+        <td>TrackName (String); Min (Float); Max (Float)</td>
+        <td>Changes the value range of the target Curves track to [Min, Max]</td>
+    </tr>
+    <tr>
+        <td>Set Range: Min</td>
+        <td>/duration/valuerange/min</td>
+        <td>TrackName (String); Min (Float)</td>
+        <td>Changes the min value of the target Curves track to Min</td>
+    </tr>
+    <tr>
+        <td>Set Range: Max</td>
+        <td>/duration/valuerange/max</td>
+        <td>TrackName (String); Max (Float)</td>
+        <td>Changes the min value of the target Curves track to Max</td>
+    </tr>
+    <tr>
+        <td>Color Palette</td>
+        <td>/duration/colorpalette</td>
+        <td>TrackName (String); PalettePath (String)</td>
+        <td>Loads the image at PalettePath for target Colors track</td>
+    </tr>
+    <tr>
+        <td>Audio Clip</td>
+        <td>/duration/audioclip</td>
+        <td>ClipPath (String)</td>
+        <td>Loads the sound clip into the Audio track. The Audio track must alrady be present in the current project</td>
+    </tr>
 
 </table>
 
