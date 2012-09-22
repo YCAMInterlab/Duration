@@ -130,24 +130,18 @@ Duration's OSC input is always listening for you to tell it what to do next.
     <tr>
         <td style="font-weight: bold">Command</td>
         <td style="font-weight: bold">OSC Address</td>
-        <td style="font-weight: bold">Arg1</td>
-        <td style="font-weight: bold">Arg2</td>
-        <td style="font-weight: bold">Arg3</td>
+        <td style="font-weight: bold">Arguments</td>
         <td style="font-weight: bold">Notes</td>
     </tr>
     <tr>
         <td>Open project</td>
         <td>/duration/open</td>
-        <td>ProjectPath as String</td>
-        <td>-</td>
-        <td>-</td>
+        <td>ProjectPath (String)</td>
         <td>Immediately opens project at "ProjectPath", Current project is not saved. Paths with a leading slash are assumed absolute, otherwise relative to ~/Documents/Duration</td>
     </tr>
     <tr>
         <td>Save Project</td>
         <td>/duration/save</td>
-        <td>-</td>
-        <td>-</td>
         <td>-</td>
         <td>Saves any changes to the current project.</td>
     </tr>
@@ -156,128 +150,96 @@ Duration's OSC input is always listening for you to tell it what to do next.
         <td>Start Playback</td>
         <td>/duration/play</td>
         <td>-</td>
-        <td>-</td>
-        <td>-</td>
         <td>Does not have an effect if the project is already playing. If playback started an /duration/info message is triggered</td>
     </tr>
     <tr>
         <td>Stop Playback</td>
         <td>/duration/stop</td>
         <td>-</td>
-        <td>-</td>
-        <td>-</td>
         <td>If already stopped, this command will reset the playhead to time 0</td>
     </tr>
     <tr>
         <td>Set Duration</td>
         <td>/duration/setduration</td>
-        <td>Seconds as Float</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Seconds (Float)</td>
         <td>Resets the current project's Duration to Seconds. If the duration is shortened values may be clipped</td>
     </tr>
     <tr>
         <td>Set Duration</td>
         <td>/duration/setduration</td>
-        <td>Milliseconds as Int</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Milliseconds (Int)</td>
         <td>Resets the current project's Duration to Millis. If the duration is shortened values may be clipped</td>
     </tr>
     <tr>
         <td>Set Duration</td>
         <td>/duration/setduration</td>
-        <td>Timecode as String</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Timecode (String)</td>
         <td>Resets the current project's Duration to Timecode, formatted HH:MM:SS:MILS. If the duration is shortened values may be clipped</td>
     </tr>
     <tr>
         <td>Seek</td>
         <td>/duration/seektoposition</td>
-        <td>Position as Float</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Position (Float)</td>
         <td>Sets playhead position to Position, 0 to 1.0</td>
     </tr>
     <tr>
         <td>Seek</td>
         <td>/duration/seektosecond</td>
-        <td>Second as Float</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Second (Float)</td>
         <td>Sets playhead position to the specified second</td>
     </tr>
     <tr>
         <td>Seek</td>
         <td>/duration/seektomillis</td>
-        <td>Millis as Int</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Millis (Int)</td>
         <td>Sets playhead position to the specified millisecond</td>
     </tr>
     <tr>
         <td>Seek</td>
         <td>/duration/seektotimecode</td>
-        <td>Millis as Int</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Millis (Int)</td>
         <td>Sets playhead position to the specified timecode, specified HH:MM:SS:MILS</td>
     </tr>
     <tr>
         <td>Enable OSC In</td>
         <td>/duration/enableoscin</td>
-        <td>Enable as Int</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Enable (Int)</td>
         <td>1 enables, 0 disables incoming OSC. Careful this may be the last message you ever send.</td>
     </tr>
     <tr>
         <td>Enable OSC In</td>
         <td>/duration/enableoscin</td>
-        <td>TrackName as String</td>
-        <td>Enable as Int</td>
-        <td>-</td>
+        <td>TrackName (String); Enable (Int)</td>
         <td>1 enables, 0 disables incoming OSC for TrackName</td>
     </tr>
     <tr>
         <td>Enable OSC Out</td>
         <td>/duration/enableoscout</td>
-        <td>Enable as Int</td>
-        <td>-</td>
-        <td>-</td>
+        <td>Enable (Int)</td>
         <td>1 enables, 0 disables outgoing OSC</td>
     </tr>
     <tr>
         <td>Enable OSC Out</td>
         <td>/duration/enableoscout</td>
-        <td>TrackName as String</td>
-        <td>Enable as Int</td>
-        <td>-</td>
+        <td>TrackName (String); Enable (Int)</td>
         <td>1 enables, 0 disables outgoing OSC on track matching name</td>
     </tr>
     <tr>
         <td>Enable OSC Out</td>
         <td>/duration/enableoscout</td>
-        <td>TrackName as String</td>
-        <td>Enable as Int</td>
-        <td>-</td>
+        <td>TrackName (String); Enable (Int)</td>
         <td>1 enables, 0 disables outgoing OSC on track matching name</td>
     </tr>
     <tr>
         <td>OSC Rate</td>
         <td>/duration/oscrate</td>
         <td>Rate (Float)</td>
-        <td>-</td>
-        <td>-</td>
         <td>Sets the outgoing OSC rate in messages per second. Default is 30</td>
     </tr>
     <tr>
         <td>Add Track</td>
         <td>/duration/addtrack</td>
-        <td>TrackType (String)</td>
-        <td>TrackName (String,Optional)</td>
-        <td>XMLFile (String,Optional)</td>
+        <td>TrackType (String); TrackName (String,Optional); XMLFile (String,Optional)</td>
         <td>Creates a new track of type TrackType (bangs, flags, switches, curves, colors or audio. Optionally set the name and a path to an external XML file to load.</td>
     </tr>
 
