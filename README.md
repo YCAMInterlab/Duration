@@ -1,6 +1,6 @@
 # This project is currently unreleased 
 
-If you found this feel free to give it a try or send it to friens but please do not publicize until after October 20th.
+If you found this feel free to give it a try or send it to friends but please do not publicize until after October 20th.
 
 # Duration
 
@@ -28,12 +28,47 @@ To remove a track, click on the delete button on the far right of the header and
 
 ### Track Types
 
+Duration has six built in track types. Each track has keyframes which specify values or behavior at specifc moments. Between keyframes tracks can define ways of interpolating values to create smooth changes.
+
+#### Bangs
+
+Bangs are the simplest track, causing a message with no parameters to be triggered once when the playhead passes over each keyframe
+
+#### Flags
+
+Flags are just like bangs with the added functionality of attaching a string of text to be attached to the message
+
+#### Switches
+
+Switches cause large regions of the track to be marked as on, and messages are sent each time a switch edge is encountered. 
+
+#### Curves
+
+Curves allow for specifying a smoothly changing value between a given min and max range. Right clicking a keyframe brings up a menu for selecting different smooth interpolation options between keyframes.
+
+#### Colors
+
+Color tracks use a color palette image loaded from disk to create smoothly changing colors over time. Each keyfr
+
+#### Audio
+
+(experimental, os x only)
+
+Audio track allows for visualizing an audio waveform and playing back sound through Duraiton along with your tracks. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
 
 ### Setting the duration
-Every project has a fixed Duration.  ::TODO::
+Every project has a fixed Duration. To change it, click on the duration timecode value beneath the playhead current time code on the to panel and type a new duration. Your new duration value must match the timecode format of HH:MM:SS:MILS. Shortening the duration may result in some keyframes being clipped if they fall out of range.
 
 ### In and Out points
-Setting in and out points let's you focus playback on just a small part of your composition. ::TODO::
+
+Setting in and out points let's you focus playback on just a small part of your composition. Use the hotkeys i and o to set the in and out range, or drag the handle beneath the time ticker. Alt+i and Alt+o can be used to clear the current in out.
+
+
+### Configuring BPM
+
+Duration has a very basic 4/4 time signature grid based on a BPM. This let's you snap keyframes to precise quarter measures. To change the BPM click and drag the BPM digit on the top panel.
+
+Note: more complex time signatures are planned for future releases.
 
 ### Configuring OSC communication
 
