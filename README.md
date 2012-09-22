@@ -10,50 +10,87 @@ The application sends it's data over OSC, as well as being controllable through 
 
 ## Using the Duration interface
 
-### hotkeys
+### Managing tracks
+
+### Setting the duration
+
+### Configuring OSC communication
+
+
+
+### Shortcuts
+
+* NOTE: Windows and Linux use CTRL and Mac uses COMMAND 
+
 <table>
     <tr>
-        <td>Function</td><td>mac hotkey</td><td>windows hotkey</td>
+        <td style="font-weight:bold">Function</td><td style="font-weight:bold">Shortcut</td>
     </tr>
     <tr>
-        <td>Save</td><td>command+s</td><td>control+s</td>
+        <td>Toggle play</td><td>SPACE</td>
     </tr>
     <tr>
-        <td>Cut Selection</td><td>command+x</td><td>control+x</td>
+        <td>Save</td><td>command+s</td>
     </tr>
     <tr>
-        <td>Copy Selection</td><td>command+c</td><td>control+c</td>
+        <td>Cut Selection</td><td>command+x</td>
     </tr>
     <tr>
-        <td>Paste Selection</td><td>command+v</td><td>control+v</td>
+        <td>Copy Selection</td><td>command+c</td>
     </tr>
     <tr>
-        <td>Undo</td><td>command+z</td><td>control+z</td>
+        <td>Paste Selection</td><td>command+v</td>
     </tr>
     <tr>
-        <td>Redo</td><td>shift+command+z</td><td>shift+control+z</td>
+        <td>Undo</td><td>command+z</td>
     </tr>
     <tr>
-        <td>Set in point</td><td>i</td><td>i</td>
+        <td>Redo</td><td>shift+command+z</td>
     </tr>
     <tr>
-        <td>Set out point</td><td>o</td><td>o</td>
+        <td>Set in point</td><td>i</td>
     </tr>
     <tr>
-        <td>Clear in point</td><td>alt+i</td><td>alt+i</td>
+        <td>Set out point</td><td>o</td>
     </tr>
     <tr>
-        <td>Clear out point</td><td>alt+o</td><td>alt+o</td>
+        <td>Clear in point</td><td>alt+i</td>
+    </tr>
+    <tr>
+        <td>Clear out point</td><td>alt+o</td>
     </tr>
 </table>
 
-## Building applications to work with Duration
+## Connecting things to Duration
+
+Duration sends all it's data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted as follows
+
+     /track/display/name <values as arguments>
+
+Each type of track sends different arguments.
+</table
+    <tr><td style="font-weight: bold">Track Type</td><td style="font-weight: bold">Arguments</td></tr>
+    <tr><td>Bang</td><td>No Arguments.</td></tr>
+    <tr><td>Flag</td><td>1 argument. flag text as string, can be blank</td></tr>
+    <tr><td>Switch</td><td>1 argument. Change, 1 for turned on, 0 for turned off</td></tr>
+    <tr><td>Curve</td><td>1 argument. Current Value, ranging between Min and Max</td></tr>
+    <tr><td>Color</td><td>3 arguments. Red, Green, Blue, as Int32 ranging 0-255</td></tr>
+</table>
 
 ## Recording data into tracks from OSC
 
 ## Controlling Duration from OSC
 
+Duration also comes packaged with a simple DurationRemote application to show and test the OSC control interface
+
 ## Compiling Duration from source
+
+
+### Download source bundle
+
+### Compile from Github
+
+
 
 ## Version History
  - Alpha 002 released September 22nd
