@@ -130,19 +130,53 @@ Duration's OSC input is always listening for you to tell it what to do next.
     <tr>
         <td style="font-weight: bold">Command</td>
         <td style="font-weight: bold">OSC Address</td>
-        <td style="font-weight: bold">Arg1 : Type</td>
-        <td style="font-weight: bold">Arg2 : Type</td>
-        <td style="font-weight: bold">Arg3 : Type</td>
+        <td style="font-weight: bold">Arg1</td>
+        <td style="font-weight: bold">Arg2</td>
+        <td style="font-weight: bold">Arg3</td>
         <td style="font-weight: bold">Notes</td>
     </tr>
     <tr>
         <td>Open project</td>
         <td>/duration/open</td>
-        <td>projectPath : String</td>
+        <td>ProjectPath:String</td>
         <td>-</td>
         <td>-</td>
-        <td>This will immediately open a new project, without saving any changes to the existing one. Paths with a leading slash '/' are assumed to be absolute, otherwise they are assumed to be relative to the ~/Documents/Duration folder</td>
+        <td>Immediately opens project at "ProjectPath", Current project is not saved. Paths with a leading slash are assumed absolute, otherwise relative to ~/Documents/Duration</td>
     </tr>
+    <tr>
+        <td>Save Project</td>
+        <td>/duration/save</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>Start Playback</td>
+        <td>/duration/play</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Does not have an effect if the project is already playing. If playback started an /duration/info message is triggered</td>
+    </tr>
+    <tr>
+        <td>Stop Playback</td>
+        <td>/duration/stop</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>If already stopped, this command will reset the playhead to time 0</td>
+    </tr>
+    <tr>
+        <td>Set Duration</td>
+        <td>/duration/setduration</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Resets the current project's Duration. If the duration is shortened values may be clipped</td>
+    </tr>
+
 </table>
 
 Duration also comes packaged with a simple DurationRemote application to show and test the OSC control interface
