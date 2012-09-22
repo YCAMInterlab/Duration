@@ -12,23 +12,25 @@ The application sends values over OSC and can be configured through OSC messages
 
 ![DurationInterface](http://www.duration.cc/duration_preview.png)
 
+Duration is open source and completely free to use in your art, research, or commercial projects. It's built with [openFrameworks](http://www.openframeworks.cc), and inherits its MIT license and sharing philosophy. 
+
 ## Using the Duration interface
 
 ### Managing Projects
 
 A Duration project saves a set of tracks, their values, and global configuration settings all into one package. A project is just a folder with .xml files and a special .durationproj file containing the track names and settings.
 
-By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project dropdown menu within the application. You can save projects anywhere you'd like, but you will have to remember yourself where you put them.
+By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project drop-down menu within the application. You can save projects anywhere you'd like, but you will have to remember yourself where you put them.
 
 ### Managing tracks
 
-In Duration, tracks are the beginning and end - the alpha and omega. Everything happens inside a track. To add a track, select a type from the Add Track dropdown and it'll be appended to your composition. Name the track by clicking on the the name in the track header and typing in a new name. This name is used for all outgoing communication to identify your track, so think of it as both a name and an OSC address. It's common to put routing information right in the name, so /mytrack/position/x is a great name for a track. If you leave off the leading slash Duration adds it for you.
+In Duration, tracks are everything. To add tracks to your project select a type from the Add Track drop-down and it'll be appended to your composition. Name the track by clicking on the the name in the track header and typing in a new name. This name is used for all outgoing communication to identify your track, so think of it as both a name and an OSC address. It's common to put routing information right in the name, so /mytrack/position/x is a great name for a track. If you leave off the leading slash Duration adds it for you.
 
 To remove a track, click on the delete button on the far right of the header and confirm you want it removed.
 
 ### Track Types
 
-Duration has six built in track types. Each track has keyframes which specify values or behavior at specifc moments. Between keyframes tracks can define ways of interpolating values to create smooth changes.
+Duration has six built in track types. Each track has keyframes which specify values or behavior at specific moments. Between keyframes tracks can define ways of interpolating values to create smooth changes.
 
 #### Bangs
 
@@ -54,7 +56,7 @@ Color tracks use a color palette image loaded from disk to create smoothly chang
 
 (experimental, os x only)
 
-Audio track allows for visualizing an audio waveform and playing back sound through Duraiton along with your tracks. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
+Audio track allows for visualizing an audio waveform and playing back sound through Duration along with your tracks. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
 
 ### Setting the duration
 Every project has a fixed Duration. To change it, click on the duration timecode value beneath the playhead current time code on the to panel and type a new duration. Your new duration value must match the timecode format of HH:MM:SS:MILS. Shortening the duration may result in some keyframes being clipped if they fall out of range.
@@ -344,19 +346,23 @@ Duration's OSC input is always listening for you to tell it what to do next.
 
 Duration comes packaged with a simple application called "DurationRemote", which can be used to test control messages.
 
+![DurationRemote](http://www.duration.cc/duration_remote.png)
+
 ### Recording data into tracks from OSC
 
 Duration has an experimental feature for recording OSC data as keyframes in Curves or Bang tracks. To record an incoming signal into a curves track, rename a track to match the address of the message being received. The first parameter of the incoming message must also be a float. 
 
-If a message is being received that matches a Curve track's name and has valid data, the background of that track will start to pulse red, indicating it's ready to record. Hitting play will immediatly result in the incoming data to be written into the track. Use a Bang track to record intermitent messages and a Curves track to record data streams. To simply play a track back without recording any data, disable incoming OSC on that track.
+If a message is being received that matches a Curve track's name and has valid data, the background of that track will start to pulse red, indicating it's ready to record. Hitting play will immediately result in the incoming data to be written into the track. Use a Bang track to record intermittent messages and a Curves track to record data streams. To simply play a track back without recording any data, disable incoming OSC on that track.
 
 * NOTE: Use the bundled RecordingDataGenerator to test this functionality by naming a track to match one of the outgoing parameters.
 
-* NOTE: This is still an experimental feature that is fun to experiment with but has quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanagable keyframes! All of these cases are not yet handled very well by Duration.
+![RecordingGenerator](http://www.duration.cc/duration_datagenerator.png)
+
+* NOTE: This is still an experimental feature that is fun to experiment with but has quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanageable keyframes! All of these cases are not yet handled very well by Duration.
 
 ## Hacking on Duration
 
-Duration is open source and free to use as is in any type of project. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be broken. There are a few ways to appraoch customizing Duration.
+Duration is open source and free to use as is in any type of project. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be broken. There are a few ways to approach customizing Duration.
 
 ### Download source bundle
 
@@ -367,7 +373,7 @@ Each Duration release is coupled with a Binary release as well as a source packa
 To compile from Github requires three things
  - A fork of the develop branch of openFrameworks
  - A fork of Duration project itself in openFrameworks/apps/
- - Forks of all dependent addons in openFrameworks/addons
+ - Forks of all dependent add-ons in openFrameworks/addons
 
 The Duration repository has a clone_addons.sh file that can be run from the terminal:
 
