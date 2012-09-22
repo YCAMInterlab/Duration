@@ -138,7 +138,7 @@ Duration's OSC input is always listening for you to tell it what to do next.
     <tr>
         <td>Open project</td>
         <td>/duration/open</td>
-        <td>ProjectPath:String</td>
+        <td>ProjectPath as String</td>
         <td>-</td>
         <td>-</td>
         <td>Immediately opens project at "ProjectPath", Current project is not saved. Paths with a leading slash are assumed absolute, otherwise relative to ~/Documents/Duration</td>
@@ -171,10 +171,74 @@ Duration's OSC input is always listening for you to tell it what to do next.
     <tr>
         <td>Set Duration</td>
         <td>/duration/setduration</td>
+        <td>Seconds as Float</td>
         <td>-</td>
         <td>-</td>
+        <td>Resets the current project's Duration to Seconds. If the duration is shortened values may be clipped</td>
+    </tr>
+    <tr>
+        <td>Set Duration</td>
+        <td>/duration/setduration</td>
+        <td>Milliseconds as Int</td>
         <td>-</td>
-        <td>Resets the current project's Duration. If the duration is shortened values may be clipped</td>
+        <td>-</td>
+        <td>Resets the current project's Duration to Millis. If the duration is shortened values may be clipped</td>
+    </tr>
+    <tr>
+        <td>Set Duration</td>
+        <td>/duration/setduration</td>
+        <td>Timecode as String</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Resets the current project's Duration to Timecode, formatted HH:MM:SS:MILS. If the duration is shortened values may be clipped</td>
+    </tr>
+    <tr>
+        <td>Seek</td>
+        <td>/duration/seektoposition</td>
+        <td>Position as Float</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Sets playhead position to Position, 0 to 1.0</td>
+    </tr>
+    <tr>
+        <td>Seek</td>
+        <td>/duration/seektosecond</td>
+        <td>Second as Float</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Sets playhead position to the specified second</td>
+    </tr>
+    <tr>
+        <td>Seek</td>
+        <td>/duration/seektomillis</td>
+        <td>Millis as Int</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Sets playhead position to the specified millisecond</td>
+    </tr>
+    <tr>
+        <td>Seek</td>
+        <td>/duration/seektotimecode</td>
+        <td>Millis as Int</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Sets playhead position to the specified timecode, specified HH:MM:SS:MILS</td>
+    </tr>
+    <tr>
+        <td>Enable OSC Out</td>
+        <td>/duration/enableoscout</td>
+        <td>Enable as Int</td>
+        <td>-</td>
+        <td>-</td>
+        <td>1 enables, 0 disables outgoing OSC</td>
+    </tr>
+    <tr>
+        <td>Enable OSC Out</td>
+        <td>/duration/enableoscout</td>
+        <td>TrackName as String</td>
+        <td>Enable as Int</td>
+        <td>-</td>
+        <td>1 enables, 0 disables outgoing OSC on track matching name</td>
     </tr>
 
 </table>
