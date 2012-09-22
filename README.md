@@ -1,4 +1,3 @@
-
 ![DurationLogo](http://www.duration.cc/icon256.png)
 # Duration
 
@@ -14,7 +13,7 @@ The application sends it's data over OSC, as well as being controllable through 
 ### hotkeys
 <table>
     <tr>
-        <td>function</td><td>mac hotkey</td><td>windows hotkey</td>
+        <td>Function</td><td>mac hotkey</td><td>windows hotkey</td>
     </tr>
     <tr>
         <td>Save</td><td>command+s</td><td>control+s</td>
@@ -28,7 +27,24 @@ The application sends it's data over OSC, as well as being controllable through 
     <tr>
         <td>Paste Selection</td><td>command+v</td><td>control+v</td>
     </tr>
-
+    <tr>
+        <td>Undo</td><td>command+z</td><td>control+z</td>
+    </tr>
+    <tr>
+        <td>Redo</td><td>shift+command+z</td><td>shift+control+z</td>
+    </tr>
+    <tr>
+        <td>Set in point</td><td>i</td><td>i</td>
+    </tr>
+    <tr>
+        <td>Set out point</td><td>o</td><td>o</td>
+    </tr>
+    <tr>
+        <td>Clear in point</td><td>alt+i</td><td>alt+i</td>
+    </tr>
+    <tr>
+        <td>Clear out point</td><td>alt+o</td><td>alt+o</td>
+    </tr>
 </table>
 
 ## Building applications to work with Duration
