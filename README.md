@@ -1,4 +1,3 @@
-
 # Duration
 
 ## Universal Timeline 
@@ -25,13 +24,16 @@ To remove a track, click on the delete button on the far right of the header and
 
 ### Track Types
 
+
 ### Setting the duration
-Every project has a fixed Duration.  
+Every project has a fixed Duration.  ::TODO::
 
 ### In and Out points
-Setting in and out points let's you
+Setting in and out points let's you focus playback on just a small part of your composition. ::TODO::
 
 ### Configuring OSC communication
+
+::TODO::
 
 ### Shortcuts
 
@@ -78,6 +80,8 @@ Setting in and out points let's you
 
 ## Connecting things to Duration
 
+By itself Duration is pretty useless, as it's designed to work in close collaboration with other realtime environments.
+
 ### Receiving output
 
 Duration sends all it's data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted as follows
@@ -118,9 +122,28 @@ For a project with 2 color tracks, a curves track and a flags track the info mes
      
     /duration/info Colors /colortrack_one Colors /colortrack_two Curves /accelerate -1.5 2.0 Flags /flagtrack
 
-
 ### Controlling Duration automatically from OSC
 
+Duration's OSC input is always listening for you to tell it what to do next.
+
+<table>
+    <tr>
+        <td style="font-weight: bold">Command</td>
+        <td style="font-weight: bold">OSC Address</td>
+        <td style="font-weight: bold">Arg1 : Type</td>
+        <td style="font-weight: bold">Arg2 : Type</td>
+        <td style="font-weight: bold">Arg3 : Type</td>
+        <td style="font-weight: bold">Notes</td>
+    </tr>
+    <tr>
+        <td>Open project</td>
+        <td>/duration/open</td>
+        <td>projectPath : String</td>
+        <td>-</td>
+        <td>-</td>
+        <td>This will immediately open a new project, without saving any changes to the existing one. Paths with a leading slash '/' are assumed to be absolute, otherwise they are assumed to be relative to the ~/Documents/Duration folder</td>
+    </tr>
+</table>
 
 Duration also comes packaged with a simple DurationRemote application to show and test the OSC control interface
 
