@@ -1,6 +1,6 @@
 # Duration
 
-![DurationLogo](https://github.com/YCAMInterlab/Duration/blob/master/Resources/icon/stopwatch/icon256.png)
+![DurationLogo](http://www.duration.cc/icon256.png)
 Universal Timeline 
 
 Duration is application for controlling change over time. With a simple one window approach, the stand alone application manages lists of tracks to compose different types of data.
@@ -10,15 +10,13 @@ The application sends the values over OSC, as well as being controllable through
 
 ## Using the Duration interface
 
-### Setting in and ou tpoints
+### Setting in and out points
 
 ## Building applications to work with Duration
 
 ## Recording data into tracks from OSC
 
 ## Controlling Duration from OSC
-
-With i
 
 ## Compiling Duration from source
 
