@@ -122,7 +122,7 @@ For a project with 2 color tracks, a curves track and a flags track the info mes
      
     /duration/info Colors /colortrack_one Colors /colortrack_two Curves /accelerate -1.5 2.0 Flags /flagtrack
 
-### Controlling Duration automatically from OSC
+### Controlling Duration through OSC
 
 Duration's OSC input is always listening for you to tell it what to do next.
 
@@ -275,26 +275,39 @@ Duration's OSC input is always listening for you to tell it what to do next.
 
 </table>
 
-Duration also comes packaged with a simple DurationRemote application to show and test the OSC control interface
+### Remote Control 
+
+Duration comes packaged with a simple application called "DurationRemote", which can be used to test control messages.
 
 ### Recording data into tracks from OSC
 
+Duration has an experimental feature for recording OSC data as keyframes in Curves or Bang tracks. To record an incoming signal into a curves track, rename a track to match the address of the message being received. The first parameter of that 
+
+
+* NOTE: Also you can use the bundled RecordingDataGenerator to test this functionality.
+
+* NOTE: This is still an experimental feature that is fun to experiment with but has quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanagable keyframes! All of these cases are not yet handled very well by Duration.
+
+# Extending Duration
+
+Duration is open source and free to use as is in any type of project. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be broken. There are a few ways to appraoch writing custom code for Duration
 
 ## Compiling Duration from source
 
 
 ### Download source bundle
 
+::TODO::
+
 ### Compile from Github
 
-
+::TODO::
 
 ## Version History
  - Alpha 002 released September 22nd
  - Alpha 001 released August 15th
 
 
-
-The core of Duration is ofxTimeline: 
-
 Duration is the product of the [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org). 
+
+Built with openFrameworks and ofxTimeline
