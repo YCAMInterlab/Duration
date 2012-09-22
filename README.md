@@ -149,7 +149,7 @@ Duration's OSC input is always listening for you to tell it what to do next.
         <td>-</td>
         <td>-</td>
         <td>-</td>
-        <td></td>
+        <td>Saves any changes to the current project.</td>
     </tr>
 
     <tr>
@@ -225,6 +225,22 @@ Duration's OSC input is always listening for you to tell it what to do next.
         <td>Sets playhead position to the specified timecode, specified HH:MM:SS:MILS</td>
     </tr>
     <tr>
+        <td>Enable OSC In</td>
+        <td>/duration/enableoscin</td>
+        <td>Enable as Int</td>
+        <td>-</td>
+        <td>-</td>
+        <td>1 enables, 0 disables incoming OSC. Careful this may be the last message you ever send.</td>
+    </tr>
+    <tr>
+        <td>Enable OSC In</td>
+        <td>/duration/enableoscin</td>
+        <td>TrackName as String</td>
+        <td>Enable as Int</td>
+        <td>-</td>
+        <td>1 enables, 0 disables incoming OSC for TrackName</td>
+    </tr>
+    <tr>
         <td>Enable OSC Out</td>
         <td>/duration/enableoscout</td>
         <td>Enable as Int</td>
@@ -239,6 +255,30 @@ Duration's OSC input is always listening for you to tell it what to do next.
         <td>Enable as Int</td>
         <td>-</td>
         <td>1 enables, 0 disables outgoing OSC on track matching name</td>
+    </tr>
+    <tr>
+        <td>Enable OSC Out</td>
+        <td>/duration/enableoscout</td>
+        <td>TrackName as String</td>
+        <td>Enable as Int</td>
+        <td>-</td>
+        <td>1 enables, 0 disables outgoing OSC on track matching name</td>
+    </tr>
+    <tr>
+        <td>OSC Rate</td>
+        <td>/duration/oscrate</td>
+        <td>Rate (Float)</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Sets the outgoing OSC rate in messages per second. Default is 30</td>
+    </tr>
+    <tr>
+        <td>Add Track</td>
+        <td>/duration/addtrack</td>
+        <td>TrackType (String)</td>
+        <td>TrackName (String,Optional)</td>
+        <td>XMLFile (String,Optional)</td>
+        <td>Creates a new track of type TrackType (bangs, flags, switches, curves, colors or audio. Optionally set the name and a path to an external XML file to load.</td>
     </tr>
 
 </table>
