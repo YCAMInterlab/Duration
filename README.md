@@ -1,4 +1,6 @@
-# Pre release -- If you found this feel free to give it a try or send it to friens but please do not publicize until after October 20th.
+# This project is currently unreleased 
+
+If you found this feel free to give it a try or send it to friens but please do not publicize until after October 20th.
 
 # Duration
 
