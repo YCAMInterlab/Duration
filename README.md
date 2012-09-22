@@ -63,25 +63,54 @@ The application sends it's data over OSC, as well as being controllable through 
 
 ## Connecting things to Duration
 
+### Receiving output
+
 Duration sends all it's data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted as follows
 
      /track/display/name <values as arguments>
 
 Each type of track sends different arguments.
-</table
-    <tr><td style="font-weight: bold">Track Type</td><td style="font-weight: bold">Arguments</td></tr>
-    <tr><td>Bang</td><td>No Arguments.</td></tr>
-    <tr><td>Flag</td><td>1 argument. flag text as string, can be blank</td></tr>
-    <tr><td>Switch</td><td>1 argument. Change, 1 for turned on, 0 for turned off</td></tr>
-    <tr><td>Curve</td><td>1 argument. Current Value, ranging between Min and Max</td></tr>
-    <tr><td>Color</td><td>3 arguments. Red, Green, Blue, as Int32 ranging 0-255</td></tr>
+<table>
+    <tr>
+        <td style="font-weight: bold">Track Type</td>
+        <td style="font-weight: bold">Arguments</td>
+    </tr>
+    <tr>
+        <td>Bang</td>
+        <td>No Arguments.</td>
+    </tr>
+    <tr>
+        <td>Flag</td>
+        <td>1 argument as String, Flag text (can be blank)</td>
+        </tr>
+    <tr>
+        <td>Switch</td>
+        <td>1 argument as Int32, 1 for turned on, 0 for turned off</td>
+    </tr>
+    <tr>
+        <td>Curve</td>
+        <td>1 argument as Float, Current Value, ranging between Min and Max</td>
+    </tr>
+    <tr>
+        <td>Color</td>
+        <td>3 arguments as Int32 args ranging 0-255 for Red, Green, Blue</td>
+    </tr>
 </table>
 
-## Recording data into tracks from OSC
+Whenever a new project is loaded or playback begins, Duration will always send a special information message containing information about all the tracks in the current project. The message has 4 arguments per Curves track, and 2 arguments for other tracks. The first argument is always a string with the track type, the second is the display name (which will always match the address of messages sent from that track). For Curves, the additional two arguments are floats representing the min and max values for that track.
 
-## Controlling Duration from OSC
+For a project with 2 color tracks, a curves track and a flags track the info message would look like this:
+     
+    /duration/info Colors /colortrack_one Colors /colortrack_two Curves /accelerate -1.5 2.0 Flags /flagtrack
+
+
+### Controlling Duration automatically from OSC
+
 
 Duration also comes packaged with a simple DurationRemote application to show and test the OSC control interface
+
+### Recording data into tracks from OSC
+
 
 ## Compiling Duration from source
 
