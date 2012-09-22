@@ -115,6 +115,22 @@ The top right of the Duration window configures incoming and outgoing OSC for th
     <tr>
         <td>Clear out point</td><td>alt+o</td>
     </tr>
+    <tr>
+        <td>Select all keyframes in Focused track</td><td>command+a</td>
+    </tr>
+    <tr>
+        <td>Add all keyframes in Focused track to selection</td><td>command+shift+a</td>
+    </tr>
+    <tr>
+        <td>Delete all selected keyframes</td><td>delete or backspace</td>
+    </tr>    
+    <tr>
+        <td>Nudge keyframes a little</td><td>arrow keys</td>
+    </tr>    
+    <tr>
+        <td>Nudge keyframes a little more</td><td>shift+arrow keys</td>
+    </tr>    
+
 </table>
 
 ## Connecting things to Duration
@@ -175,6 +191,13 @@ Duration's OSC input is always listening for you to tell it what to do next.
         <td style="font-weight: bold">Arguments</td>
         <td style="font-weight: bold">Notes</td>
     </tr>
+    <tr>
+        <td>New Project</td>
+        <td>/duration/new</td>
+        <td>ProjectPath (String)</td>
+        <td>Immediately creates and opens a new project for "ProjectPath", Current project is not saved. Paths with a leading slash are assumed absolute, otherwise relative to ~/Documents/Duration</td>
+    </tr>
+    
     <tr>
         <td>Open project</td>
         <td>/duration/open</td>
