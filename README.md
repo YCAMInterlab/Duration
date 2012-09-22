@@ -1,3 +1,5 @@
+# Pre release -- If you found this feel free to give it a try or send it to friens but please do not publicize until after October 20th.
+
 # Duration
 
 ## Universal Timeline 
@@ -33,7 +35,7 @@ Setting in and out points let's you focus playback on just a small part of your 
 
 ### Configuring OSC communication
 
-::TODO::
+The top right of the Duration window configures incoming and outgoing OSC for the project. Type the incoming port to listen to and the outgoing address and port.  Each individual track may also be enabled or disabled using the toggle in the header.
 
 ### Shortcuts
 
@@ -80,7 +82,7 @@ Setting in and out points let's you focus playback on just a small part of your 
 
 ## Connecting things to Duration
 
-By itself Duration is pretty useless, as it's designed to work in close collaboration with other realtime environments.
+By itself Duration is pretty useless, so let's hook it up to another realtime environment through OSC.
 
 ### Receiving output
 
@@ -116,7 +118,10 @@ Each type of track sends different arguments.
     </tr>
 </table>
 
-Whenever a new project is loaded or playback begins, Duration will always send a special information message containing information about all the tracks in the current project. The message has 4 arguments per Curves track, and 2 arguments for other tracks. The first argument is always a string with the track type, the second is the display name (which will always match the address of messages sent from that track). For Curves, the additional two arguments are floats representing the min and max values for that track.
+
+### Track info messages
+
+When a new project is loaded or playback begins, Duration will always send a special information message containing information about all the tracks in the current project. The message has 4 arguments per Curves track, and 2 arguments for other tracks. The first argument is always a string with the track type, the second is the display name (which will always match the address of messages sent from that track). For Curves, the additional two arguments are floats representing the min and max values for that track.
 
 For a project with 2 color tracks, a curves track and a flags track the info message would look like this:
      
@@ -281,32 +286,38 @@ Duration comes packaged with a simple application called "DurationRemote", which
 
 ### Recording data into tracks from OSC
 
-Duration has an experimental feature for recording OSC data as keyframes in Curves or Bang tracks. To record an incoming signal into a curves track, rename a track to match the address of the message being received. The first parameter of that 
+Duration has an experimental feature for recording OSC data as keyframes in Curves or Bang tracks. To record an incoming signal into a curves track, rename a track to match the address of the message being received. The first parameter of the incoming message must also be a float. 
 
+If a message is being received that matches a Curve track's name and has valid data, the background of that track will start to pulse red, indicating it's ready to record. Hitting play will immediatly result in the incoming data to be written into the track. Use a Bang track to record intermitent messages and a Curves track to record data streams. To simply play a track back without recording any data, disable incoming OSC on that track.
 
-* NOTE: Also you can use the bundled RecordingDataGenerator to test this functionality.
+* NOTE: Use the bundled RecordingDataGenerator to test this functionality by naming a track to match one of the outgoing parameters.
 
 * NOTE: This is still an experimental feature that is fun to experiment with but has quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanagable keyframes! All of these cases are not yet handled very well by Duration.
 
-# Extending Duration
+## Hacking on Duration
 
-Duration is open source and free to use as is in any type of project. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be broken. There are a few ways to appraoch writing custom code for Duration
-
-## Compiling Duration from source
-
+Duration is open source and free to use as is in any type of project. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be broken. There are a few ways to appraoch customizing Duration.
 
 ### Download source bundle
 
-::TODO::
+Each Duration release is coupled with a Binary release as well as a source package. The source package contains the application and all of it's dependencies and project files for all platforms. This is the easiest way to get up and running to hack Duration. But if you want to contribute to it's development consider forking the project and it's dependencies on Github so that you may issue Pull requests for your changes.
 
 ### Compile from Github
 
-::TODO::
+To compile from Github requires three things
+ - A fork of the develop branch of openFrameworks
+ - A fork of Duration project itself in openFrameworks/apps/
+ - Forks of all dependent addons in openFrameworks/addons
+
+The Duration repository has a clone_addons.sh file that can be run from the terminal:
+
+    $openFrameworks/apps/Duration/clone_addons.sh 
+
+This will configure all necessary dependencies into openFrameworks/addons/ and the project should compile
 
 ## Version History
  - Alpha 002 released September 22nd
  - Alpha 001 released August 15th
-
 
 Duration is the product of the [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org). 
 
