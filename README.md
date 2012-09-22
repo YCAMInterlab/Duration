@@ -1,6 +1,8 @@
-# Duration
+<p align="center">
+  <img href="http://www.duration.cc/icon256.png"/>
+</p>
 
-![DurationLogo](http://www.duration.cc/icon256.png)
+# Duration
 Universal Timeline 
 
 Duration is application for controlling change over time. With a simple one window approach, the stand alone application manages lists of tracks to compose different types of data.
