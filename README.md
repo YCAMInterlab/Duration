@@ -1,18 +1,35 @@
-<p align="center">
-  <img href="http://www.duration.cc/icon256.png"/>
-</p>
 
+![DurationLogo](http://www.duration.cc/icon256.png)
 # Duration
+
 Universal Timeline 
 
-Duration is application for controlling change over time. With a simple one window approach, the stand alone application manages lists of tracks to compose different types of data.
+Duration controls change over time. With a simple one window approach, the stand alone application manages lists of tracks to compose changing data over a fixed duration.
 
-The application sends the values over OSC, as well as being controllable through OSC messages.
+The application sends it's data over OSC, as well as being controllable through OSC messages.
 
 
 ## Using the Duration interface
 
-### Setting in and out points
+### hotkeys
+<table>
+    <tr>
+        <td>function</td><td>mac hotkey</td><td>windows hotkey</td>
+    </tr>
+    <tr>
+        <td>Save</td><td>command+s</td><td>control+s</td>
+    </tr>
+    <tr>
+        <td>Cut Selection</td><td>command+x</td><td>control+x</td>
+    </tr>
+    <tr>
+        <td>Copy Selection</td><td>command+c</td><td>control+c</td>
+    </tr>
+    <tr>
+        <td>Paste Selection</td><td>command+v</td><td>control+v</td>
+    </tr>
+
+</table>
 
 ## Building applications to work with Duration
 
