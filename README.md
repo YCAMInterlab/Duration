@@ -1,22 +1,33 @@
 # Duration
 
-Duration is an application for time.
+![DurationLogo](https://github.com/YCAMInterlab/Duration/blob/master/Resources/icon/stopwatch/icon256.png)
+Universal Timeline 
 
-current version is 001
-# OSC protocol
+Duration is application for controlling change over time. With a simple one window approach, the stand alone application manages lists of tracks to compose different types of data.
 
-Duration sends arbitrary timeline values over OSC using the following format
+The application sends the values over OSC, as well as being controllable through OSC messages.
 
-/duration/version/tracktype/trackname/ timestamp<uint64_t> args<...>
 
-Bang:
-/duration/001/bangs/trackname timestamp<uint64_t>
+## Using the Duration interface
 
-Flag:
-/duration/001/flags/trackname timestamp<uint64_t> flagname<string>
+### Setting in and ou tpoints
 
-Curve
-/duration/001/curves/trackname timestamp<uint64_t> value<float> min<float> max<float>
+## Building applications to work with Duration
 
-Switch:
-/duration/001/switches/trackname timestamp<uint64_t> value<int> on = 1 off = 0
+## Recording data into tracks from OSC
+
+## Controlling Duration from OSC
+
+With i
+
+## Compiling Duration from source
+
+## Version History
+ - Alpha 002 released September 22nd
+ - Alpha 001 released August 15th
+
+
+
+The core of Duration is ofxTimeline: 
+
+Duration is the product of the [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org). 
