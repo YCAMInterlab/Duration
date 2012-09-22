@@ -1,22 +1,37 @@
-![DurationLogo](http://www.duration.cc/icon256.png)
+
 # Duration
 
-Universal Timeline 
+## Universal Timeline 
 
-Duration controls change over time. With a simple one window approach, the stand alone application manages lists of tracks to compose changing data over a fixed duration.
+Duration controls change over time. With a simple one window approach, the cross platform stand alone application manages lists of tracks to compose changing data over a fixed duration.
 
-The application sends it's data over OSC, as well as being controllable through OSC messages.
+The application sends values over OSC and can be configured through OSC messages.
 
+![DurationInterface](http://www.duration.cc/duration_preview.png)
 
 ## Using the Duration interface
 
+### Managing Projects
+
+A Duration project saves a set of tracks, their values, and global configuration settings all into one package. A project is just a folder with .xml files and a special .durationproj file containing the track names and settings.
+
+By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project dropdown menu within the application. You can save projects anywhere you'd like, but you will have to remember yourself where you put them.
+
 ### Managing tracks
 
+In Duration, tracks are the beginning and end - the alpha and omega. Everything happens inside a track. To add a track, select a type from the Add Track dropdown and it'll be appended to your composition. Name the track by clicking on the the name in the track header and typing in a new name. This name is used for all outgoing communication to identify your track, so think of it as both a name and an OSC address. It's common to put routing information right in the name, so /mytrack/position/x is a great name for a track. If you leave off the leading slash Duration adds it for you.
+
+To remove a track, click on the delete button on the far right of the header and confirm you want it removed.
+
+### Track Types
+
 ### Setting the duration
+Every project has a fixed Duration.  
+
+### In and Out points
+Setting in and out points let's you
 
 ### Configuring OSC communication
-
-
 
 ### Shortcuts
 
