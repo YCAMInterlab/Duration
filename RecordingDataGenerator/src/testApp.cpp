@@ -14,7 +14,7 @@ void testApp::setup(){
 	// open an outgoing connection to HOST:PORT
 	sender.setup(HOST, PORT);
 	
-	font.loadFont("NewMedia Fett.ttf", 15);
+	font.loadFont("GUI/NewMedia Fett.ttf", 15);
 	
 	currentFreeDrawCursor = ofVec2f(.5,.5);
 	currentNoiseCursor = ofVec2f(.5,.5);

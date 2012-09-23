@@ -101,6 +101,7 @@ class DurationController : public ofThread  {
     string defaultProjectDirectoryPath;
 	DurationProjectSettings settings;
 	
+	void newProject(string projectPath);
     void newProject(string newProjectPath, string newProjectName);
     void loadProject(string projectPath, bool forceCreate = false);
     void loadProject(string projectPath, string projectName, bool forceCreate = false);
@@ -116,11 +117,13 @@ class DurationController : public ofThread  {
     void bangFired(ofxTLBangEventArgs& bang);
 	vector<string> trackAddresses;
 	
+	bool shouldStartPlayback;
 	void startPlayback();
 	void sendInfoMessage();
 	bool refreshAllOscOut;
 	
     bool shouldCreateNewProject;
+	string newProjectPath;
     bool shouldLoadProject;
 	string projectToLoad;
 	
@@ -163,6 +166,10 @@ class DurationController : public ofThread  {
 	string oscTrackTypeReceived;
 	string oscTrackNameReceived;
 	string oscTrackFilePathReceived;
+	
+	bool receivedPaletteToLoad;
+	ofxTLColorTrack* paletteTrack;
+	string palettePath;
 	
 };
 

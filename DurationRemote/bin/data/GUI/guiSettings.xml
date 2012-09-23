@@ -11,12 +11,12 @@
 <Widget>
     <Kind>12</Kind>
     <Name>COMMAND</Name>
-    <Value>/duration/oscrate</Value>
+    <Value>/duration/open</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>ARG1</Name>
-    <Value>30</Value>
+    <Value>OutputExample</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
@@ -31,7 +31,7 @@
 <Widget>
     <Kind>12</Kind>
     <Name>TRACK NAME</Name>
-    <Value>Floob</Value>
+    <Value>newCurves</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
@@ -41,7 +41,7 @@
 <Widget>
     <Kind>17</Kind>
     <Name>flags</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
@@ -51,7 +51,7 @@
 <Widget>
     <Kind>17</Kind>
     <Name>curves</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>

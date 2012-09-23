@@ -15,7 +15,10 @@
 
 DurationController::DurationController(){
 	lastOSCBundleSent = 0;
-
+	shouldStartPlayback = false;
+	receivedAddTrack = false;
+	receivedPaletteToLoad = false;
+	
 	enabled = false;
 	shouldCreateNewProject = false;
     shouldLoadProject = false;
@@ -263,7 +266,7 @@ void DurationController::handleOscIn(){
 		long startTime = recordTimer.getAppTimeMicros();
 		vector<ofxTLPage*>& pages = timeline.getPages();
 		for(int i = 0; i < pages.size(); i++){
-			vector<ofxTLTrack*> tracks = pages[i]->getTracks();
+			vector<ofxTLTrack*>& tracks = pages[i]->getTracks();
 			for(int t = 0; t < tracks.size(); t++){
 //				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
 				ofxTLTrack* track = tracks[t];
@@ -303,15 +306,37 @@ void DurationController::handleOscIn(){
 		
 		//check for playback messages
 		if(m.getAddress() == "/duration/open"){
-			string projectPath = ofToDataPath(m.getArgAsString(0));
-			if(ofFilePath::isAbsolute(projectPath)){
-				loadProject(projectPath);
+			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING){
+				string projectPath = m.getArgAsString(0);
+				shouldLoadProject = true;
+				if(ofFilePath::isAbsolute(projectPath)){
+					projectToLoad = projectPath;
+				}
+				else{
+					projectToLoad = defaultProjectDirectoryPath+projectPath;
+				}
 			}
 			else{
-				loadProject(defaultProjectDirectoryPath+m.getArgAsString(0));
+				ofLogError("Duration:OSC") << " Open Project Failed - must have on string argument specifying project name or absolute path";
 			}
 		}
-		if(m.getAddress() == "/duration/save"){
+		else if(m.getAddress() == "/duration/new"){
+			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING){
+				string path = m.getArgAsString(0);
+				shouldCreateNewProject = true;
+				if(ofFilePath::isAbsolute(path)){
+					newProjectPath = path;
+				}
+				else{
+					newProjectPath = defaultProjectDirectoryPath+path;
+				}
+				cout << "creating new project at path " << newProjectPath << endl;
+			}
+			else{
+				ofLogError("Duration:OSC") << " New Project Failed - must have on string argument specifying the new project path";
+			}
+		}
+		else if(m.getAddress() == "/duration/save"){
 			saveProject();
 		}
 		else if(m.getAddress() == "/duration/setduration"){
@@ -342,7 +367,8 @@ void DurationController::handleOscIn(){
 		}
 		else if(m.getAddress() == "/duration/play"){
 			if(!timeline.getIsPlaying()){
-				startPlayback();
+				shouldStartPlayback = true;
+				//startPlayback();
 			}
 		}
 		else if(m.getAddress() == "/duration/stop"){
@@ -355,7 +381,8 @@ void DurationController::handleOscIn(){
 		}
 		else if(m.getAddress() == "/duration/record"){
 			//TODO: turn on record mode
-			startPlayback();
+			shouldStartPlayback = true;
+			//startPlayback();
 		}
 		else if(m.getAddress() == "/duration/seektosecond"){
 			if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
@@ -507,12 +534,21 @@ void DurationController::handleOscIn(){
 			}
 		}
 		else if(m.getAddress() == "/duration/trackname"){
-			if(m.getNumArgs() == 2 && m.getArgType(0) == OFXOSC_TYPE_STRING && m.getArgType(1) == OFXOSC_TYPE_STRING){
+			if(m.getNumArgs() == 2 &&
+			   m.getArgType(0) == OFXOSC_TYPE_STRING &&
+			   m.getArgType(1) == OFXOSC_TYPE_STRING)
+			{
 				string trackName = m.getArgAsString(0);
 				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
 				if(header != NULL){
-					header->getTrackHeader()->setDisplayName(m.getArgAsString(1));
+					header->getTrack()->setDisplayName(m.getArgAsString(1));
 				}
+				else{
+					ofLogError("Duration:OSC") << "Set Track Name failed, could not find track " << trackName;
+				}
+			}
+			else{
+				ofLogError("Duration:OSC") << "Set Track Name failed, incorrectly formatted arguments. \n usage: /duration/trackname oldname:string newname:string";
 			}
 		}
 		else if(m.getAddress() == "/duration/valuerange"){
@@ -594,9 +630,9 @@ void DurationController::handleOscIn(){
 				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
 				if(header != NULL){
 					if(header->getTrackType() == "Colors"){
-						if( ! ((ofxTLColorTrack*)header->getTrack())->loadColorPalette(m.getArgAsString(1)) ){
-							ofLogError("Duration:OSC") << "Set color palette failed, file not found";
-						}
+						receivedPaletteToLoad = true;
+						paletteTrack = (ofxTLColorTrack*)header->getTrack();
+						palettePath  = m.getArgAsString(1);
 					}
 				}
 				else {
@@ -646,7 +682,7 @@ void DurationController::handleOscOut(){
 	//lock();
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
-		vector<ofxTLTrack*> tracks = pages[i]->getTracks();
+		vector<ofxTLTrack*>& tracks = pages[i]->getTracks();
 		for(int t = 0; t < tracks.size(); t++){
 			ofPtr<ofxTLUIHeader> header = headers[tracks[t]->getName()];
 			if(!header->sendOSC()){
@@ -693,7 +729,6 @@ void DurationController::handleOscOut(){
 					m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
 					bundle.addMessage(m);
 					numMessages++;
-					refreshAllOscOut = false;
 				}
 			}
 		}
@@ -708,6 +743,8 @@ void DurationController::handleOscOut(){
 	numMessages += bangsReceived.size();
 	if(numMessages > 0){
 		sender.sendBundle(bundle);
+		refreshAllOscOut = false;
+
 	}
 	lastOSCBundleSent = bundleTime;
 	bangsReceived.clear();	
@@ -771,10 +808,12 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 		}
     }
     else if(name == "DURATION"){
-        string newDuration = durationLabel->getTextString();
-        timeline.setDurationInTimecode(newDuration);
-        durationLabel->setTextString(timeline.getDurationInTimecode());
-		needsSave = true;
+		if(!gui->hasKeyboardFocus()){
+			string newDuration = durationLabel->getTextString();
+			timeline.setDurationInTimecode(newDuration);
+			durationLabel->setTextString(timeline.getDurationInTimecode());
+			needsSave = true;
+		}
     }
     else if(e.widget == addTrackDropDown){
         if(addTrackDropDown->isOpen()){
@@ -854,20 +893,22 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
     }
 	//INCOMING PORT
 	else if(e.widget == oscInPortInput){
-        int newPort = ofToInt(oscInPortInput->getTextString());
-        if(newPort > 0 && newPort < 65535 &&
-		   newPort != settings.oscInPort &&
-		   //don't send messages to ourself
-		   (newPort != settings.oscOutPort || (settings.oscIP != "localhost" && settings.oscIP != "127.0.0.1"))){
-            settings.oscInPort = newPort;
-			oscLock.lock();
-	        receiver.setup(settings.oscInPort);
-			oscLock.unlock();
-			needsSave = true;
-        }
-        else {
-            oscInPortInput->setTextString( ofToString(settings.oscInPort) );
-        }
+		if(!gui->hasKeyboardFocus()){
+			int newPort = ofToInt(oscInPortInput->getTextString());
+			if(newPort > 0 && newPort < 65535 &&
+			   newPort != settings.oscInPort &&
+			   //don't send messages to ourself
+			   (newPort != settings.oscOutPort || (settings.oscIP != "localhost" && settings.oscIP != "127.0.0.1"))){
+				settings.oscInPort = newPort;
+				oscLock.lock();
+				receiver.setup(settings.oscInPort);
+				oscLock.unlock();
+				needsSave = true;
+			}
+			else {
+				oscInPortInput->setTextString( ofToString(settings.oscInPort) );
+			}
+		}
     }
 	
 	//OSC OUTPUT
@@ -882,7 +923,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
     }
 
 	//OUTGOING IP
-    else if(e.widget == oscOutIPInput){
+    else if(e.widget == oscOutIPInput && !gui->hasKeyboardFocus()){
         string newIP = ofToLower(oscOutIPInput->getTextString());
         if(newIP == settings.oscIP){
             return;
@@ -918,7 +959,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 		oscOutIPInput->setTextString(settings.oscIP);
     }
 	//OUTGOING PORT
-	else if(e.widget == oscOutPortInput){
+	else if(e.widget == oscOutPortInput && !gui->hasKeyboardFocus()){
         int newPort = ofToInt(oscOutPortInput->getTextString());
         if(newPort > 0 && newPort < 65535 &&
 		   newPort != settings.oscOutPort &&
@@ -993,6 +1034,10 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 void DurationController::update(ofEventArgs& args){
 	gui->update();
 	
+	if(shouldStartPlayback){
+		shouldStartPlayback = false;
+		startPlayback();
+	}
 	timeLabel->setLabel(timeline.getCurrentTimecode());
 	playpauseToggle->setValue(timeline.getIsPlaying());
 
@@ -1031,12 +1076,25 @@ void DurationController::update(ofEventArgs& args){
     
     if(shouldCreateNewProject){
         shouldCreateNewProject = false;
-        ofFileDialogResult r = ofSystemSaveDialog("New Project", "NewDuration");
-        if(r.bSuccess){
-            newProject(r.getPath(), r.getName());
-        }
+		if(newProjectPath != ""){
+			newProject(newProjectPath);
+			newProjectPath = "";
+		}
+		else{
+			ofFileDialogResult r = ofSystemSaveDialog("New Project", "NewDuration");
+			if(r.bSuccess){
+				newProject(r.getPath(), r.getName());
+			}
+		}
     }
-	
+
+	if(receivedPaletteToLoad){
+		receivedPaletteToLoad = false;
+		if(!paletteTrack->loadColorPalette(palettePath)){
+			ofLogError("Duration:OSC") << "Set color palette failed, file not found";
+		}
+	}
+
 	if(receivedAddTrack){
 		lock();
 		receivedAddTrack = false;
@@ -1146,16 +1204,28 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
     }
     
     if(key == 'i'){
-        timeline.setInPointAtPlayhead();
+		if(ofGetModifierAltPressed()){
+			timeline.setInPointAtMillis(0);
+		}
+		else{
+	        timeline.setInPointAtPlayhead();
+		}
     }
     
     if(key == 'o'){
-        timeline.setOutPointAtPlayhead();
+		if(ofGetModifierAltPressed()){
+			timeline.setOutPointAtPercent(1.0);
+		}
+		else{
+	        timeline.setOutPointAtPlayhead();
+		}
     }
+	
 	
 	if(ofGetModifierShortcutKeyPressed() && (key == 's' || key=='s'-96) ){
 		saveProject();
 	}
+	
 }
 
 //--------------------------------------------------------------
@@ -1170,21 +1240,24 @@ void DurationController::startPlayback(){
 void DurationController::sendInfoMessage(){
 	if(settings.oscOutEnabled){
 		ofxOscMessage m;
-		m.setAddress("/duration/info");
-		map<string, ofPtr<ofxTLUIHeader> >::iterator trackit;
-		for(trackit = headers.begin(); trackit != headers.end(); trackit++){
-			m.addStringArg(trackit->second->getTrackType());
-			m.addStringArg(ofFilePath::addLeadingSlash( trackit->second->getTrack()->getDisplayName() ));
-			if(trackit->second->getTrackType() == "Curves"){
-				ofxTLCurves* curves = (ofxTLCurves*)trackit->second->getTrack();
-				m.addFloatArg(curves->getValueRange().min);
-				m.addFloatArg(curves->getValueRange().max);
+		m.setAddress("/duration/info");		
+		vector<ofxTLPage*>& pages = timeline.getPages();
+		for(int i = 0; i < pages.size(); i++){
+			vector<ofxTLTrack*>& tracks = pages[i]->getTracks();
+			for (int t = 0; t < tracks.size(); t++) {
+				m.addStringArg(tracks[t]->getTrackType());
+				m.addStringArg(ofFilePath::addLeadingSlash( tracks[t]->getDisplayName() ));
+				if(tracks[t]->getTrackType() == "Curves"){
+					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
+					m.addFloatArg(curves->getValueRange().min);
+					m.addFloatArg(curves->getValueRange().max);
+				}
 			}
 		}
 		oscLock.lock();
 		sender.sendMessage(m);
-		oscLock.unlock();
 		refreshAllOscOut = true;
+		oscLock.unlock();
 	}
 }
 
@@ -1207,6 +1280,18 @@ DurationProjectSettings DurationController::defaultProjectSettings(){
     settings.oscIP = "localhost";
     settings.oscOutPort = 12345;
     return settings;
+}
+
+//--------------------------------------------------------------
+void DurationController::newProject(string projectPath){
+	//scrape off the last component of the filename for the project name
+	projectPath = ofFilePath::removeTrailingSlash(projectPath);
+#ifdef TARGET_WIN32
+	vector<string> pathComponents = ofSplitString(projectPath, "\\");
+#else
+	vector<string> pathComponents = ofSplitString(projectPath, "/");
+#endif
+	newProject(projectPath, pathComponents[pathComponents.size()-1]);
 }
 
 //--------------------------------------------------------------
@@ -1415,7 +1500,7 @@ void DurationController::saveProject(){
         projectSettings.addTag("page");
         projectSettings.pushTag("page", i);
         projectSettings.addValue("name", pages[i]->getName());
-        vector<ofxTLTrack*> tracks = pages[i]->getTracks();
+        vector<ofxTLTrack*>& tracks = pages[i]->getTracks();
         for (int t = 0; t < tracks.size(); t++) {
             projectSettings.addTag("track");
             projectSettings.pushTag("track", t);
