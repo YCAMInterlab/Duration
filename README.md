@@ -18,8 +18,14 @@ Duration is open source and completely free to use in your art, research, or com
 
 Download Duration: 
 
-http://www.duration.cc/releases/Duration_OSX_002_preRelease.zip (os x)
-http://www.duration.cc/releases/Duration_Windows_002_preRelease.zip (windows)
+Mac OS X 10.6+
+https://github.com/downloads/YCAMInterlab/Duration/Duration_OSX_002_preRelease.zip
+
+Windows XP and 7
+https://github.com/downloads/YCAMInterlab/Duration/Duration_Windows_002_preRelease.zip
+
+Source for Windows (VC2010) and Mac (Xcode 4.4)
+https://github.com/downloads/YCAMInterlab/Duration/Duration_preRelease_002_Source_MacWndows.zip 
 
 For windows, you may need to install the MSVC++ Runtime
 http://www.microsoft.com/en-us/download/details.aspx?id=5555
