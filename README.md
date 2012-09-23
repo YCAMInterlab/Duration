@@ -14,17 +14,32 @@ The application sends values over OSC and can be configured through OSC messages
 
 Duration is open source and completely free to use in your art, research, or commercial projects. It's built with [openFrameworks](http://www.openframeworks.cc), and inherits its MIT license and sharing philosophy. 
 
+## Download
+
+Download Duration: 
+
+http://www.duration.cc/releases/Duration_OSX_002_preRelease.zip (os x)
+http://www.duration.cc/releases/Duration_Windows_002_preRelease.zip (windows)
+
+For windows, you may need to install the MSVC++ Runtime
+http://www.microsoft.com/en-us/download/details.aspx?id=5555
+
+## Demo video
+
+Readme TL;DR? The latest walk through video is here:
+https://vimeo.com/47504220 password: duration
+
 ## Using the Duration interface
 
 ### Managing Projects
 
-A Duration project saves a set of tracks, their values, and global configuration settings all into one package. A project is just a folder with .xml files and a special .durationproj file containing the track names and settings.
+A Duration project is just a collection of track data and interface configuration settings. It's all saved to a folder with .xml files and a special .durationproj file containing the track names and settings.
 
-By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project drop-down menu within the application. You can save projects anywhere you'd like, but you will have to remember yourself where you put them.
+By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project drop-down menu within the application. You can put projects anywhere you'd like, but you will have to remember yourself where you put them.
 
 ### Managing tracks
 
-In Duration, tracks are everything. To add tracks to your project select a type from the Add Track drop-down and it'll be appended to your composition. Name the track by clicking on the the name in the track header and typing in a new name. This name is used for all outgoing communication to identify your track, so think of it as both a name and an OSC address. It's common to put routing information right in the name, so /mytrack/position/x is a great name for a track. If you leave off the leading slash Duration adds it for you.
+Tracks are everything in Duration. To add tracks to your project select a type from the Add Track drop-down and it'll be appended to your composition. Name the track by clicking on the the name in the track header and typing in a new name. This name is used for all outgoing OSC messages to identify your track, so think of it as both a name and an OSC address. You can have duplicate names, but it makes it hard to work with on the output side. It's also common to put routing information right in the name, so /mytrack/position/x is a great name for a track. If you leave off the leading slash Duration adds it for you when it sends the message.
 
 To remove a track, click on the delete button on the far right of the header and confirm you want it removed.
 
@@ -34,11 +49,11 @@ Duration has six built in track types. Each track has keyframes which specify va
 
 #### Bangs
 
-Bangs are the simplest track, causing a message with no parameters to be triggered once when the playhead passes over each keyframe
+Bangs are the simplest track, causing a message with no parameters to be triggered once when the playhead passes over each keyframe.
 
 #### Flags
 
-Flags are just like bangs with the added functionality of attaching a string of text to be attached to the message
+Flags are just like bangs with the added functionality of attaching a string of text to be attached to the message.
 
 #### Switches
 
@@ -50,7 +65,7 @@ Curves allow for specifying a smoothly changing value between a given min and ma
 
 #### Colors
 
-Color tracks use a color palette image loaded from disk to create smoothly changing colors over time. Each keyfr
+Color tracks use a color palette image loaded to create smoothly changing colors over time. Each sample on the timeline specifies a position in the palette image to sample from. The next position is smoothly transitioned, sampling from the image along the way. 
 
 #### Audio
 
@@ -59,12 +74,12 @@ Color tracks use a color palette image loaded from disk to create smoothly chang
 Audio track allows for visualizing an audio waveform and playing back sound through Duration along with your tracks. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
 
 ### Setting the duration
+
 Every project has a fixed Duration. To change it, click on the duration timecode value beneath the playhead current time code on the to panel and type a new duration. Your new duration value must match the timecode format of HH:MM:SS:MILS. Shortening the duration may result in some keyframes being clipped if they fall out of range.
 
 ### In and Out points
 
 Setting in and out points let's you focus playback on just a small part of your composition. Use the hotkeys i and o to set the in and out range, or drag the handle beneath the time ticker. Alt+i and Alt+o can be used to clear the current in out.
-
 
 ### Configuring BPM
 
@@ -141,7 +156,7 @@ By itself Duration is pretty useless, so let's hook it up to another realtime en
 
 ### Receiving output
 
-Duration sends all it's data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted as follows
+Duration sends all it's data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted like this:
 
      /track/display/name <values as arguments>
 
@@ -157,26 +172,26 @@ Each type of track sends different arguments.
     </tr>
     <tr>
         <td>Flag</td>
-        <td>1 argument as String, Flag text (can be blank)</td>
+        <td>1 String argument representing Flag's text (can be blank)</td>
         </tr>
     <tr>
         <td>Switch</td>
-        <td>1 argument as Int32, 1 for turned on, 0 for turned off</td>
+        <td>1 Int32 argument, set to 1 for on, 0 for off</td>
     </tr>
     <tr>
         <td>Curve</td>
-        <td>1 argument as Float, Current Value, ranging between Min and Max</td>
+        <td>1 Float argument representing the current value, ranging between Min and Max</td>
     </tr>
     <tr>
         <td>Color</td>
-        <td>3 arguments as Int32 args ranging 0-255 for Red, Green, Blue</td>
+        <td>3 Int32 arguments ranging from 0-255 for Red, Green, Blue</td>
     </tr>
 </table>
 
 
 ### Track info messages
 
-When a new project is loaded or playback begins, Duration will always send a special information message containing information about all the tracks in the current project. The message has 4 arguments per Curves track, and 2 arguments for other tracks. The first argument is always a string with the track type, the second is the display name (which will always match the address of messages sent from that track). For Curves, the additional two arguments are floats representing the min and max values for that track.
+When a new project is loaded or playback begins, Duration will always send a special information message with the address /duration/info. The arguments contain information about all the tracks in the current project. The message has 4 arguments per Curves track, and 2 arguments for other tracks. The first argument is always a string with the track type, the second is the display name (which will always match the address of messages sent from that track). For Curves, the additional two arguments are floats representing the min and max values for that track.
 
 For a project with 2 color tracks, a curves track and a flags track the info message would look like this:
      
@@ -264,7 +279,7 @@ Duration's OSC input is always listening for you to tell it what to do next.
     <tr>
         <td>Seek</td>
         <td>/duration/seektotimecode</td>
-        <td>Millis (Int)</td>
+        <td>Millis (String)</td>
         <td>Sets playhead position to the specified timecode, specified HH:MM:SS:MILS</td>
     </tr>
     <tr>
@@ -366,7 +381,7 @@ Duration is open source and free to use as is in any type of project. Timelines 
 
 ### Download source bundle
 
-Each Duration release is coupled with a Binary release as well as a source package. The source package contains the application and all of it's dependencies and project files for all platforms. This is the easiest way to get up and running to hack Duration. But if you want to contribute to it's development consider forking the project and it's dependencies on Github so that you may issue Pull requests for your changes.
+Each Duration release is coupled with a Binary release as well as a source package available in the downloads section on this repository. The source package contains the application and all of it's dependencies and project files for all platforms. This is the easiest way to get up and running to hack Duration. But if you want to contribute to it's development consider forking the project and it's dependencies on Github so that you may issue Pull requests for your changes.
 
 ### Compile from Github
 
@@ -377,7 +392,7 @@ To compile from Github requires three things
 
 The Duration repository has a clone_addons.sh file that can be run from the terminal:
 
-    $openFrameworks/apps/Duration/clone_addons.sh 
+    $ ./openFrameworks/apps/Duration/clone_addons.sh 
 
 This will configure all necessary dependencies into openFrameworks/addons/ and the project should compile
 
@@ -389,7 +404,11 @@ This will configure all necessary dependencies into openFrameworks/addons/ and t
 
 Duration was developed as part of the  [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/)
 
-![YCAM](http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png)
+<p align="center">
+    <img src="http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png" />
+</p>
+
+## Additional Support
 
 ![Additional Support](http://www.jamesgeorge.org/images/ofxtimeline/github/SupportedBy.png)
 
