@@ -1,0 +1,3 @@
+ofxOsc
+ofxUI
+ofxXmlSettings

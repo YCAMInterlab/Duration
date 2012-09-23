@@ -643,7 +643,7 @@ void DurationController::handleOscIn(){
 				ofLogError("Duration:OSC") << "Set color palette failed, incorrectly formatted arguments \n usage: /duration/colorpalette trackname:string imagefilepath:string";
 			}
 		}
-#ifdef TARGET_API_MAC_OSX
+#ifdef TARGET_OSX
 		else if(m.getAddress() == "/duration/audioclip"){
 			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING){
 				if(audioTrack != NULL){
@@ -1358,10 +1358,12 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 	
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
+#ifdef TARGET_OSX
 	if(audioTrack != NULL){
 		delete audioTrack;
 		audioTrack = NULL;
 	}
+#endif
     timeline.setWorkingFolder(projectPath);
 	
     //LOAD ALL TRACKS

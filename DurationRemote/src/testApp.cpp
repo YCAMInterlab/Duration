@@ -1,4 +1,5 @@
 #include "testApp.h"
+#include <locale>
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -84,8 +85,9 @@ void testApp::setup(){
 
 //number test from http://stackoverflow.com/questions/4654636/how-to-determine-if-a-string-is-a-number-with-c
 bool isNumber(const string& s){
+	locale loc;
 	std::string::const_iterator it = s.begin();
-    while (it != s.end() && (std::isdigit(*it) || *it == '.' || *it == '-')) ++it;
+    while (it != s.end() && (std::isdigit(*it, loc) || *it == '.' || *it == '-')) ++it;
 	bool isnumber = !s.empty() && it == s.end();
     return isnumber;
 }
