@@ -382,9 +382,22 @@ The Duration repository has a clone_addons.sh file that can be run from the term
 This will configure all necessary dependencies into openFrameworks/addons/ and the project should compile
 
 ## Version History
- - Alpha 002 released September 22nd
+ - Alpha 002 released September 23nd
  - Alpha 001 released August 15th
 
-Duration is the product of the [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org). 
+## Supported By ##
+
+Duration was developed as part of the  [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/)
+
+![YCAM](http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png)
+
+![Additional Support](http://www.jamesgeorge.org/images/ofxtimeline/github/SupportedBy.png)
+
+[Playmodes](http://www.playmodes.com/) who graciously funded and shaped the project in it's early stages for [BlueBeams](https://vimeo.com/35931265) .
+
+[The Frank-Ratchye STUDIO for Creative Inquiry](http://studioforcreativeinquiry.org/) who have supported the [RGBDToolkit](http://www.rgbdtoolkit.com) project for which ofxTimeline was first created.
+
+[Eyebeam](http://http://eyebeam.org/) who supported further development of ofxTimeline during my residency in Spring 2012.
+
 
 Built with openFrameworks and ofxTimeline
