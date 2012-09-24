@@ -7,3 +7,5 @@ ofxTimeline
 ofxTween
 ofxUI
 ofxXmlSettings
+ofxTextInputField
+ofxLocalization
