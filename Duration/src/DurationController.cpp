@@ -127,6 +127,7 @@ void DurationController::setup(){
     timeline.getColors().load("defaultColors.xml");
     timeline.setBPM(120.f);
 	timeline.setAutosave(false);
+	timeline.setEditableHeaders(true);
 	timeline.moveToThread(); //increases accuracy of bang call backs
     
 	//Set up top GUI
@@ -366,17 +367,40 @@ void DurationController::handleOscIn(){
 			}
 		}
 		else if(m.getAddress() == "/duration/play"){
-			if(!timeline.getIsPlaying()){
-				shouldStartPlayback = true;
-				//startPlayback();
+			if(m.getNumArgs() == 0){
+				if(!timeline.getIsPlaying()){
+					shouldStartPlayback = true;
+				}
+			}
+			else {
+				for(int i = 0; i < m.getNumArgs(); i++){
+					if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+						ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(m.getArgAsString(i));
+						if(header != NULL){
+							header->getTrack()->play();
+						}
+					}
+				}
 			}
 		}
 		else if(m.getAddress() == "/duration/stop"){
-			if(timeline.getIsPlaying()){
-				timeline.stop();
+			if(m.getNumArgs() == 0){
+				if(timeline.getIsPlaying()){
+					timeline.stop();
+				}
+				else{
+					timeline.setCurrentTimeMillis(0);
+				}
 			}
 			else{
-				timeline.setCurrentTimeMillis(0);
+				for(int i = 0; i < m.getNumArgs(); i++){
+					if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+						ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(m.getArgAsString(i));
+						if(header != NULL){
+							header->getTrack()->stop();
+						}
+					}
+				}				
 			}
 		}
 		else if(m.getAddress() == "/duration/record"){
@@ -675,7 +699,7 @@ void DurationController::handleOscOut(){
 	}
 	//cout << "OSC RATE IS " << settings.oscRate << " osc FREQUENCY is " << oscFrequency << " sending num at record timer " << recordTimer.getAppTimeMillis() << endl;
 	
-	unsigned long sampleMillis = timeline.getCurrentTimeMillis();
+	unsigned long timelineSampleTime = timeline.getCurrentTimeMillis();
 	int numMessages = 0;
 	ofxOscBundle bundle;
 	
@@ -688,14 +712,14 @@ void DurationController::handleOscOut(){
 			if(!header->sendOSC()){
 				continue;
 			}
-			
+			unsigned long trackSampleTime = tracks[t]->getIsPlaying() ? tracks[t]->currentTrackTime() : timelineSampleTime;
 			string trackType = tracks[t]->getTrackType();
 			if(trackType == "Curves" || trackType == "Switches" || trackType == "Colors"){
 				bool messageValid = false;
 				ofxOscMessage m;
 				if(trackType == "Curves"){
 					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
-					float value = curves->getValueAtTimeInMillis(sampleMillis);
+					float value = curves->getValueAtTimeInMillis(trackSampleTime);
 					if(value != header->lastFloatSent || !header->hasSentValue || refreshAllOscOut){
 						m.addFloatArg(value);
 						header->lastFloatSent = value;
@@ -705,7 +729,7 @@ void DurationController::handleOscOut(){
 				}
 				else if(trackType == "Switches"){
 					ofxTLSwitches* switches = (ofxTLSwitches*)tracks[t];
-					bool on = switches->isOnAtMillis(sampleMillis);
+					bool on = switches->isOnAtMillis(trackSampleTime);
 					if(on != header->lastBoolSent || !header->hasSentValue || refreshAllOscOut){
 						m.addIntArg(on ? 1 : 0);
 						header->lastBoolSent = on;
@@ -715,7 +739,7 @@ void DurationController::handleOscOut(){
 				}
 				else if(trackType == "Colors"){
 					ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
-					ofColor color = colors->getColorAtMillis(sampleMillis);
+					ofColor color = colors->getColorAtMillis(trackSampleTime);
 					if(color != header->lastColorSent || !header->hasSentValue || refreshAllOscOut){
 						m.addIntArg(color.r);
 						m.addIntArg(color.g);
@@ -1195,11 +1219,16 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
 	
     int key = keyArgs.key;
 	if(key == ' '){
-		if(!timeline.getIsPlaying()){
-			startPlayback();
+		if(ofGetModifierShiftPressed()){
+			timeline.togglePlaySelectedTrack();
 		}
 		else{
-			timeline.stop();
+			if(!timeline.getIsPlaying()){
+				startPlayback();
+			}
+			else{
+				timeline.stop();
+			}
 		}
     }
     

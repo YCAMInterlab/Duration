@@ -53,6 +53,12 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     //switch on track type
 
     trackType = trackHeader->getTrack()->getTrackType();
+	if(trackType != "Audio" && trackType != "Video"){
+		ofxUILabelButton* playSolo = new ofxUILabelButton(">", false,0,0,0, OFX_UI_FONT_SMALL);
+		playSolo->setPadding(0);
+		gui->addWidgetRight(playSolo);
+	}
+	
 	if(trackType == "Curves"){
         //SET THE RANGE
         ofxTLCurves* tweenTrack = (ofxTLCurves*)trackHeader->getTrack();
@@ -73,7 +79,6 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 	
 #ifdef TARGET_OSX
 	else if(trackType == "Audio"){
-//		ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
 		audioClip = new ofxUILabelButton(translation->translateKey("select audio"), false,0,0,0,0, OFX_UI_FONT_SMALL);
 		audioClip->setPadding(0);
 		gui->addWidgetRight(audioClip);
@@ -204,8 +209,10 @@ string ofxTLUIHeader::getTrackType(){
 void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 //    cout << e.widget->getName() << " hit!" << endl;
     
-    //TODO min/max
-    if(e.widget->getName() == "min"){
+	if(e.widget->getName() == ">" && ((ofxUILabelButton*)e.widget)->getValue()){
+		getTrack()->togglePlay();
+	}
+    else if(e.widget->getName() == "min"){
         float newMinValue = MIN(minDialer->getValue(), maxDialer->getValue());
         minDialer->setValue(newMinValue);
         ofRange newValueRange = ofRange(newMinValue, maxDialer->getValue());
