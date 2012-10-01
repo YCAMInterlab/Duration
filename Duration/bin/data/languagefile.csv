@@ -5,6 +5,8 @@ switches,SWITCHES,スイッチ
 curves,CURVES,カーブ
 colors,COLORS,カラー
 audio,AUDIO,オーディオ
+lfo,LFO,LFO
+bins,bins,bins
 new project...,new project...,新規プロジェクト
 open project...,open project...,プロジェクトを開く
 BPM,BPM,BPM
