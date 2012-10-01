@@ -179,9 +179,10 @@ int ofxTLUIHeader::getNumberOfBins(){
 		return ((ofxTLAudioTrack*)getTrack())->getDefaultBinCount();
 	}
 #endif
+	return 0;
 }
 
-int ofxTLUIHeader::setNumberOfbins(int binCount){
+void ofxTLUIHeader::setNumberOfbins(int binCount){
 #ifdef TARGET_OSX
 	if(getTrackType() == "Audio"){
 		((ofxTLAudioTrack*)getTrack())->getFFTSpectrum(binCount);

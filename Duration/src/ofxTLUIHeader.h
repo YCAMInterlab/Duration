@@ -78,7 +78,7 @@ class ofxTLUIHeader {
 	ofxUICanvas* getGui();
 	bool getModified();
 	
-	int setNumberOfbins(int bins);
+	void setNumberOfbins(int bins);
 	int getNumberOfBins();
 	void setValueRange(ofRange range);
 	void setValueMin(float min);

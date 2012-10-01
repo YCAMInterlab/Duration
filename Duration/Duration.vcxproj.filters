@@ -22,6 +22,9 @@
     <ClCompile Include="..\..\..\addons\ofxFTGL\src\ofxFTGLFont.cpp">
       <Filter>addons\ofxFTGL\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxLocalization\src\ofxLocalization.cpp">
+      <Filter>addons\ofxLocalization\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxMSATimer\src\ofxMSATimer.cpp">
       <Filter>addons\ofxMSATimer\src</Filter>
     </ClCompile>
@@ -64,10 +67,22 @@
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.cpp">
+      <Filter>addons\ofxTextInputField\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimecode\src\ofxTimecode.cpp">
       <Filter>addons\ofxTimecode\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxHotKeys_impl_linux.cpp">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxHotKeys_impl_mac.mm">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxHotKeys_impl_win.cpp">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxRemoveCocoaMenu.mm">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTimeline.cpp">
@@ -83,6 +98,12 @@
       <Filter>addons\ofxTimeline\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLCurves.cpp">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLEmptyKeyframes.cpp">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLEmptyTrack.cpp">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLFlags.cpp">
@@ -101,6 +122,9 @@
       <Filter>addons\ofxTimeline\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLKeyframes.cpp">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLLFO.cpp">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLPage.cpp">
@@ -181,12 +205,6 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.cpp">
-      <Filter>addons\ofxTextInputField\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxLocalization\src\ofxLocalization.cpp">
-      <Filter>addons\ofxLocalization\src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -212,6 +230,12 @@
     </Filter>
     <Filter Include="addons\ofxFTGL\libs\FTGL\include\FTGL">
       <UniqueIdentifier>{c73df1b7-81e5-1b03-29a4-6b8f3cd35731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLocalization">
+      <UniqueIdentifier>{24c83c2b-09ad-deb6-81fc-86bf00215e49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxLocalization\src">
+      <UniqueIdentifier>{f48681dd-b9a4-9ae0-562f-429a7fb7340f}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxMSATimer">
       <UniqueIdentifier>{fa2c7f81-95ad-913a-95ee-6d674205f1e6}</UniqueIdentifier>
@@ -252,6 +276,12 @@
     <Filter Include="addons\ofxRange\src">
       <UniqueIdentifier>{afee1af4-3be7-35e2-f89c-feb8f18a60fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxTextInputField">
+      <UniqueIdentifier>{a4b02712-30e4-b504-c110-2c93e13629d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTextInputField\src">
+      <UniqueIdentifier>{b67afc83-af32-6fe3-281f-ac212c044641}</UniqueIdentifier>
+    </Filter>
     <Filter Include="addons\ofxTimecode">
       <UniqueIdentifier>{1b5cd1f2-714c-1a5f-97d0-2f9712f8476a}</UniqueIdentifier>
     </Filter>
@@ -288,18 +318,6 @@
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{687714a8-1662-fa1c-261f-50f068335398}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxTextInputField">
-      <UniqueIdentifier>{9d571783-75f9-4c3e-af35-1961f27e2cdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxTextInputField\src">
-      <UniqueIdentifier>{c652bd61-3708-4b5c-923b-a5d6aca79da0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxLocalization">
-      <UniqueIdentifier>{ac851c00-53f4-40ff-b529-ca099a6e604a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxLocalization\src">
-      <UniqueIdentifier>{fe949539-ef56-4718-bc85-50a42127aa8b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\testApp.h">
@@ -309,9 +327,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxTLUIHeader.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxUITimecode.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\testApp.h">
@@ -386,6 +401,9 @@
     <ClInclude Include="..\..\..\addons\ofxFTGL\libs\FTGL\include\FTGL\FTTextureGlyph.h">
       <Filter>addons\ofxFTGL\libs\FTGL\include\FTGL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxLocalization\src\ofxLocalization.h">
+      <Filter>addons\ofxLocalization\src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxMSATimer\src\ofxMSATimer.h">
       <Filter>addons\ofxMSATimer\src</Filter>
     </ClInclude>
@@ -449,10 +467,16 @@
     <ClInclude Include="..\..\..\addons\ofxRange\src\ofRange.h">
       <Filter>addons\ofxRange\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.h">
+      <Filter>addons\ofxTextInputField\src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimecode\src\ofxTimecode.h">
       <Filter>addons\ofxTimecode\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxHotKeys.h">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxRemoveCocoaMenu.h">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTimeline.h">
@@ -468,6 +492,12 @@
       <Filter>addons\ofxTimeline\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLCurves.h">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLEmptyKeyframes.h">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLEmptyTrack.h">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLEvents.h">
@@ -491,6 +521,9 @@
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLKeyframes.h">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLLFO.h">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLPage.h">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClInclude>
@@ -501,9 +534,6 @@
       <Filter>addons\ofxTimeline\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLTicker.h">
-      <Filter>addons\ofxTimeline\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLTimeController.h">
       <Filter>addons\ofxTimeline\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLTrack.h">
@@ -688,12 +718,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h">
       <Filter>addons\ofxXmlSettings\libs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxTextInputField\src\ofxTextInputField.h">
-      <Filter>addons\ofxTextInputField\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxLocalization\src\ofxLocalization.h">
-      <Filter>addons\ofxLocalization\src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
