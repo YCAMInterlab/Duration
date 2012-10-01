@@ -1,11 +1,34 @@
-//
-//  DurationController.h
-//  Duration
-//
-//  Duration is a universal timeline.
-//  Made by obviousjim (jamesgeorge.org) at YCAM InterLab (interlab.ycam.jp)
-//
-//
+/**
+ * Duration
+ * Standalone timeline for Creative Code
+ *
+ * Copyright (c) 2011-2012 James George
+ * Development Supported by YCAM InterLab http://interlab.ycam.jp/en/
+ * http://jamesgeorge.org + http://flightphase.com
+ * http://github.com/obviousjim + http://github.com/flightphase
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
 
 #include "DurationController.h"
 #include "ofxHotKeys.h"
@@ -144,6 +167,7 @@ void DurationController::setup(){
     trackTypes.push_back(translation.translateKey("switches"));
     trackTypes.push_back(translation.translateKey("curves"));
     trackTypes.push_back(translation.translateKey("colors"));
+	trackTypes.push_back(translation.translateKey("lfo"));
 #ifdef TARGET_OSX
 	trackTypes.push_back(translation.translateKey("audio"));
 #endif
@@ -584,7 +608,7 @@ void DurationController::handleOscIn(){
 				string trackName = m.getArgAsString(0);
 				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
 				if(header != NULL){
-					if(header->getTrackType() == "Curves"){
+					if(header->getTrackType() == "Curves" || header->getTrackType() == "LFO"){
 						header->setValueRange(ofRange(m.getArgAsFloat(1),m.getArgAsFloat(2)));
 					}
 					else {
@@ -607,7 +631,7 @@ void DurationController::handleOscIn(){
 				string trackName = m.getArgAsString(0);
 				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
 				if(header != NULL){
-					if(header->getTrackType() == "Curves"){
+					if(header->getTrackType() == "Curves" || header->getTrackType() == "LFO"){
 						header->setValueMin(m.getArgAsFloat(1));
 					}
 					else{
@@ -630,7 +654,7 @@ void DurationController::handleOscIn(){
 				string trackName = m.getArgAsString(0);
 				ofPtr<ofxTLUIHeader> header = getHeaderWithDisplayName(trackName);
 				if(header != NULL){
-					if(header->getTrackType() == "Curves"){
+					if(header->getTrackType() == "Curves" || header->getTrackType() == "LFO"){
 						header->setValueMax(m.getArgAsFloat(1));
 					}
 					else{
@@ -714,11 +738,11 @@ void DurationController::handleOscOut(){
 			}
 			unsigned long trackSampleTime = tracks[t]->getIsPlaying() ? tracks[t]->currentTrackTime() : timelineSampleTime;
 			string trackType = tracks[t]->getTrackType();
-			if(trackType == "Curves" || trackType == "Switches" || trackType == "Colors"){
+			if(trackType == "Curves" || trackType == "Switches" || trackType == "Colors" || trackType == "Audio" || trackType == "LFO"){
 				bool messageValid = false;
 				ofxOscMessage m;
-				if(trackType == "Curves"){
-					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
+				if(trackType == "Curves" || trackType == "LFO"){
+					ofxTLKeyframes* curves = (ofxTLKeyframes*)tracks[t];
 					float value = curves->getValueAtTimeInMillis(trackSampleTime);
 					if(value != header->lastFloatSent || !header->hasSentValue || refreshAllOscOut){
 						m.addFloatArg(value);
@@ -749,6 +773,18 @@ void DurationController::handleOscOut(){
 						messageValid = true;
 					}
 				}
+#ifdef TARGET_OSX
+				else if(trackType == "Audio"){
+					ofxTLAudioTrack* audio = (ofxTLAudioTrack*)tracks[t];
+					if(audio->getIsPlaying() || timeline.getIsPlaying()){
+						vector<float>& bins = audio->getFFTSpectrum(header->getNumberOfBins());
+						for(int b = 0; b < bins.size(); b++){
+							m.addFloatArg(bins[b]);
+						}
+						messageValid = true;
+					}
+				}
+#endif
 				if(messageValid){
 					m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
 					bundle.addMessage(m);
@@ -1030,6 +1066,9 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 	else if(trackType == translation.translateKey("colors") || trackType == "colors"){
 		newTrack = timeline.addColors(trackName, xmlFileName);
 	}
+	else if(trackType == translation.translateKey("lfo") || trackType == "lfo"){
+		newTrack = timeline.addLFO(trackName, xmlFileName);
+	}
 #ifdef TARGET_OSX
 	else if(trackType == translation.translateKey("audio") || trackType == "audio"){
 		if(audioTrack != NULL){
@@ -1068,13 +1107,14 @@ void DurationController::update(ofEventArgs& args){
 #ifdef TARGET_OSX
 	if(audioTrack != NULL && audioTrack->isSoundLoaded()){
 		
+		if(timeline.getTimecontrolTrack() != audioTrack){
+			timeline.setTimecontrolTrack(audioTrack);
+		}
+
 		if(audioTrack->getDuration() != timeline.getDurationInSeconds()){
 			timeline.setDurationInSeconds(audioTrack->getDuration());
-			if(timeline.getTimecontrolTrack() != audioTrack){
-				timeline.setTimecontrolTrack(audioTrack);
-				durationLabel->setTextString(timeline.getDurationInTimecode());
-			}
 		}
+		
 		if(durationLabel->getTextString() != timeline.getDurationInTimecode()){
 			durationLabel->setTextString(timeline.getDurationInTimecode());
 		}
@@ -1276,7 +1316,7 @@ void DurationController::sendInfoMessage(){
 			for (int t = 0; t < tracks.size(); t++) {
 				m.addStringArg(tracks[t]->getTrackType());
 				m.addStringArg(ofFilePath::addLeadingSlash( tracks[t]->getDisplayName() ));
-				if(tracks[t]->getTrackType() == "Curves"){
+				if(tracks[t]->getTrackType() == "Curves" || tracks[t]->getTrackType() == "LFO"){
 					ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
 					m.addFloatArg(curves->getValueRange().min);
 					m.addFloatArg(curves->getValueRange().max);
@@ -1422,8 +1462,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 			//custom setup
 			if(newTrack != NULL){
 				ofPtr<ofxTLUIHeader> headerTrack = headers[newTrack->getName()];
-				if(newTrack->getTrackType() == "Curves"){
-					ofxTLCurves* curves = (ofxTLCurves*)newTrack;
+				if(newTrack->getTrackType() == "Curves" || newTrack->getTrackType() == "LFO"){
 					headerTrack->setValueRange(ofRange(projectSettings.getValue("min", 0.0),
 													   projectSettings.getValue("max", 1.0)));
 				}
@@ -1437,6 +1476,10 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 					if(clipPath != ""){
 						audioTrack->loadSoundfile(clipPath);
 					}
+					int numbins = projectSettings.getValue("bins", 256);
+					headerTrack->setNumberOfbins(numbins);
+					cout << "set " << numbins << " after load " << headerTrack->getNumberOfBins() << endl;
+					//audioTrack->getFFTSpectrum(projectSettings.getValue("bins", 256));
 				}
 				#endif
 
@@ -1545,8 +1588,8 @@ void DurationController::saveProject(){
             //save custom gui props
             projectSettings.addValue("sendOSC", headers[trackName]->sendOSC());
 			projectSettings.addValue("receiveOSC", headers[trackName]->receiveOSC());
-            if(trackType == "Curves"){
-                ofxTLCurves* curves = (ofxTLCurves*)tracks[t];
+            if(trackType == "Curves" || trackType == "LFO"){
+                ofxTLKeyframes* curves = (ofxTLKeyframes*)tracks[t];
                 projectSettings.addValue("min", curves->getValueRange().min);
                 projectSettings.addValue("max", curves->getValueRange().max);
 				
@@ -1558,6 +1601,9 @@ void DurationController::saveProject(){
 #ifdef TARGET_OSX
 			else if(trackType == "Audio"){
 				projectSettings.addValue("clip", audioTrack->getSoundfilePath());
+				int numbins = audioTrack->getDefaultBinCount();
+				cout << "saving bins " << numbins << endl;
+				projectSettings.addValue("bins", audioTrack->getDefaultBinCount());
 			}
 #endif
             projectSettings.popTag();

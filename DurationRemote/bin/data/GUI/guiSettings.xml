@@ -11,17 +11,17 @@
 <Widget>
     <Kind>12</Kind>
     <Name>COMMAND</Name>
-    <Value>/duration/open</Value>
+    <Value>/duration/stop</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>ARG1</Name>
-    <Value>OutputExample</Value>
+    <Value>ayumi/tail</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>ARG2</Name>
-    <Value> </Value>
+    <Value>ayumi/x</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>

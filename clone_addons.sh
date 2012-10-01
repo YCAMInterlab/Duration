@@ -27,8 +27,6 @@ ${PREFIX}Flightphase/ofxTextInputField.git
 
 ${PREFIX}Flightphase/ofxRange.git
 
-${PREFIX}Flightphase/ofxRange.git
-
 ${PREFIX}Flightphase/ofxFTGL.git
 
 ${PREFIX}YCAMInterlab/ofxTimeline.git

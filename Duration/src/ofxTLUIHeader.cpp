@@ -1,8 +1,47 @@
+/**
+ * Duration
+ * Standalone timeline for Creative Code
+ *
+ * Copyright (c) 2011-2012 James George
+ * Development Supported by YCAM InterLab http://interlab.ycam.jp/en/
+ * http://jamesgeorge.org + http://flightphase.com
+ * http://github.com/obviousjim + http://github.com/flightphase
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
 
 #include "ofxTLUIHeader.h"
 #ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
 #endif
+
+#include <locale>
+bool isNumber(const string& s){
+	locale loc;
+	std::string::const_iterator it = s.begin();
+    while (it != s.end() && (std::isdigit(*it, loc))) ++it;
+	return !s.empty() && it == s.end();
+}
 
 ofxTLUIHeader::ofxTLUIHeader(){
 	gui = NULL;
@@ -16,7 +55,9 @@ ofxTLUIHeader::ofxTLUIHeader(){
 	lastBoolSent = false;
 	lastColorSent = ofColor(0,0,0);
 	lastValueReceived = 0;
+	audioNumberOfBins = 256;
 	
+	bins = NULL;
 	minDialer = NULL;
 	maxDialer = NULL;
     sendOSCEnable = NULL;
@@ -34,6 +75,7 @@ ofxTLUIHeader::~ofxTLUIHeader(){
 	    ofRemoveListener(gui->newGUIEvent, this, &ofxTLUIHeader::guiEvent);
         delete gui;
     }
+	
 }
 
 void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
@@ -59,9 +101,9 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		gui->addWidgetRight(playSolo);
 	}
 	
-	if(trackType == "Curves"){
+	if(trackType == "Curves" || trackType == "LFO"){
         //SET THE RANGE
-        ofxTLCurves* tweenTrack = (ofxTLCurves*)trackHeader->getTrack();
+        ofxTLKeyframes* tweenTrack = (ofxTLKeyframes*)trackHeader->getTrack();
         minDialer = new ofxUINumberDialer(-9999., 9999., tweenTrack->getValueRange().min, 2, "min", OFX_UI_FONT_SMALL);
         minDialer->setPadding(0);
         gui->addWidgetRight( minDialer );
@@ -70,18 +112,29 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
         maxDialer->setPadding(0);
         gui->addWidgetRight( maxDialer );
 		
+		resetRange = new ofxUILabelButton(translation->translateKey("reset"), false, 0,0,0,0,OFX_UI_FONT_SMALL);
+		resetRange->setPadding(0);
+		gui->addWidgetRight(resetRange);
     }
 	else if(trackType == "Colors"){
 		palette = new ofxUILabelButton(translation->translateKey("change palette"), false,0,0,0,0, OFX_UI_FONT_SMALL);
 		palette->setPadding(0);
 		gui->addWidgetRight(palette);
 	}
-	
 #ifdef TARGET_OSX
 	else if(trackType == "Audio"){
 		audioClip = new ofxUILabelButton(translation->translateKey("select audio"), false,0,0,0,0, OFX_UI_FONT_SMALL);
 		audioClip->setPadding(0);
 		gui->addWidgetRight(audioClip);
+		
+		ofxUILabel* binLabel = new ofxUILabel(0, 0, "bins", translation->translateKey("bins"), OFX_UI_FONT_SMALL);
+		binLabel->setPadding(0);
+		gui->addWidgetRight(binLabel);
+		
+		bins = new ofxUITextInput("bins", "256", 50, 0,0,0, OFX_UI_FONT_SMALL);
+		bins->setAutoClear(false);
+		bins->setPadding(0);
+		gui->addWidgetRight(bins);
 	}
 #endif
 	
@@ -91,11 +144,11 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		gui->addWidgetRight(receiveOSCEnable);
 	}
 	
-	if(trackType != "Audio"){ //TODO: audio should send some nice FFT OSC
+//	if(trackType != "Audio"){ //TODO: audio should send some nice FFT OSC
 		sendOSCEnable = new ofxUIToggle(translation->translateKey("send osc"), true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
 		sendOSCEnable->setPadding(1);
 		gui->addWidgetRight(sendOSCEnable);
-	}
+//	}
     
     //DELETE ME???
     vector<string> deleteTrack;
@@ -120,11 +173,28 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 	gui->getRect()->x = trackHeader->getTimeline()->getTopRight().x - (gui->getRect()->width + 50);
 }
 
+int ofxTLUIHeader::getNumberOfBins(){
+#ifdef TARGET_OSX
+	if(getTrackType() == "Audio"){
+		return ((ofxTLAudioTrack*)getTrack())->getDefaultBinCount();
+	}
+#endif
+}
+
+int ofxTLUIHeader::setNumberOfbins(int binCount){
+#ifdef TARGET_OSX
+	if(getTrackType() == "Audio"){
+		((ofxTLAudioTrack*)getTrack())->getFFTSpectrum(binCount);
+		bins->setTextString(ofToString(binCount));
+	}
+#endif
+}
+
 void ofxTLUIHeader::setValueRange(ofRange range){
-	if(getTrackType() == "Curves"){
+	if(getTrackType() == "Curves" || getTrackType() == "LFO"){
 		minDialer->setValue(range.min);
 		maxDialer->setValue(range.max);
-		((ofxTLCurves*)getTrack())->setValueRange(range);
+		((ofxTLKeyframes*)getTrack())->setValueRange(range);
 	}
 	else{
 		ofLogError("ofxTLUIHeader::setValueMax") << "Cannot set value range on tracks that aren't curves";
@@ -132,9 +202,9 @@ void ofxTLUIHeader::setValueRange(ofRange range){
 }
 
 void ofxTLUIHeader::setValueMin(float min){
-	if(getTrackType() == "Curves"){
+	if(getTrackType() == "Curves" || getTrackType() == "LFO"){
 		minDialer->setValue(min);
-		((ofxTLCurves*)getTrack())->setValueRangeMin(min);
+		((ofxTLKeyframes*)getTrack())->setValueRangeMin(min);
 	}
 	else{
 		ofLogError("ofxTLUIHeader::setValueMax") << "Cannot set min value on tracks that aren't curves";
@@ -142,15 +212,14 @@ void ofxTLUIHeader::setValueMin(float min){
 }
 
 void ofxTLUIHeader::setValueMax(float max){
-	if(getTrackType() == "Curves"){
+	if(getTrackType() == "Curves" || getTrackType() == "LFO"){
 		maxDialer->setValue(max);
-		((ofxTLCurves*)getTrack())->setValueRangeMin(max);
+		((ofxTLKeyframes*)getTrack())->setValueRangeMin(max);
 	}
 	else{
 		ofLogError("ofxTLUIHeader::setValueMax") << "Cannot set max value on tracks that aren't curves";
 	}
 }
-
 
 ofxUICanvas* ofxTLUIHeader::getGui(){
 	return gui;
@@ -224,7 +293,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         float newMaxValue = MAX(minDialer->getValue(), maxDialer->getValue());
         maxDialer->setValue(newMaxValue);
         ofRange newValueRange = ofRange(minDialer->getValue(), newMaxValue);
-        ofxTLCurves* track = (ofxTLCurves*)trackHeader->getTrack();
+        ofxTLKeyframes* track = (ofxTLKeyframes*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
 		modified = true;
     }
@@ -253,6 +322,14 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 			modified = true;
 		}		
 	}
+	else if(e.widget == resetRange && resetRange->getValue()){
+		minDialer->setValue(0);
+        maxDialer->setValue(1.0);
+        ofRange newValueRange = ofRange(0, 1.0);
+        ofxTLKeyframes* track = (ofxTLKeyframes*)trackHeader->getTrack();
+        track->setValueRange(newValueRange);
+		modified = true;		
+	}
 #ifdef TARGET_OSX
 	else if(e.widget == audioClip && audioClip->getValue()){
 		ofFileDialogResult r = ofSystemLoadDialog();
@@ -260,6 +337,19 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 			ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
 			audioTrack->loadSoundfile(r.getPath());
 			modified = true;
+		}
+	}
+	else if(e.widget == bins){
+		if(!isNumber(bins->getTextString())){
+			bins->setTextString(ofToString(audioNumberOfBins));
+		}
+	
+		int newBinNumber = ofToInt(bins->getTextString());
+		if(newBinNumber != audioNumberOfBins){
+			audioNumberOfBins = newBinNumber;
+			ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
+			audioTrack->getFFTSpectrum(audioNumberOfBins);
+//			cout << "new bin number is " << audioTrack->getDefaultBinCount() << " after setting to " << audioNumberOfBins << endl;
 		}
 	}
 #endif
