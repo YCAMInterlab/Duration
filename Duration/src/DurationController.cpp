@@ -2,7 +2,7 @@
  * Duration
  * Standalone timeline for Creative Code
  *
- * Copyright (c) 2011-2012 James George
+ * Copyright (c) 2012 James George
  * Development Supported by YCAM InterLab http://interlab.ycam.jp/en/
  * http://jamesgeorge.org + http://flightphase.com
  * http://github.com/obviousjim + http://github.com/flightphase
