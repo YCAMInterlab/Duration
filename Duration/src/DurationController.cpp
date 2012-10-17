@@ -884,7 +884,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
             if(addTrackDropDown->getSelected().size() > 0){
 				lock();
                 string selectedTrackType = addTrackDropDown->getSelected()[0]->getName();
-				addTrack(selectedTrackType);
+				addTrack(translation.keyForTranslation(selectedTrackType));
 				unlock();
 				
                 addTrackDropDown->clearSelected();
@@ -1045,7 +1045,7 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 	if(trackName == ""){
 		trackName = trackType;
 	}
-	
+
 	if(xmlFileName == ""){
 		string uniqueName = timeline.confirmedUniqueName(trackName);
 		xmlFileName = ofToDataPath(settings.path + "/" + uniqueName + "_.xml");

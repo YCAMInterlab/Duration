@@ -16,7 +16,7 @@ ADD TRACK,ADD TRACK,トラック追加
 record,record,レコード
 switch project,switch project,プロジェクトの切り替え
 send osc,send osc,OSC送信
-sure?,sure?,よろしいですか？
+sure?,sure?,ok？
 delete,delete,削除
 switch project,switch project,プロジェクトの切り替え
 save,save,保存

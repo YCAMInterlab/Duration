@@ -66,13 +66,11 @@
 		E78C29F815EF1AB3003A9CCB /* ofxTLVideoThumb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E78C29E115EF1AB3003A9CCB /* ofxTLVideoThumb.cpp */; };
 		E78C29F915EF1AB3003A9CCB /* ofxTLVideoTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E78C29E315EF1AB3003A9CCB /* ofxTLVideoTrack.cpp */; };
 		E78C29FA15EF1AB3003A9CCB /* ofxTLZoomer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E78C29E515EF1AB3003A9CCB /* ofxTLZoomer.cpp */; };
-		E78C29FF15EF1ADA003A9CCB /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E78C29FC15EF1ADA003A9CCB /* .gitignore */; };
 		E78C2A0315EF1BC2003A9CCB /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78C2A0215EF1BC2003A9CCB /* Accelerate.framework */; };
 		E7C5D6A216148462006E514C /* ofxRemoveCocoaMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = E7C5D6A116148462006E514C /* ofxRemoveCocoaMenu.mm */; };
 		E7C659A915FF22260049005B /* buildFTGL.sh in Resources */ = {isa = PBXBuildFile; fileRef = E7C6599215FF22260049005B /* buildFTGL.sh */; };
 		E7C659AA15FF22260049005B /* libftgl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7C6599315FF22260049005B /* libftgl.a */; };
 		E7C659AD15FF22270049005B /* ofxFTGLFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C6599815FF22260049005B /* ofxFTGLFont.cpp */; };
-		E7C659BF15FF46BC0049005B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E7C659BC15FF46BC0049005B /* .gitignore */; };
 		E7C659C015FF46BC0049005B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = E7C659BD15FF46BC0049005B /* README.md */; };
 		E7C659C415FF46D20049005B /* ofxLocalization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C659C215FF46D20049005B /* ofxLocalization.cpp */; };
 		E7D3318615D379E30009192F /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = E7D3316A15D379E20009192F /* kiss_fft.c */; };
@@ -243,7 +241,6 @@
 		E78C29E415EF1AB3003A9CCB /* ofxTLVideoTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTLVideoTrack.h; sourceTree = "<group>"; };
 		E78C29E515EF1AB3003A9CCB /* ofxTLZoomer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTLZoomer.cpp; sourceTree = "<group>"; };
 		E78C29E615EF1AB3003A9CCB /* ofxTLZoomer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTLZoomer.h; sourceTree = "<group>"; };
-		E78C29FC15EF1ADA003A9CCB /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		E78C29FE15EF1ADA003A9CCB /* ofRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRange.h; sourceTree = "<group>"; };
 		E78C2A0215EF1BC2003A9CCB /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		E7C5D6A016148462006E514C /* ofxRemoveCocoaMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxRemoveCocoaMenu.h; sourceTree = "<group>"; };
@@ -274,7 +271,6 @@
 		E7C6599315FF22260049005B /* libftgl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libftgl.a; sourceTree = "<group>"; };
 		E7C6599815FF22260049005B /* ofxFTGLFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFTGLFont.cpp; sourceTree = "<group>"; };
 		E7C6599915FF22260049005B /* ofxFTGLFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFTGLFont.h; sourceTree = "<group>"; };
-		E7C659BC15FF46BC0049005B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		E7C659BD15FF46BC0049005B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		E7C659C215FF46D20049005B /* ofxLocalization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLocalization.cpp; sourceTree = "<group>"; };
 		E7C659C315FF46D20049005B /* ofxLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLocalization.h; sourceTree = "<group>"; };
@@ -692,7 +688,6 @@
 		E78C29FB15EF1ADA003A9CCB /* ofxRange */ = {
 			isa = PBXGroup;
 			children = (
-				E78C29FC15EF1ADA003A9CCB /* .gitignore */,
 				E78C29FD15EF1ADA003A9CCB /* src */,
 			);
 			name = ofxRange;
@@ -800,7 +795,6 @@
 		E7C659BB15FF46BC0049005B /* ofxLocalization */ = {
 			isa = PBXGroup;
 			children = (
-				E7C659BC15FF46BC0049005B /* .gitignore */,
 				E7C659BD15FF46BC0049005B /* README.md */,
 				E7C659BE15FF46BC0049005B /* src */,
 			);
@@ -1170,9 +1164,7 @@
 				E7DFADD015D0E24200CD5CF1 /* Duration.icns in Resources */,
 				E7DFB45315D0E37E00CD5CF1 /* easing_terms_of_use.html in Resources */,
 				E72B8DD415D629CB00DB5A38 /* install.xml in Resources */,
-				E78C29FF15EF1ADA003A9CCB /* .gitignore in Resources */,
 				E7C659A915FF22260049005B /* buildFTGL.sh in Resources */,
-				E7C659BF15FF46BC0049005B /* .gitignore in Resources */,
 				E7C659C015FF46BC0049005B /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
