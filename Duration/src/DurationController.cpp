@@ -144,6 +144,7 @@ void DurationController::setup(){
 	timeline.setup();
 //	timeline.curvesUseBinary = true; //ELOI SWITCH THIS HERE
 //	timeline.enableUndo(false);
+    timeline.setSpacebarTogglePlay(false);
     timeline.setFrameRate(30);
 	timeline.setDurationInSeconds(30);
 	timeline.setOffset(ofVec2f(0, 90));
@@ -1601,9 +1602,8 @@ void DurationController::saveProject(){
 #ifdef TARGET_OSX
 			else if(trackType == "Audio"){
 				projectSettings.addValue("clip", audioTrack->getSoundfilePath());
-				int numbins = audioTrack->getDefaultBinCount();
-				cout << "saving bins " << numbins << endl;
-				projectSettings.addValue("bins", audioTrack->getDefaultBinCount());
+				int numbins = audioTrack->getFFTBinCount();
+				projectSettings.addValue("bins", audioTrack->getFFTBinCount());
 			}
 #endif
             projectSettings.popTag();
@@ -1655,7 +1655,6 @@ ofxTLUIHeader* DurationController::createHeaderForTrack(ofxTLTrack* track){
     headers[track->getName()] = ofPtr<ofxTLUIHeader>( headerGui );
     return headerGui;
 }
-
 
 void DurationController::createTooltips(){
 

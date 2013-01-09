@@ -176,7 +176,7 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 int ofxTLUIHeader::getNumberOfBins(){
 #ifdef TARGET_OSX
 	if(getTrackType() == "Audio"){
-		return ((ofxTLAudioTrack*)getTrack())->getDefaultBinCount();
+		return ((ofxTLAudioTrack*)getTrack())->getFFTBinCount();
 	}
 #endif
 	return 0;
