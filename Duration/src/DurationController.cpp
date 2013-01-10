@@ -94,6 +94,9 @@ bool DurationController::isInterfaceEnabled(){
 
 void DurationController::setup(){
     
+	#ifdef TARGET_WIN32
+	FreeConsole();
+	#endif
 	if(!translation.load("languageFile.csv")){
 		ofLogError("DurationController::setup") << "error setting up translation, unpredictable stuff will happen" << endl;
 	}
@@ -137,9 +140,13 @@ void DurationController::setup(){
         }
     }
 	
-	tooltipFont.loadFont("GUI/mplus-1c-regular.ttf", 5);
+#ifdef TARGET_WIN32
+	timeline.setupFont("GUI/mplus-1c-regular.ttf", 9);
+	tooltipFont.loadFont("GUI/mplus-1c-regular.ttf", 7);
+#else
 	timeline.setupFont("GUI/mplus-1c-regular.ttf", 6);
-	
+	tooltipFont.loadFont("GUI/mplus-1c-regular.ttf", 5);
+#endif
 	//setup timeline
 	timeline.setup();
 //	timeline.curvesUseBinary = true; //ELOI SWITCH THIS HERE
