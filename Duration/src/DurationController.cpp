@@ -45,10 +45,7 @@ DurationController::DurationController(){
 	enabled = false;
 	shouldCreateNewProject = false;
     shouldLoadProject = false;
-
-#ifdef TARGET_OSX
 	audioTrack = NULL;
-#endif
 }
 
 DurationController::~DurationController(){
@@ -176,9 +173,7 @@ void DurationController::setup(){
     trackTypes.push_back(translation.translateKey("curves"));
     trackTypes.push_back(translation.translateKey("colors"));
 	trackTypes.push_back(translation.translateKey("lfo"));
-#ifdef TARGET_OSX
 	trackTypes.push_back(translation.translateKey("audio"));
-#endif
 	
     addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, translation.translateKey("ADD TRACK"), trackTypes, OFX_UI_FONT_MEDIUM);
     addTrackDropDown->setAllowMultiple(false);
@@ -699,7 +694,6 @@ void DurationController::handleOscIn(){
 				ofLogError("Duration:OSC") << "Set color palette failed, incorrectly formatted arguments \n usage: /duration/colorpalette trackname:string imagefilepath:string";
 			}
 		}
-#ifdef TARGET_OSX
 		else if(m.getAddress() == "/duration/audioclip"){
 			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING){
 				if(audioTrack != NULL){
@@ -715,7 +709,6 @@ void DurationController::handleOscIn(){
 				ofLogError("Duration:OSC") << "Set audio clip failed, incorrectly formatted arguments. \n usage /duration/audioclip filepath:string ";
 			}
 		}
-#endif
 	}
 }
 
@@ -781,18 +774,16 @@ void DurationController::handleOscOut(){
 						messageValid = true;
 					}
 				}
-#ifdef TARGET_OSX
 				else if(trackType == "Audio"){
 					ofxTLAudioTrack* audio = (ofxTLAudioTrack*)tracks[t];
 					if(audio->getIsPlaying() || timeline.getIsPlaying()){
-						vector<float>& bins = audio->getFFTSpectrum(header->getNumberOfBins());
+						vector<float>& bins = audio->getFFT();
 						for(int b = 0; b < bins.size(); b++){
 							m.addFloatArg(bins[b]);
 						}
 						messageValid = true;
 					}
 				}
-#endif
 				if(messageValid){
 					m.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
 					bundle.addMessage(m);
@@ -1077,7 +1068,6 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 	else if(trackType == translation.translateKey("lfo") || trackType == "lfo"){
 		newTrack = timeline.addLFO(trackName, xmlFileName);
 	}
-#ifdef TARGET_OSX
 	else if(trackType == translation.translateKey("audio") || trackType == "audio"){
 		if(audioTrack != NULL){
 			ofLogError("DurationController::addTrack") << "Trying to add an additional audio track";
@@ -1089,7 +1079,6 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 			newTrack = audioTrack;
 		}
 	}
-#endif
 	else {
 		ofLogError("DurationController::addTrack") << "Unsupported track type: " << trackType;
 	}
@@ -1112,7 +1101,6 @@ void DurationController::update(ofEventArgs& args){
 	timeLabel->setLabel(timeline.getCurrentTimecode());
 	playpauseToggle->setValue(timeline.getIsPlaying());
 
-#ifdef TARGET_OSX
 	if(audioTrack != NULL && audioTrack->isSoundLoaded()){
 		
 		if(timeline.getTimecontrolTrack() != audioTrack){
@@ -1127,7 +1115,6 @@ void DurationController::update(ofEventArgs& args){
 			durationLabel->setTextString(timeline.getDurationInTimecode());
 		}
 	}
-#endif
 	
 	if(ofGetHeight() < timeline.getDrawRect().getMaxY()){
 		ofSetWindowShape(ofGetWidth(), timeline.getDrawRect().getMaxY()+30);
@@ -1191,7 +1178,6 @@ void DurationController::update(ofEventArgs& args){
 			lock();
             timeline.removeTrack(it->first);
 			timeline.setTimecontrolTrack(NULL);
-#ifdef TARGET_OSX
 			if(it->second->getTrackType() == "Audio"){
 				if(audioTrack == NULL){
 					ofLogError("Audio track inconsistency");
@@ -1201,7 +1187,6 @@ void DurationController::update(ofEventArgs& args){
 					audioTrack = NULL;
 				}
 			}
-#endif
             headers.erase(it);
 			unlock();
 			needsSave = true;
@@ -1435,12 +1420,10 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 	
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
-#ifdef TARGET_OSX
 	if(audioTrack != NULL){
 		delete audioTrack;
 		audioTrack = NULL;
 	}
-#endif
     timeline.setWorkingFolder(projectPath);
 	
     //LOAD ALL TRACKS
@@ -1478,18 +1461,16 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 					ofxTLColorTrack* colors = (ofxTLColorTrack*)newTrack;
 					colors->loadColorPalette(projectSettings.getValue("palette", timeline.getDefaultColorPalettePath()));
 				}
-				#ifdef TARGET_OSX
 				else if(newTrack->getTrackType() == "Audio"){
 					string clipPath = projectSettings.getValue("clip", "");
 					if(clipPath != ""){
 						audioTrack->loadSoundfile(clipPath);
 					}
-					int numbins = projectSettings.getValue("bins", 256);
-					headerTrack->setNumberOfbins(numbins);
-					cout << "set " << numbins << " after load " << headerTrack->getNumberOfBins() << endl;
+//					int numbins = projectSettings.getValue("bins", 256);
+//					headerTrack->setNumberOfbins(numbins);
+//					cout << "set " << numbins << " after load " << headerTrack->getNumberOfBins() << endl;
 					//audioTrack->getFFTSpectrum(projectSettings.getValue("bins", 256));
 				}
-				#endif
 
 				string displayName = projectSettings.getValue("displayName","");
 				if(displayName != ""){
@@ -1606,13 +1587,11 @@ void DurationController::saveProject(){
 				ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
 				projectSettings.addValue("palette", colors->getPalettePath());
 			}
-#ifdef TARGET_OSX
 			else if(trackType == "Audio"){
 				projectSettings.addValue("clip", audioTrack->getSoundfilePath());
-				int numbins = audioTrack->getFFTBinCount();
-				projectSettings.addValue("bins", audioTrack->getFFTBinCount());
+//				int numbins = audioTrack->getFFTBinCount();
+//				projectSettings.addValue("bins", audioTrack->getFFTBinCount());
 			}
-#endif
             projectSettings.popTag();
         }
         projectSettings.popTag(); //page

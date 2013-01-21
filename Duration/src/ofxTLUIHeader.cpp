@@ -31,9 +31,7 @@
  */
 
 #include "ofxTLUIHeader.h"
-#ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
-#endif
 
 #include <locale>
 bool isNumber(const string& s){
@@ -121,22 +119,21 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		palette->setPadding(0);
 		gui->addWidgetRight(palette);
 	}
-#ifdef TARGET_OSX
 	else if(trackType == "Audio"){
 		audioClip = new ofxUILabelButton(translation->translateKey("select audio"), false,0,0,0,0, OFX_UI_FONT_SMALL);
 		audioClip->setPadding(0);
 		gui->addWidgetRight(audioClip);
 		
-		ofxUILabel* binLabel = new ofxUILabel(0, 0, "bins", translation->translateKey("bins"), OFX_UI_FONT_SMALL);
-		binLabel->setPadding(0);
-		gui->addWidgetRight(binLabel);
+        //REMOVING BINS
+//		ofxUILabel* binLabel = new ofxUILabel(0, 0, "bins", translation->translateKey("bins"), OFX_UI_FONT_SMALL);
+//		binLabel->setPadding(0);
+//		gui->addWidgetRight(binLabel);
 		
-		bins = new ofxUITextInput("bins", "256", 50, 0,0,0, OFX_UI_FONT_SMALL);
-		bins->setAutoClear(false);
-		bins->setPadding(0);
-		gui->addWidgetRight(bins);
+//		bins = new ofxUITextInput("bins", "256", 50, 0,0,0, OFX_UI_FONT_SMALL);
+//		bins->setAutoClear(false);
+//		bins->setPadding(0);
+//		gui->addWidgetRight(bins);
 	}
-#endif
 	
 	if(trackType == "Bangs" || trackType == "Curves"){
 		receiveOSCEnable = new ofxUIToggle(translation->translateKey("receive osc"), true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
@@ -173,23 +170,40 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 	gui->getRect()->x = trackHeader->getTimeline()->getTopRight().x - (gui->getRect()->width + 50);
 }
 
-int ofxTLUIHeader::getNumberOfBins(){
-#ifdef TARGET_OSX
-	if(getTrackType() == "Audio"){
-		return ((ofxTLAudioTrack*)getTrack())->getFFTBinCount();
-	}
-#endif
-	return 0;
-}
+//void ofxTLUIHeader::setMinFrequency(int frequency){
+//    
+//}
 
-void ofxTLUIHeader::setNumberOfbins(int binCount){
-#ifdef TARGET_OSX
-	if(getTrackType() == "Audio"){
-		((ofxTLAudioTrack*)getTrack())->getFFTSpectrum(binCount);
-		bins->setTextString(ofToString(binCount));
-	}
-#endif
-}
+//int ofxTLUIHeader::getMinFrequency(){
+//	if(getTrackType() == "Audio"){
+//		return ((ofxTLAudioTrack*)getTrack())->getFFTBinCount();
+//	}
+//	return 0;
+//}
+//
+//void ofxTLUIHeader::setBandsPerOctave(int bands){
+//    
+//}
+//
+//int ofxTLUIHeader::getBandsPerOctave(){
+//    
+//}
+
+
+//int ofxTLUIHeader::getNumberOfBins(){
+//	if(getTrackType() == "Audio"){
+//		return ((ofxTLAudioTrack*)getTrack())->getFFTBinCount();
+//	}
+//	return 0;
+//}
+//
+//void ofxTLUIHeader::setNumberOfbins(int binCount){
+//
+//	if(getTrackType() == "Audio"){
+//		((ofxTLAudioTrack*)getTrack())->getFFTSpectrum(binCount);
+//		bins->setTextString(ofToString(binCount));
+//	}
+//}
 
 void ofxTLUIHeader::setValueRange(ofRange range){
 	if(getTrackType() == "Curves" || getTrackType() == "LFO"){
@@ -331,7 +345,6 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         track->setValueRange(newValueRange);
 		modified = true;		
 	}
-#ifdef TARGET_OSX
 	else if(e.widget == audioClip && audioClip->getValue()){
 		ofFileDialogResult r = ofSystemLoadDialog();
 		if(r.bSuccess){
@@ -340,6 +353,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 			modified = true;
 		}
 	}
+    /*
 	else if(e.widget == bins){
 		if(!isNumber(bins->getTextString())){
 			bins->setTextString(ofToString(audioNumberOfBins));
@@ -349,11 +363,11 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 		if(newBinNumber != audioNumberOfBins){
 			audioNumberOfBins = newBinNumber;
 			ofxTLAudioTrack* audioTrack = (ofxTLAudioTrack*)trackHeader->getTrack();
-			audioTrack->getFFTSpectrum(audioNumberOfBins);
+//			audioTrack->getFFTSpectrum(audioNumberOfBins);
 //			cout << "new bin number is " << audioTrack->getDefaultBinCount() << " after setting to " << audioNumberOfBins << endl;
 		}
 	}
-#endif
+     */
     //this is polled from outside
 	else if(e.widget == sendOSCEnable){
 		modified = true;
