@@ -408,7 +408,7 @@ This will configure all necessary dependencies into openFrameworks/addons/ and t
 
 ## Supported By ##
 
-Duration was developed as part of the  [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/)
+Duration was developed as part of the  [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/en/)
 
 <p align="center">
     <img src="http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png" />
