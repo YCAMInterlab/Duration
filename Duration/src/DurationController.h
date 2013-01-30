@@ -86,6 +86,7 @@ class DurationController : public ofThread  {
 	void draw(ofEventArgs& args);
 	
 	void keyPressed(ofKeyEventArgs& keyArgs);
+    void keyReleased(ofKeyEventArgs& keyArgs);
 		
 	ofxTimeline& getTimeline();
 	
@@ -136,6 +137,14 @@ class DurationController : public ofThread  {
 	void stopRecording();
 
   protected:
+    
+    //Surya
+    void increaseSelectionByAMeasure();
+    void decreaseSelectionByAMeasure();
+    void selectNextLoop();
+    void selectPreviousLoop();
+    void nudgeSelection(long amount);
+    
 	ofxTimeline timeline;
     void bangFired(ofxTLBangEventArgs& bang);
 	vector<string> trackAddresses;

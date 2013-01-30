@@ -35,6 +35,7 @@
 
 #define DROP_DOWN_WIDTH 250
 #define TEXT_INPUT_WIDTH 100
+#define NUDGE_AMOUNT 10
 
 DurationController::DurationController(){
 	lastOSCBundleSent = 0;
@@ -61,6 +62,7 @@ void DurationController::enableInterface(){
 		ofAddListener(ofEvents().update, this, &DurationController::update);
 		ofAddListener(ofEvents().draw, this, &DurationController::draw);
 		ofAddListener(ofEvents().keyPressed, this, &DurationController::keyPressed);
+        ofAddListener(ofEvents().keyReleased, this, &DurationController::keyReleased);
 		gui->enable();
 		gui->disableAppEventCallbacks();
 		timeline.enable();
@@ -78,6 +80,7 @@ void DurationController::disableInterface(){
 		ofRemoveListener(ofEvents().update, this, &DurationController::update);
 		ofRemoveListener(ofEvents().draw, this, &DurationController::draw);
 		ofRemoveListener(ofEvents().keyPressed, this, &DurationController::keyPressed);
+        ofRemoveListener(ofEvents().keyReleased, this, &DurationController::keyReleased);
 		gui->disable();
 		timeline.disable();
 		map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
@@ -1289,12 +1292,112 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
 	        timeline.setOutPointAtPlayhead();
 		}
     }
+    
+    if(key == ']'){
+        increaseSelectionByAMeasure();
+    }
+    
+    if(key == '['){
+        decreaseSelectionByAMeasure();
+    }
+    
+    if(key == '}'){
+        selectNextLoop();
+    }
+    
+    if(key == '{'){
+        selectPreviousLoop();
+    }
+    
+    if(key == OF_KEY_RIGHT){
+        timeline.stop();
+        nudgeSelection(NUDGE_AMOUNT);
+    }
+    
+    if(key == OF_KEY_LEFT){
+         timeline.stop();
+        nudgeSelection(-NUDGE_AMOUNT);
+    }
 	
 	
 	if(ofGetModifierShortcutKeyPressed() && (key == 's' || key=='s'-96) ){
 		saveProject();
 	}
 	
+}
+
+//--------------------------------------------------------------
+void DurationController::keyReleased(ofKeyEventArgs& keyArgs){
+    if(timeline.isModal()){
+        return;
+    }
+	
+	if(gui->hasKeyboardFocus()){
+		return;
+	}
+	
+    int key = keyArgs.key;
+    
+    if(key == OF_KEY_RIGHT || key == OF_KEY_LEFT){
+        timeline.play();
+    }
+    
+    
+}
+
+//--------------------------------------------------------------
+void DurationController::increaseSelectionByAMeasure(){
+    long newOutPoint = 240000.0f / settings.bpm; // milliseconds per measure
+    
+    // true if the in point is at zero
+    if(timeline.getInTimeInMillis() == 0){
+        timeline.setInPointAtPlayhead();
+        newOutPoint += timeline.getCurrentTimeMillis();
+    } else {
+        newOutPoint += timeline.getOutTimeInMillis();
+    }
+    
+    timeline.setOutPointAtMillis(newOutPoint);
+}
+
+//--------------------------------------------------------------
+void DurationController::decreaseSelectionByAMeasure(){
+    long millisecondsPerMeasure = 240000.0f / settings.bpm; // milliseconds per measure
+    
+    // true if the out point is at the end of the track
+    if(timeline.getOutTimeInMillis() == timeline.getDurationInMilliseconds()){
+        timeline.setOutPointAtPlayhead();
+        long newInPoint = timeline.getCurrentTimeMillis() - millisecondsPerMeasure;
+        timeline.setInPointAtMillis(newInPoint);
+    } else {
+        timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() - millisecondsPerMeasure);
+    }
+    
+}
+
+//--------------------------------------------------------------
+void DurationController::selectNextLoop(){
+    long spanInMillis = timeline.getOutTimeInMillis() - timeline.getInTimeInMillis();
+//    timeline.setInPointAtMillis(timeline.getInTimeInMillis() + spanInMillis);
+//    timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() + spanInMillis);
+    nudgeSelection(timeline.getInOutRangeMillis().span());
+}
+
+//--------------------------------------------------------------
+void DurationController::selectPreviousLoop(){
+//    timeline.setInPointAtMillis(timeline.getInTimeInMillis() - spanInMillis);
+//    timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() - spanInMillis);
+    nudgeSelection(-timeline.getInOutRangeMillis().span());
+}
+
+//--------------------------------------------------------------
+void DurationController::nudgeSelection(long amount){
+    
+    timeline.setInPointAtMillis(timeline.getInTimeInMillis() + amount);
+    timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() + amount);
+    
+    timeline.setCurrentTimeToInPoint();
+
 }
 
 //--------------------------------------------------------------
