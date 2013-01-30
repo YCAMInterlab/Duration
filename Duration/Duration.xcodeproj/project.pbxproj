@@ -99,6 +99,7 @@
 		E7DFB46015D0E37E00CD5CF1 /* ofxTween.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7DFB43E15D0E37E00CD5CF1 /* ofxTween.cpp */; };
 		FA209DAB16B8EEBF00B98710 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA209DAA16B8EEBF00B98710 /* OpenAL.framework */; };
 		FA209DAD16B8EEC500B98710 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA209DAC16B8EEC500B98710 /* Accelerate.framework */; };
+		FA209E8616B9B6A400B98710 /* ofxTLNotes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA209E8416B9B6A400B98710 /* ofxTLNotes.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -363,6 +364,8 @@
 		E7DFB43F15D0E37E00CD5CF1 /* ofxTween.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTween.h; sourceTree = "<group>"; };
 		FA209DAA16B8EEBF00B98710 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = /System/Library/Frameworks/OpenAL.framework; sourceTree = "<absolute>"; };
 		FA209DAC16B8EEC500B98710 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
+		FA209E8416B9B6A400B98710 /* ofxTLNotes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTLNotes.cpp; sourceTree = "<group>"; };
+		FA209E8516B9B6A400B98710 /* ofxTLNotes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTLNotes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -399,6 +402,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				FA209E8316B9B6A400B98710 /* ofxTLNotes */,
 				E7C659BB15FF46BC0049005B /* ofxLocalization */,
 				E7C6596315FF22260049005B /* ofxFTGL */,
 				E78C29FB15EF1ADA003A9CCB /* ofxRange */,
@@ -1092,6 +1096,16 @@
 			path = Easings;
 			sourceTree = "<group>";
 		};
+		FA209E8316B9B6A400B98710 /* ofxTLNotes */ = {
+			isa = PBXGroup;
+			children = (
+				FA209E8416B9B6A400B98710 /* ofxTLNotes.cpp */,
+				FA209E8516B9B6A400B98710 /* ofxTLNotes.h */,
+			);
+			name = ofxTLNotes;
+			path = ../../../addons/ofxTimelineTracks/ofxTLNotes;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1258,6 +1272,7 @@
 				E7C659C415FF46D20049005B /* ofxLocalization.cpp in Sources */,
 				E7C5D6A216148462006E514C /* ofxRemoveCocoaMenu.mm in Sources */,
 				E734FF8616197EE500DFC0DB /* ofxTLLFO.cpp in Sources */,
+				FA209E8616B9B6A400B98710 /* ofxTLNotes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1400,6 +1415,19 @@
 				GCC_MODEL_TUNING = NONE;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+					../../../addons/ofxOsc/libs,
+					../../../addons/ofxOsc/libs/oscpack,
+					../../../addons/ofxOsc/libs/oscpack/src,
+					../../../addons/ofxOsc/libs/oscpack/src/ip/posix,
+					../../../addons/ofxOsc/libs/oscpack/src/ip/win32,
+					../../../addons/ofxOsc/libs/oscpack/src/osc,
+					../../../addons/ofxOsc/src,
+					../../../addons/ofxFTGL/libs/FTGL/include,
+					../../../addons/ofxTimelineTracks/ofxTLNotes,
+				);
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -1483,7 +1511,6 @@
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxFTGL/libs/FTGL/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10 = "\"$(SRCROOT)/../../../addons/ofxTimeline/libs/sndfile/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../addons/ofxFTGL/libs/FTGL/lib/vs2010\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../addons/ofxTimeline/libs/sndfile/osx/lib\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = DurationDebug;
@@ -1508,6 +1535,19 @@
 				GCC_MODEL_TUNING = NONE;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+					../../../addons/ofxOsc/libs,
+					../../../addons/ofxOsc/libs/oscpack,
+					../../../addons/ofxOsc/libs/oscpack/src,
+					../../../addons/ofxOsc/libs/oscpack/src/ip/posix,
+					../../../addons/ofxOsc/libs/oscpack/src/ip/win32,
+					../../../addons/ofxOsc/libs/oscpack/src/osc,
+					../../../addons/ofxOsc/src,
+					../../../addons/ofxFTGL/libs/FTGL/include,
+					../../../addons/ofxTimelineTracks/ofxTLNotes,
+				);
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -1591,7 +1631,6 @@
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxFTGL/libs/FTGL/lib/osx\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10 = "\"$(SRCROOT)/../../../addons/ofxTimeline/libs/sndfile/lib/osx\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../addons/ofxFTGL/libs/FTGL/lib/vs2010\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../addons/ofxTimeline/libs/sndfile/osx/lib\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = Duration;

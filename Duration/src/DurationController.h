@@ -40,6 +40,7 @@
 #include "ofxUI.h"
 #include "ofxLocalization.h"
 #include "ofxFTGLFont.h"
+#include "ofxTLNotes.h"
 
 #ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"

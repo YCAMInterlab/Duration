@@ -31,6 +31,7 @@
  */
 
 #include "DurationController.h"
+#include "ofxTLNotes.h"
 #include "ofxHotKeys.h"
 
 #define DROP_DOWN_WIDTH 250
@@ -171,6 +172,7 @@ void DurationController::setup(){
     trackTypes.push_back(translation.translateKey("curves"));
     trackTypes.push_back(translation.translateKey("colors"));
 	trackTypes.push_back(translation.translateKey("lfo"));
+    trackTypes.push_back(translation.translateKey("notes"));
 #ifdef TARGET_OSX
 	trackTypes.push_back(translation.translateKey("audio"));
 #endif
@@ -264,6 +266,9 @@ void DurationController::setup(){
 	createTooltips();
 	
 	startThread();
+    
+    // temp add MIDI Note track
+//    timeline.addTrack("MIDINOTE", new ofxTLMidiNote());
 }
 
 void DurationController::threadedFunction(){
@@ -1071,6 +1076,10 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 	}
 	else if(trackType == translation.translateKey("lfo") || trackType == "lfo"){
 		newTrack = timeline.addLFO(trackName, xmlFileName);
+	}
+	else if(trackType == translation.translateKey("notes") || trackType == "notes"){
+		newTrack = new ofxTLNotes();
+        timeline.addTrack(trackName, newTrack);
 	}
 #ifdef TARGET_OSX
 	else if(trackType == translation.translateKey("audio") || trackType == "audio"){
