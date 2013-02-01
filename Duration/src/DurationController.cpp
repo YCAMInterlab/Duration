@@ -325,13 +325,24 @@ void DurationController::handleOscIn(){
 						}
                         else if(track->getTrackType() == "Notes"){
                             ofxTLNotes* notes = (ofxTLNotes*)track;
-                            cout << "adding value " << m.getArgAsFloat(0) << endl;
+                            
                             if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
-								float value = m.getArgAsFloat(0);
-								if(value != header->lastValueReceived || !header->hasReceivedValue){
-									notes->addKeyframeAtMillis(value, timelineStartTime);
-									header->lastValueReceived = value;
+								float pitch = m.getArgAsFloat(0);
+                                float velocity = m.getArgAsFloat(1);
+                                int trigger = m.getArgAsInt32(2);
+                                float sig = trigger + pitch;
+								if(sig != header->lastValueReceived || !header->hasReceivedValue){
+                                    if(trigger > 0){
+                                        // note on
+                                        notes->addKeyframeAtMillis(pitch, timelineStartTime, true);
+                                    } else {
+                                        // note off
+                                        notes->finishNote(pitch);
+                                    }
+                                    
+									header->lastValueReceived = sig;
 									header->hasReceivedValue = true;
+                                    
 								}
 							}
                         }
