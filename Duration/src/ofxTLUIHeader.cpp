@@ -31,7 +31,6 @@
  */
 
 #include "ofxTLUIHeader.h"
-#include "ofxTLNotes.h"
 #ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
 #endif
@@ -139,7 +138,7 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 	}
 #endif
 	
-	if(trackType == "Bangs" || trackType == "Curves"){
+	if(trackType == "Bangs" || trackType == "Curves" || trackType == "Notes"){
 		receiveOSCEnable = new ofxUIToggle(translation->translateKey("receive osc"), true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
 		receiveOSCEnable->setPadding(1);
 		gui->addWidgetRight(receiveOSCEnable);
