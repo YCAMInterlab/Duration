@@ -292,18 +292,18 @@ void DurationController::handleOscIn(){
 	//TODO: move parsing and receing to separate different threads?
 	long timelineStartTime = timeline.getCurrentTimeMillis();
 	while(receiver.hasWaitingMessages()){
-
 		ofxOscMessage m;
 		receiver.getNextMessage(&m);
+         cout << "heard " << m.getAddress() << endl;
 		bool handled = false;
 		long startTime = recordTimer.getAppTimeMicros();
 		vector<ofxTLPage*>& pages = timeline.getPages();
 		for(int i = 0; i < pages.size(); i++){
 			vector<ofxTLTrack*>& tracks = pages[i]->getTracks();
 			for(int t = 0; t < tracks.size(); t++){
-//				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
 				ofxTLTrack* track = tracks[t];
-				ofPtr<ofxTLUIHeader> header = headers[track->getName()];				
+				ofPtr<ofxTLUIHeader> header = headers[track->getName()];
+                
 				if(header->receiveOSC() && m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
 					
 					if(timeline.getIsPlaying() ){ //TODO: change to isPlaying() && isRecording()
@@ -323,6 +323,18 @@ void DurationController::handleOscIn(){
 							ofxTLBangs* bangs = (ofxTLBangs*)track;
 							bangs->addKeyframeAtMillis(0,timelineStartTime);
 						}
+                        else if(track->getTrackType() == "Notes"){
+                            ofxTLNotes* notes = (ofxTLNotes*)track;
+                            cout << "adding value " << m.getArgAsFloat(0) << endl;
+                            if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
+								float value = m.getArgAsFloat(0);
+								if(value != header->lastValueReceived || !header->hasReceivedValue){
+									notes->addKeyframeAtMillis(value, timelineStartTime);
+									header->lastValueReceived = value;
+									header->hasReceivedValue = true;
+								}
+							}
+                        }
 					}
 
 					header->lastInputReceivedTime = recordTimer.getAppTimeSeconds();
