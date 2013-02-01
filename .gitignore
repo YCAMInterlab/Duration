@@ -73,3 +73,16 @@ releases/*
 *.lib
 *.ilk
 *.exp
+
+Duration/bin/Duration
+Duration/bin/libs/*
+DurationRemote/bin/libs/*
+RecordingDataGenerator/bin/RecordingDataGenerator
+RecordingDataGenerator/bin/libs/*
+
+*.cbp
+*.workspace
+Makefile
+config.make
+
+DurationRemote/bin/DurationRemote
