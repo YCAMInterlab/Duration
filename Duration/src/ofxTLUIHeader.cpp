@@ -31,6 +31,7 @@
  */
 
 #include "ofxTLUIHeader.h"
+#include "ofxTLNotes.h"
 #ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
 #endif
@@ -149,6 +150,18 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		sendOSCEnable->setPadding(1);
 		gui->addWidgetRight(sendOSCEnable);
 //	}
+    
+    // add range high / low
+    if(trackType == "Notes"){
+        int testInt = 0;    // ambiguous call avoided!
+         minDialer = new ofxUINumberDialer(0, 127, testInt, 0, "min", OFX_UI_FONT_SMALL);
+        minDialer->setPadding(0);
+        gui->addWidgetRight( minDialer );
+        
+        maxDialer = new ofxUINumberDialer(0, 127, 11, 0, "max", OFX_UI_FONT_SMALL);
+        maxDialer->setPadding(0);
+        gui->addWidgetRight( maxDialer );
+    }
     
     //DELETE ME???
     vector<string> deleteTrack;
