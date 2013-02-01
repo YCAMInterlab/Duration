@@ -294,7 +294,7 @@ void DurationController::handleOscIn(){
 	while(receiver.hasWaitingMessages()){
 		ofxOscMessage m;
 		receiver.getNextMessage(&m);
-         cout << "heard " << m.getAddress() << endl;
+
 		bool handled = false;
 		long startTime = recordTimer.getAppTimeMicros();
 		vector<ofxTLPage*>& pages = timeline.getPages();
