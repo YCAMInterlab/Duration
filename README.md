@@ -4,6 +4,8 @@
 
 Duration controls change over time. With a simple one window approach, the cross platform stand alone application manages lists of tracks to compose changing data over a fixed duration.
 
+[Duration official website](http:://duration.cc)
+
 The application sends values over OSC and can be configured through OSC messages.
 
 ![DurationInterface](http://www.duration.cc/assets/images/duration_screen.png)
@@ -14,20 +16,15 @@ Duration is open source and completely free to use in your art, research, or com
 
 Download Duration: 
 
-Mac OS X 10.6+
-http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip
+[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip)
 
-Windows XP and 7
-http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip
+[Windows XP and 7](http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip)
 
-Linux
-http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip
+[Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip)
 
-Source for Windows (VC2010) and Mac (Xcode 4.5)
-http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip 
+[Source for Windows (VC2010) and Mac (Xcode 4.5)](http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip)
 
-For windows, you may need to install the MSVC++ Runtime
-http://www.microsoft.com/en-us/download/details.aspx?id=5555
+For windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)
 
 ## Demo video
 
