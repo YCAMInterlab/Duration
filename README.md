@@ -180,7 +180,7 @@ By itself Duration is pretty useless, so let's hook it up to another realtime en
 
 ### Receiving output
 
-Duration sends all it's data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted like this:
+Duration sends all its data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted like this:
 
      /track/display/name <values as arguments>
 
@@ -405,7 +405,7 @@ Duration is open source and free to use as is in any type of project. Timelines 
 
 ### Download source bundle
 
-Each Duration release is coupled with a Binary release as well as a source package available in the downloads section on this repository. The source package contains the application and all of it's dependencies and project files for all platforms. This is the easiest way to get up and running to hack Duration. But if you want to contribute to it's development consider forking the project and it's dependencies on Github so that you may issue Pull requests for your changes.
+Each Duration release is coupled with a Binary release as well as a source package available in the downloads section on this repository. The source package contains the application and all of its dependencies and project files for all platforms. This is the easiest way to get up and running to hack Duration. But if you want to contribute to its development consider forking the project and dependencies on Github so that you may issue Pull requests for your changes.
 
 ### Compile from Github
 
@@ -436,7 +436,7 @@ Duration is a project by [James George](http://www.jamesgeorge.org), co-develope
 
 ![Additional Support](http://www.jamesgeorge.org/images/ofxtimeline/github/SupportedBy.png)
 
-[Playmodes](http://www.playmodes.com/) who graciously funded and shaped the project in it's early stages for [BlueBeams](https://vimeo.com/35931265) .
+[Playmodes](http://www.playmodes.com/) who graciously funded and shaped the project in its early stages for [BlueBeams](https://vimeo.com/35931265).
 
 [The Frank-Ratchye STUDIO for Creative Inquiry](http://studioforcreativeinquiry.org/) who have supported the [RGBDToolkit](http://www.rgbdtoolkit.com) project for which ofxTimeline was first created.
 
