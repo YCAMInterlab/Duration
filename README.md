@@ -85,13 +85,15 @@ Switches cause large regions of the track to be marked as on, and messages are s
 
 Curves allow for specifying a smoothly changing value between a given min and max range. Right clicking a keyframe brings up a menu for selecting different smooth interpolation options between keyframes.
 
+#### LFOs
+
+Low Frequency Oscillators provide sine waves and noise functions to be used in animations.
+
 #### Colors
 
 Color tracks use a color palette image loaded to create smoothly changing colors over time. Each sample on the timeline specifies a position in the palette image to sample from. The next position is smoothly transitioned, sampling from the image along the way. 
 
 #### Audio
-
-(experimental, os x only)
 
 Audio track allows for visualizing an audio waveform and playing back sound through Duration along with your tracks. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
 
@@ -201,7 +203,7 @@ Each type of track sends different arguments.
         <td>1 Int32 argument, set to 1 for on, 0 for off</td>
     </tr>
     <tr>
-        <td>Curve</td>
+        <td>Curve and LFO</td>
         <td>1 Float argument representing the current value, ranging between Min and Max</td>
     </tr>
     <tr>
