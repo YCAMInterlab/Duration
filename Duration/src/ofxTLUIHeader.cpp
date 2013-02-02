@@ -34,7 +34,7 @@
 #ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
 #endif
-
+#include "ofxTLNotes.h"
 #include <locale>
 bool isNumber(const string& s){
 	locale loc;
@@ -313,6 +313,11 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         ofRange newValueRange = ofRange(minDialer->getValue(), newMaxValue);
         ofxTLKeyframes* track = (ofxTLKeyframes*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
+		modified = true;
+    }
+	else if(e.widget->getName() == "trim"){
+        ofxTLNotes* track = (ofxTLNotes*)trackHeader->getTrack();
+        track->trimToPitches();
 		modified = true;
     }
     else if(e.widget->getName() == translation->translateKey("delete")){
