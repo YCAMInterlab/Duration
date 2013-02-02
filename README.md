@@ -4,7 +4,7 @@
 
 Duration controls change over time. With a simple one window approach, the cross platform stand alone application manages lists of tracks to compose changing data over a fixed duration.
 
-[Duration official website](http:://duration.cc)
+[Duration official website](http://duration.cc)
 
 The application sends values over OSC and can be configured through OSC messages.
 
@@ -24,7 +24,7 @@ Download Duration:
 
 [Source for Windows (VC2010) and Mac (Xcode 4.5)](http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip)
 
-For windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)
+For Windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)
 
 ## Demo video
 
@@ -54,7 +54,7 @@ https://vimeo.com/47504220 password: duration
 
 A Duration project is just a collection of track data and interface configuration settings. It's all saved to a folder with .xml files and a special .durationproj file containing the track names and settings.
 
-By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project drop-down menu within the application. You can put projects anywhere you'd like, but you will have to remember yourself where you put them.
+By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project drop-down menu within the application. You can put projects anywhere else you'd like, but you will have to remember yourself where you put them.
 
 ### Managing tracks
 
@@ -92,7 +92,7 @@ Color tracks use a color palette image loaded to create smoothly changing colors
 
 #### Audio
 
-Audio track allows for visualizing an audio waveform and playing back sound through Duration along with your tracks. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
+Audio track allows for visualizing an audio waveform, sound playback, and FFT data sent through OSC. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
 
 ### Setting the duration
 
@@ -394,11 +394,11 @@ If a message is being received that matches a Curve track's name and has valid d
 
 ![RecordingGenerator](http://www.duration.cc/duration_datagenerator.png)
 
-* NOTE: This is still an experimental feature that is fun to experiment with but has quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanageable keyframes! All of these cases are not yet handled very well by Duration.
+* NOTE: This is still an experimental feature with a few quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanageable keyframes! All of these cases are not yet handled very well by Duration.
 
 ## Hacking on Duration
 
-Duration is open source and free to use as is in any type of project. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be broken. There are a few ways to approach customizing Duration.
+Duration is open source and free to use. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be extended. There are a few ways to approach customizing Duration.
 
 ### Download source bundle
 
