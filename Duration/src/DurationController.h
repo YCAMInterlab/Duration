@@ -40,10 +40,7 @@
 #include "ofxUI.h"
 #include "ofxLocalization.h"
 #include "ofxFTGLFont.h"
-
-#ifdef TARGET_OSX
 #include "ofxTLAudioTrack.h"
-#endif
 
 typedef struct {
     string path; //full project path
@@ -169,10 +166,8 @@ class DurationController : public ofThread  {
 	ofMutex oscLock;
 	
 	vector<Tooltip> tooltips;
-	#ifdef TARGET_OSX
 	//only can have one of these!
 	ofxTLAudioTrack* audioTrack;
-	#endif
 
 	vector<ofxOscMessage> bangsReceived;
 	map<string, ofPtr<ofxTLUIHeader> > headers;

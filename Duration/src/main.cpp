@@ -33,11 +33,15 @@
 
 #include "testApp.h"
 #include "ofAppGlutWindow.h"
-
 //--------------------------------------------------------------
+#ifdef TARGET_WIN32
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
+#else
 int main(){
+#endif
 	ofAppGlutWindow window; // create a window
 	// set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
-	ofSetupOpenGL(&window, 1280, 768, OF_WINDOW);
+	ofSetupOpenGL(&window, 1300, 768, OF_WINDOW);
+	ofSetWindowTitle("Duration");
 	ofRunApp(new testApp()); // start the app
 }

@@ -1,10 +1,6 @@
-# This project is currently unreleased 
-
-If you found this feel free to give it a try or send it to friends but please do not publicize until after October 20th.
-
 # Duration
 
-## Universal Timeline 
+## Timeline for creative code 
 
 Duration controls change over time. With a simple one window approach, the cross platform stand alone application manages lists of tracks to compose changing data over a fixed duration.
 

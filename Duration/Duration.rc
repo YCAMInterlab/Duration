@@ -1,0 +1,6 @@
+ #include "src/Resources.h"
+  
+    IDI_MAIN_ICON ICON "Duration.ico" 
+    GLUT_ICON ICON "Duration.ico"
+    IDI_ICON_BIG ICON "Duration.ico"
+    IDI_ICON_SMALL ICON "Duration.ico"

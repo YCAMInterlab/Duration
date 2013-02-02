@@ -3,11 +3,13 @@
 # Dependencies for Duration
 
 cd ../../addons/
-echo "one is " $1
+
 if [ -z $1 ]; then
     PREFIX="git clone https://github.com/"
+	echo "Cloning read-only"
 else
     PREFIX="git clone git@github.com:"
+	echo "Cloning writable"
 fi
 
 ${PREFIX}YCAMInterlab/ofxTimecode.git
