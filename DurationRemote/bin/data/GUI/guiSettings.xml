@@ -11,17 +11,17 @@
 <Widget>
     <Kind>12</Kind>
     <Name>COMMAND</Name>
-    <Value>/duration/stop</Value>
+    <Value>/duration/addtrack</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>ARG1</Name>
-    <Value>ayumi/tail</Value>
+    <Value>switches</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>ARG2</Name>
-    <Value>ayumi/x</Value>
+    <Value>newCurves</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
@@ -46,12 +46,12 @@
 <Widget>
     <Kind>17</Kind>
     <Name>switches</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
     <Name>curves</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>

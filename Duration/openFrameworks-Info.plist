@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Duration.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.ycam.Duration</string>
+	<string>cc.duration.Duration</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

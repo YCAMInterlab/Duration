@@ -1417,8 +1417,10 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 	
 	lock();
 	
+    timeline.removeFromThread();
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
+
 	if(audioTrack != NULL){
 		delete audioTrack;
 		audioTrack = NULL;
@@ -1483,6 +1485,10 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         }
         projectSettings.popTag(); //page
     }
+    
+    timeline.moveToThread(); //increases accuracy of bang call backs
+
+
 	unlock();
 	
     timeline.setCurrentPage(0);
