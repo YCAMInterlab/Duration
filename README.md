@@ -6,9 +6,9 @@ Duration controls change over time. With a simple one window approach, the cross
 
 The application sends values over OSC and can be configured through OSC messages.
 
-![DurationInterface](http://www.duration.cc/duration_preview.png)
+![DurationInterface](http://www.duration.cc/assets/images/duration_screen.png)
 
-Duration is open source and completely free to use in your art, research, or commercial projects. It's built with [openFrameworks](http://www.openframeworks.cc), and inherits its commitment to sharing. 
+Duration is open source and completely free to use in your art, research, or commercial projects. It's built with [openFrameworks](http://www.openframeworks.cc), and inherits its commitment to sharing. Duration is a project by [James George](http://www.jamesgeorge.org), co-developed by [YCAMInterLab](http://interlab.ycam.jp/en/) during the [Guest Research Project v.2](http://interlab.ycam.jp/en/projects/guestresearch/vol2)
 
 ## Download
 
@@ -37,7 +37,7 @@ https://vimeo.com/47504220 password: duration
 
 ## License
 
-    Copyright 2012-2013 James George + YCAMInterLab
+    Copyright 2012-2013 James George and YCAMInterLab
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -424,7 +424,7 @@ This will configure all necessary dependencies into openFrameworks/addons/ and t
 
 ## Supported By ##
 
-Duration was co developed by YCAMInterLab during the [Guest Research Project v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/en/)
+Duration is a project by [James George](http://www.jamesgeorge.org), co-developed by [YCAMInterLab](http://interlab.ycam.jp/en/) during the [Guest Research Project v.2](http://interlab.ycam.jp/en/projects/guestresearch/vol2)
 
 <p align="center">
     <img src="http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png" />
