@@ -427,8 +427,9 @@ The Duration repository has a clone_addons.sh file that can be run from the term
 This will configure all necessary dependencies into openFrameworks/addons/ and the project should compile
 
 ## Version History
- - Alpha 002 released September 23nd
- - Alpha 001 released August 15th
+ - Alpha 003 released February 2nd 2013
+ - Alpha 002 released September 23nd 2012
+ - Alpha 001 released August 15th 2012
 
 ## Supported By ##
 
