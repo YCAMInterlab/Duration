@@ -8,20 +8,23 @@ The application sends values over OSC and can be configured through OSC messages
 
 ![DurationInterface](http://www.duration.cc/duration_preview.png)
 
-Duration is open source and completely free to use in your art, research, or commercial projects. It's built with [openFrameworks](http://www.openframeworks.cc), and inherits its MIT license and sharing philosophy. 
+Duration is open source and completely free to use in your art, research, or commercial projects. It's built with [openFrameworks](http://www.openframeworks.cc), and inherits its commitment to sharing. 
 
 ## Download
 
 Download Duration: 
 
 Mac OS X 10.6+
-https://github.com/downloads/YCAMInterlab/Duration/Duration_OSX_002_preRelease.zip
+http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip
 
 Windows XP and 7
-https://github.com/downloads/YCAMInterlab/Duration/Duration_Windows_002_preRelease.zip
+http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip
 
-Source for Windows (VC2010) and Mac (Xcode 4.4)
-https://github.com/downloads/YCAMInterlab/Duration/Duration_preRelease_002_Source_MacWndows.zip 
+Linux
+http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip
+
+Source for Windows (VC2010) and Mac (Xcode 4.5)
+http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip 
 
 For windows, you may need to install the MSVC++ Runtime
 http://www.microsoft.com/en-us/download/details.aspx?id=5555
@@ -31,6 +34,23 @@ http://www.microsoft.com/en-us/download/details.aspx?id=5555
 Readme TL;DR? The latest walk through video is here:
 https://vimeo.com/47504220 password: duration
 
+
+## License
+
+    Copyright 2012-2013 James George + YCAMInterLab
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+   
 ## Using the Duration interface
 
 ### Managing Projects
@@ -404,7 +424,7 @@ This will configure all necessary dependencies into openFrameworks/addons/ and t
 
 ## Supported By ##
 
-Duration was developed as part of the  [Guest Research Projector v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/en/)
+Duration was co developed by YCAMInterLab during the [Guest Research Project v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/en/)
 
 <p align="center">
     <img src="http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png" />
