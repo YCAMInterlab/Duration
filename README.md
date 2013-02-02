@@ -47,7 +47,16 @@ https://vimeo.com/47504220 password: duration
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-   
+
+
+## Changing the default language
+
+Duration is currently available in English, Japanese, French and Italian.
+
+To change the language, open Duration/data/settings.mxl and change the word inside the language tag. Restart Duration
+
+Thanks to Joanie LeMercier, Takayuki Ito, and Francesco Fantoni for help translating! If you would like to provide a translation to a different language, please take a look at the languagefile.csv, add your translations and send it to me through a pull request or email and I'll add it to the next release!
+
 ## Using the Duration interface
 
 ### Managing Projects
