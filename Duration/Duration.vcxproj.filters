@@ -205,6 +205,18 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp">
       <Filter>addons\ofxXmlSettings\libs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\libs\ofOpenALSoundPlayer_TimelineAdditions\src\ofOpenALSoundPlayer_TimelineAdditions.cpp">
+      <Filter>addons\ofxTimeline\libs\ofOpenALSoundPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\libs\kiss\src\kiss_fft.c">
+      <Filter>addons\ofxTimeline\libs\kiss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\libs\kiss\src\kiss_fftr.c">
+      <Filter>addons\ofxTimeline\libs\kiss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxTimeline\src\ofxTLAudioTrack.cpp">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -317,6 +329,21 @@
     </Filter>
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{687714a8-1662-fa1c-261f-50f068335398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTimeline\libs">
+      <UniqueIdentifier>{a4a1d45d-4e59-48be-96d0-58fb960293c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTimeline\libs\ofOpenALSoundPlayer">
+      <UniqueIdentifier>{061403eb-4a1e-4564-a5d0-6ad985b58cc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTimeline\libs\AL">
+      <UniqueIdentifier>{3dadc12c-647e-44f6-bf32-d70ff444bd78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTimeline\libs\kiss">
+      <UniqueIdentifier>{3c1f09fb-2ae4-47b7-b00b-c845a8e57dd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTimeline\libs\sndfile">
+      <UniqueIdentifier>{cbebcfa0-2003-416f-9e67-34a912883465}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -722,8 +749,49 @@
     <ClInclude Include="src\Resources.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\ofOpenALSoundPlayer_TimelineAdditions\src\ofOpenALSoundPlayer_TimelineAdditions.h">
+      <Filter>addons\ofxTimeline\libs\ofOpenALSoundPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\openal\include\AL\al.h">
+      <Filter>addons\ofxTimeline\libs\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\openal\include\AL\alc.h">
+      <Filter>addons\ofxTimeline\libs\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\openal\include\AL\efx.h">
+      <Filter>addons\ofxTimeline\libs\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\openal\include\AL\efx-creative.h">
+      <Filter>addons\ofxTimeline\libs\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\openal\include\AL\EFX-Util.h">
+      <Filter>addons\ofxTimeline\libs\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\openal\include\AL\xram.h">
+      <Filter>addons\ofxTimeline\libs\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\kiss\src\_kiss_fft_guts.h">
+      <Filter>addons\ofxTimeline\libs\kiss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\kiss\include\kiss_fft.h">
+      <Filter>addons\ofxTimeline\libs\kiss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\kiss\include\kiss_fftr.h">
+      <Filter>addons\ofxTimeline\libs\kiss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\libs\sndfile\include\sndfile.h">
+      <Filter>addons\ofxTimeline\libs\sndfile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTimeline\src\ofxTLAudioTrack.h">
+      <Filter>addons\ofxTimeline\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Duration.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\addons\ofxTimeline\libs\sndfile\include\sndfile.hh">
+      <Filter>addons\ofxTimeline\libs\sndfile</Filter>
+    </None>
   </ItemGroup>
 </Project>

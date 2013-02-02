@@ -4,6 +4,8 @@
 
 Duration controls change over time. With a simple one window approach, the cross platform stand alone application manages lists of tracks to compose changing data over a fixed duration.
 
+[Duration official website](http://duration.cc)
+
 The application sends values over OSC and can be configured through OSC messages.
 
 ![DurationInterface](http://www.duration.cc/assets/images/duration_screen.png)
@@ -14,20 +16,15 @@ Duration is open source and completely free to use in your art, research, or com
 
 Download Duration: 
 
-Mac OS X 10.6+
-http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip
+[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip)
 
-Windows XP and 7
-http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip
+[Windows XP and 7](http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip)
 
-Linux
-http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip
+[Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip)
 
-Source for Windows (VC2010) and Mac (Xcode 4.5)
-http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip 
+[Source for Windows (VC2010) and Mac (Xcode 4.5)](http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip)
 
-For windows, you may need to install the MSVC++ Runtime
-http://www.microsoft.com/en-us/download/details.aspx?id=5555
+For Windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)
 
 ## Demo video
 
@@ -50,14 +47,23 @@ https://vimeo.com/47504220 password: duration
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-   
+
+
+## Changing the default language
+
+Duration is currently available in English, Japanese, French and Italian.
+
+To change the language, open Duration/data/settings.mxl and change the word inside the language tag. Restart Duration
+
+Thanks to Joanie LeMercier, Takayuki Ito, and Francesco Fantoni for help translating! If you would like to provide a translation to a different language, please take a look at the languagefile.csv, add your translations and send it to me through a pull request or email and I'll add it to the next release!
+
 ## Using the Duration interface
 
 ### Managing Projects
 
 A Duration project is just a collection of track data and interface configuration settings. It's all saved to a folder with .xml files and a special .durationproj file containing the track names and settings.
 
-By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project drop-down menu within the application. You can put projects anywhere you'd like, but you will have to remember yourself where you put them.
+By convention Duration looks for projects in ~/Documents/Duration folder. Projects saved here will show up in the Project drop-down menu within the application. You can put projects anywhere else you'd like, but you will have to remember yourself where you put them.
 
 ### Managing tracks
 
@@ -85,15 +91,17 @@ Switches cause large regions of the track to be marked as on, and messages are s
 
 Curves allow for specifying a smoothly changing value between a given min and max range. Right clicking a keyframe brings up a menu for selecting different smooth interpolation options between keyframes.
 
+#### LFOs
+
+Low Frequency Oscillators provide sine waves and noise functions to be used in animations.
+
 #### Colors
 
 Color tracks use a color palette image loaded to create smoothly changing colors over time. Each sample on the timeline specifies a position in the palette image to sample from. The next position is smoothly transitioned, sampling from the image along the way. 
 
 #### Audio
 
-(experimental, os x only)
-
-Audio track allows for visualizing an audio waveform and playing back sound through Duration along with your tracks. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
+Audio track allows for visualizing an audio waveform, sound playback, and FFT data sent through OSC. Currently only one audio track is allowed per project, and the duration of the project is fixed to the length of the audio track.
 
 ### Setting the duration
 
@@ -178,7 +186,7 @@ By itself Duration is pretty useless, so let's hook it up to another realtime en
 
 ### Receiving output
 
-Duration sends all it's data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted like this:
+Duration sends all its data over OSC in bundles. Whenever a value changes it well send an update (whether you are just editing the track or it's playing back). The OSC messages are formatted like this:
 
      /track/display/name <values as arguments>
 
@@ -201,7 +209,7 @@ Each type of track sends different arguments.
         <td>1 Int32 argument, set to 1 for on, 0 for off</td>
     </tr>
     <tr>
-        <td>Curve</td>
+        <td>Curve and LFO</td>
         <td>1 Float argument representing the current value, ranging between Min and Max</td>
     </tr>
     <tr>
@@ -395,15 +403,15 @@ If a message is being received that matches a Curve track's name and has valid d
 
 ![RecordingGenerator](http://www.duration.cc/duration_datagenerator.png)
 
-* NOTE: This is still an experimental feature that is fun to experiment with but has quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanageable keyframes! All of these cases are not yet handled very well by Duration.
+* NOTE: This is still an experimental feature with a few quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanageable keyframes! All of these cases are not yet handled very well by Duration.
 
 ## Hacking on Duration
 
-Duration is open source and free to use as is in any type of project. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be broken. There are a few ways to approach customizing Duration.
+Duration is open source and free to use. Timelines are used in so many different scenarios there is no way that one application could solve them all, with this in mind Duration was built to be extended. There are a few ways to approach customizing Duration.
 
 ### Download source bundle
 
-Each Duration release is coupled with a Binary release as well as a source package available in the downloads section on this repository. The source package contains the application and all of it's dependencies and project files for all platforms. This is the easiest way to get up and running to hack Duration. But if you want to contribute to it's development consider forking the project and it's dependencies on Github so that you may issue Pull requests for your changes.
+Each Duration release is coupled with a Binary release as well as a source package available in the downloads section on this repository. The source package contains the application and all of its dependencies and project files for all platforms. This is the easiest way to get up and running to hack Duration. But if you want to contribute to its development consider forking the project and dependencies on Github so that you may issue Pull requests for your changes.
 
 ### Compile from Github
 
@@ -434,7 +442,7 @@ Duration is a project by [James George](http://www.jamesgeorge.org), co-develope
 
 ![Additional Support](http://www.jamesgeorge.org/images/ofxtimeline/github/SupportedBy.png)
 
-[Playmodes](http://www.playmodes.com/) who graciously funded and shaped the project in it's early stages for [BlueBeams](https://vimeo.com/35931265) .
+[Playmodes](http://www.playmodes.com/) who graciously funded and shaped the project in its early stages for [BlueBeams](https://vimeo.com/35931265).
 
 [The Frank-Ratchye STUDIO for Creative Inquiry](http://studioforcreativeinquiry.org/) who have supported the [RGBDToolkit](http://www.rgbdtoolkit.com) project for which ofxTimeline was first created.
 
