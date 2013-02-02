@@ -18,6 +18,7 @@ switch project,switch project,プロジェクトの切り替え,changer de proje
 send osc,send osc,OSC送信,envoyer osc,invia osc
 sure?,sure?,ok？,ok ?,ok ?
 delete,delete,削除,supprimer,cancella
+reset,reset,リセット,remettre,reset
 save,save,保存,save,salva
 play,play,再生,lecture,play
 pause,pause,一時停止,pause,pausa

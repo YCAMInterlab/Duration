@@ -11,17 +11,17 @@
 <Widget>
     <Kind>12</Kind>
     <Name>COMMAND</Name>
-    <Value>/duration/addtrack</Value>
+    <Value>/duration/seektoposition</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>ARG1</Name>
-    <Value>switches</Value>
+    <Value>0.2550</Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
     <Name>ARG2</Name>
-    <Value>newCurves</Value>
+    <Value> </Value>
 </Widget>
 <Widget>
     <Kind>12</Kind>
@@ -66,5 +66,5 @@
 <Widget>
     <Kind>12</Kind>
     <Name>TRACK FILEPATH</Name>
-    <Value>track filepath [optional]</Value>
+    <Value>track filepath [optiona</Value>
 </Widget>
