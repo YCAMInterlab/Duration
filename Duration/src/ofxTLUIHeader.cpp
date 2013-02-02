@@ -152,6 +152,11 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     
     // add range high / low
     if(trackType == "Notes"){
+        ofxUILabelButton* button = new ofxUILabelButton("trim", false, 40, 17);
+        button->setPadding(0);
+        gui->addWidgetRight(button);
+        
+        
         int testInt = 0;    // ambiguous call avoided!
          minDialer = new ofxUINumberDialer(0, 127, testInt, 0, "min", OFX_UI_FONT_SMALL);
         minDialer->setPadding(0);
