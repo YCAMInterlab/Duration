@@ -152,7 +152,6 @@ void DurationController::setup(){
     timeline.setFrameRate(30);
 	timeline.setDurationInSeconds(30);
 	timeline.setOffset(ofVec2f(0, 90));
-    timeline.getColors().load("defaultColors.xml");
     timeline.setBPM(120.f);
 	timeline.setAutosave(false);
 	timeline.setEditableHeaders(true);
