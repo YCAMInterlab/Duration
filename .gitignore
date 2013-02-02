@@ -45,8 +45,6 @@ apps/*/*/Release Linux
 apps/*/*/Debug Linux64
 apps/*/*/Release Linux64
 
-openTSPS.xcodeproj/rockwell.mode1v3
-openTSPS.xcodeproj/rockwell.pbxuser
 =======
 Debug*/
 Release*/
@@ -73,6 +71,7 @@ releases/*
 *.lib
 *.ilk
 *.exp
+*.ipch
 
 Duration/bin/Duration
 Duration/bin/libs/*
