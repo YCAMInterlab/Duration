@@ -20,7 +20,7 @@ Download Duration:
 
 [Windows XP and 7](http://www.duration.cc/downloads/Duration_003_Windows.zip)
 
-[Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip) 
+[Linux 64bit](http://www.duration.cc/downloads/Duration_003_Linux64.zip) 
 
 Thanks to [Philip Whitfield](http://underdoeg.com/) for the Linux build.
 
