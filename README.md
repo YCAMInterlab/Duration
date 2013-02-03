@@ -1,10 +1,8 @@
-# Duration
+# [Duration](http://duration.cc)
 
 ## Timeline for creative code 
 
 Duration controls change over time. With a simple one window approach, the cross platform stand alone application manages lists of tracks to compose changing data over a fixed duration.
-
-[Duration official website](http://duration.cc)
 
 The application sends values over OSC and can be configured through OSC messages.
 
@@ -24,7 +22,7 @@ Download Duration:
 
 Thanks to [Philip Whitfield](http://underdoeg.com/) for the Linux build.
 
-[Source for Windows (VC2010) and Mac (Xcode 4.5)](http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip)
+[Source for all platforms](http://www.duration.cc/downloads/DurationSource_003.zip)
 
 For Windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)
 
