@@ -20,7 +20,9 @@ Download Duration:
 
 [Windows XP and 7](http://www.duration.cc/downloads/Duration_003_Windows.zip)
 
-[Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip)
+[Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip) 
+
+Thanks to [Philip Whitfield](http://underdoeg.com/) for the Linux build.
 
 [Source for Windows (VC2010) and Mac (Xcode 4.5)](http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip)
 
