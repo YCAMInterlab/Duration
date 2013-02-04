@@ -1103,7 +1103,10 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 	else if(trackType == translation.translateKey("notes") || trackType == "notes"){
 		newTrack = new ofxTLNotes();
         string uniqueName = timeline.confirmedUniqueName(trackName);
-        timeline.addTrack(uniqueName, newTrack);
+        
+        newTrack->setCreatedByTimeline(true);
+        newTrack->setXMLFileName(xmlFileName);
+        timeline.addTrack(timeline.confirmedUniqueName(trackName), newTrack);
 	}
 #ifdef TARGET_OSX
 	else if(trackType == translation.translateKey("audio") || trackType == "audio"){
