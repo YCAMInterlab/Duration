@@ -326,11 +326,11 @@ void DurationController::handleOscIn(){
                         else if(track->getTrackType() == "Notes"){
                             ofxTLNotes* notes = (ofxTLNotes*)track;
                             
-                            if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
-								float pitch = m.getArgAsFloat(0);
+                            if(m.getArgType(0) == OFXOSC_TYPE_INT32){
+								int pitch = m.getArgAsInt32(0);
                                 float velocity = m.getArgAsFloat(1);
                                 int trigger = m.getArgAsInt32(2);
-                                float sig = trigger + pitch;
+                                float sig = trigger + ((float)pitch / 127.0);
 								if(sig != header->lastValueReceived || !header->hasReceivedValue){
                                     if(trigger > 0){
                                         // note on
