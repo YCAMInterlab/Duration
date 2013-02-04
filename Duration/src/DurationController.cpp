@@ -769,7 +769,7 @@ void DurationController::handleOscOut(){
 			}
 			unsigned long trackSampleTime = tracks[t]->getIsPlaying() ? tracks[t]->currentTrackTime() : timelineSampleTime;
 			string trackType = tracks[t]->getTrackType();
-			if(trackType == "Curves" || trackType == "Switches" || trackType == "Colors" || trackType == "Audio" || trackType == "LFO"){
+			if(trackType == "Curves" || trackType == "Switches" || trackType == "Colors" || trackType == "Audio" || trackType == "LFO" || trackType == "Notes"){
 				bool messageValid = false;
 				ofxOscMessage m;
 				if(trackType == "Curves" || trackType == "LFO"){
@@ -791,6 +791,19 @@ void DurationController::handleOscOut(){
 						header->hasSentValue = true;
 						messageValid = true;
 					}
+				}
+                else if(trackType == "Notes"){
+					ofxTLNotes* notes = (ofxTLNotes*)tracks[t];
+                    vector<ofxTLNote*>dirtyNotes = notes->getDirtyNotes();
+                    for (int i = 0; i < dirtyNotes.size(); ++i) {
+                        ofxTLNote* note = dirtyNotes[i];
+                        ofxOscMessage noteMessage;
+                        noteMessage.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
+                        noteMessage.addFloatArg(note->value);
+                        noteMessage.addIntArg(note->triggeredOn ? 1 : 0); // add 1 for on, 0 for off
+                        bundle.addMessage(noteMessage);
+                        numMessages++;
+                    }
 				}
 				else if(trackType == "Colors"){
 					ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
