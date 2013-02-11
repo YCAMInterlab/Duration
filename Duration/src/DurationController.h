@@ -145,6 +145,7 @@ class DurationController : public ofThread  {
     void selectNextLoop();
     void selectPreviousLoop();
     void nudgeSelection(long amount);
+    void zoomToLoop();
     
 	ofxTimeline timeline;
     void bangFired(ofxTLBangEventArgs& bang);

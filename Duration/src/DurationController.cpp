@@ -329,10 +329,9 @@ void DurationController::handleOscIn(){
                             if(m.getArgType(0) == OFXOSC_TYPE_INT32){
 								int pitch = m.getArgAsInt32(0);
                                 float velocity = m.getArgAsFloat(1);
-                                int trigger = m.getArgAsInt32(2);
-                                float sig = trigger + ((float)pitch / 127.0);
+                                float sig = pitch + velocity;
 								if(sig != header->lastValueReceived || !header->hasReceivedValue){
-                                    if(trigger > 0){
+                                    if(velocity > 0){
                                         // note on
                                         notes->addKeyframeAtMillis(pitch, timelineStartTime, true);
                                     } else {
@@ -1407,6 +1406,7 @@ void DurationController::increaseSelectionByAMeasure(){
     }
     
     timeline.setOutPointAtMillis(newOutPoint);
+    zoomToLoop();
 }
 
 //--------------------------------------------------------------
@@ -1421,21 +1421,17 @@ void DurationController::decreaseSelectionByAMeasure(){
     } else {
         timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() - millisecondsPerMeasure);
     }
-    
+    zoomToLoop();
 }
 
 //--------------------------------------------------------------
 void DurationController::selectNextLoop(){
     long spanInMillis = timeline.getOutTimeInMillis() - timeline.getInTimeInMillis();
-//    timeline.setInPointAtMillis(timeline.getInTimeInMillis() + spanInMillis);
-//    timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() + spanInMillis);
     nudgeSelection(timeline.getInOutRangeMillis().span());
 }
 
 //--------------------------------------------------------------
 void DurationController::selectPreviousLoop(){
-//    timeline.setInPointAtMillis(timeline.getInTimeInMillis() - spanInMillis);
-//    timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() - spanInMillis);
     nudgeSelection(-timeline.getInOutRangeMillis().span());
 }
 
@@ -1446,7 +1442,15 @@ void DurationController::nudgeSelection(long amount){
     timeline.setOutPointAtMillis(timeline.getOutTimeInMillis() + amount);
     
     timeline.setCurrentTimeToInPoint();
+    zoomToLoop();
 
+}
+
+//--------------------------------------------------------------
+void DurationController::zoomToLoop(){
+//    timeline.getZoomer()->setZoomBounds(timeline.getInOutRange());
+//    ofRange newRange = ofRange(timeline.getInOutRange().min, timeline.getInOutRange().max * 6);
+//    timeline.getZoomer()->setViewRange(newRange);
 }
 
 //--------------------------------------------------------------
