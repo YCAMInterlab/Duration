@@ -755,6 +755,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = DurationRemoteDebug;
+				SDKROOT = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -841,6 +842,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = DurationRemote;
+				SDKROOT = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
