@@ -333,7 +333,7 @@ void DurationController::handleOscIn(){
 								if(sig != header->lastValueReceived || !header->hasReceivedValue){
                                     if(velocity > 0){
                                         // note on
-                                        notes->addKeyframeAtMillis(pitch, timelineStartTime, true);
+                                        notes->addKeyframeAtMillis(pitch, velocity, timelineStartTime, true);
                                     } else {
                                         // note off
                                         notes->finishNote(pitch);
@@ -797,9 +797,17 @@ void DurationController::handleOscOut(){
                     for (int i = 0; i < dirtyNotes.size(); ++i) {
                         ofxTLNote* note = dirtyNotes[i];
                         ofxOscMessage noteMessage;
-                        noteMessage.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
-                        noteMessage.addFloatArg(note->value);
-                        noteMessage.addIntArg(note->triggeredOn ? 1 : 0); // add 1 for on, 0 for off
+                        
+                        if (notes->oneArgMode) {
+                            // use pitch to further define the address
+                             noteMessage.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName() + "/" + ofToString(note->pitch)));
+                        } else {
+                            // use only track name as address, add pitch as first argument
+                            noteMessage.setAddress(ofFilePath::addLeadingSlash(tracks[t]->getDisplayName()));
+                            noteMessage.addIntArg(note->pitch); //pitch
+                        }
+                        // add velocity argument
+                        noteMessage.addFloatArg(note->velocity * ((note->triggeredOn) ? 1 : 0)); // send 0 velocity on note off
                         bundle.addMessage(noteMessage);
                         numMessages++;
                     }

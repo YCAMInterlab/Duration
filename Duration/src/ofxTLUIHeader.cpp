@@ -152,10 +152,14 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     
     // add range high / low
     if(trackType == "Notes"){
+        ofxUILabelToggle* oneArgMode = new ofxUILabelToggle("oneArgMode", false, 50, 17);
+        oneArgMode->setPadding(0);
+        gui->addWidgetRight(oneArgMode);
+        oneArgMode->setLabelText("1Arg");
+        
         ofxUILabelButton* button = new ofxUILabelButton("trim", false, 40, 17);
         button->setPadding(0);
         gui->addWidgetRight(button);
-        
         
         int testInt = 0;    // ambiguous call avoided!
          minDialer = new ofxUINumberDialer(0, 127, testInt, 0, "min", OFX_UI_FONT_SMALL);
@@ -318,6 +322,12 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 	else if(e.widget->getName() == "trim"){
         ofxTLNotes* track = (ofxTLNotes*)trackHeader->getTrack();
         track->trimToPitches();
+		modified = true;
+    }
+	else if(e.widget->getName() == "oneArgMode"){
+        ofxTLNotes* track = (ofxTLNotes*)trackHeader->getTrack();
+        ofxUILabelToggle* toggle = (ofxUILabelToggle*) e.widget;
+        track->oneArgMode = toggle->getValue();
 		modified = true;
     }
     else if(e.widget->getName() == translation->translateKey("delete")){
