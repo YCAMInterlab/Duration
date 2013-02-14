@@ -1,10 +1,6 @@
-# このプロジェクトは現在まだ未公開の状態です。
-
-このプロジェクトを自由にお使いいただく、もしくはお知り合いの方々に送っていただいても大丈夫です。ただし、2月8日までの間は大々的な公開をするのはお控えいただけますよう、お願いいたします。
-
 # Duration
 
-## 万能のタイムライン
+## クリエイティブコーディングのためのタイムライン
 
 Durationはタイムラインに沿って、値の変化をコントロールします。シンプルな1画面のインターフェースを備えたクロスプラットフォームのスタンドアローンアプリケーションで、複数のトラックを使ってタイムライン編集をする事ができます。
 
@@ -12,22 +8,25 @@ Durationはタイムラインに沿って、値の変化をコントロールし
 
 ![Durationのインターフェース](http://www.duration.cc/duration_preview.png)
 
-Durationはオープンソースで公開されています。ご自分のアート作品制作や、リサーチ活動、またコマーシャルなプロジェクトにおいても完全にフリーで使うことが出来ます。このプロジェクトは[openFrameworks](http://www.openframeworks.cc)を使用して作られており、そのライセンスの形体やシェアに関しての考え方を引き継いでいます。
+Durationはオープンソースで公開されています。ご自分のアート作品制作や、リサーチ活動、またコマーシャルなプロジェクトにおいても完全にフリーで使うことが出来ます。このプロジェクトは[openFrameworks](http://www.openframeworks.cc)を使用して作られており、そのシェアに関しての考え方を引き継いでいます。
 
 ## ダウンロード
 
 Durationをダウンロードする：
 
 Mac OS X 10.6+
-https://github.com/downloads/YCAMInterlab/Duration/Duration_OSX_002_preRelease.zip
+http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip
 
 Windows XP and 7
-https://github.com/downloads/YCAMInterlab/Duration/Duration_Windows_002_preRelease.zip
+http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip
 
-Windows用ソースコード（VC2010)と、Mac用ソースコード（XCode 4.4）
-https://github.com/downloads/YCAMInterlab/Duration/Duration_preRelease_002_Source_MacWndows.zip 
+Linux
+http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip
 
-Windowsユーザーの方はMSVC++ Runtimeのインストールが必要になる場合があります。　
+Windows用ソースコード（VC2010)と、Mac用ソースコード（XCode 4.5）
+http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip 
+
+Windowsユーザーの方はMSVC++ Runtimeのインストールが必要になる場合があります。  
 http://www.microsoft.com/en-us/download/details.aspx?id=5555
 
 
@@ -35,6 +34,22 @@ http://www.microsoft.com/en-us/download/details.aspx?id=5555
 
 Readmeを読む時間がありませんか？最新の紹介映像がここにあります。
 https://vimeo.com/47504220 password: duration
+
+## ライセンス
+
+    Copyright 2012-2013 James George + YCAMInterLab
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 ## Durationのインターフェースを使用する
 
@@ -405,7 +420,7 @@ Durationのレポジトリにはclone_addons.shファイルが入っています
 
 ## Supported By ##
 
-Duration was developed as part of the  [Guest Research Projector vol.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/en/)
+DurationDuration was co developed by YCAMInterLab during the [Guest Research Project v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/en/)
 
 <p align="center">
     <img src="http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png" />
