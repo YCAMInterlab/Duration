@@ -4,30 +4,29 @@
 
 Durationはタイムラインに沿って、値の変化をコントロールします。シンプルな1画面のインターフェースを備えたクロスプラットフォームのスタンドアローンアプリケーションで、複数のトラックを使ってタイムライン編集をする事ができます。
 
+[Duration official website](http://duration.cc)
+
 このアプリケーションによるタイムラインからの値はOSCによって送信されます。また、外部からのOSCメッセージで、アプリケーションを操作する事も可能です。
 
-![Durationのインターフェース](http://www.duration.cc/duration_preview.png)
+![Durationのインターフェース](http://www.duration.cc/assets/images/duration_screen.png)
 
 Durationはオープンソースで公開されています。ご自分のアート作品制作や、リサーチ活動、またコマーシャルなプロジェクトにおいても完全にフリーで使うことが出来ます。このプロジェクトは[openFrameworks](http://www.openframeworks.cc)を使用して作られており、そのシェアに関しての考え方を引き継いでいます。
+
+Duration is a project by [James George](http://www.jamesgeorge.org), co-developed by [YCAMInterLab](http://interlab.ycam.jp/en/) during the [Guest Research Project v.2](http://interlab.ycam.jp/en/projects/guestresearch/vol2)
 
 ## ダウンロード
 
 Durationをダウンロードする：
 
-Mac OS X 10.6+
-http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip
+[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip)
 
-Windows XP and 7
-http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip
+[Windows XP and 7](http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip)
 
-Linux
-http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip
+[Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip)
 
-Windows用ソースコード（VC2010)と、Mac用ソースコード（XCode 4.5）
-http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip 
+[Windows用ソースコード（VC2010)と、Mac用ソースコード（XCode 4.5）](http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip)
 
-Windowsユーザーの方はMSVC++ Runtimeのインストールが必要になる場合があります。  
-http://www.microsoft.com/en-us/download/details.aspx?id=5555
+Windowsユーザーの方は[MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)のインストールが必要になる場合があります。
 
 
 ## デモビデオ
@@ -37,7 +36,7 @@ https://vimeo.com/47504220 password: duration
 
 ## ライセンス
 
-    Copyright 2012-2013 James George + YCAMInterLab
+    Copyright 2012-2013 James George and YCAMInterLab
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -85,15 +84,17 @@ Durationは標準で6つのタイプのトラックを使用する事が可能�
 
 カーブを使うと、指定した最小値と最大値の間で値をスムーズに変化させる事が出来ます。キーフレームを右クリックするとメニューが表示され、キーフレーム間の補完方法を指定する事が出来ます。
 
+#### LFOs
+
+アニメーションの制作等用に、ローフリークエンシーオシレーターによるサイン波とノイズを使用する事が出来ます。
+
 #### カラー/Color
 
 カラートラックでは、色のサンプルパレットとして画像を使用し、時間の経過に従ってスムーズに色を変化させる事が出来ます。各キーフレームでは画像パレット中の、色をサンプルする位置を指定します。キーフレーム間では、画像パレット内で色のサンプル位置が移動していくことで、滑らかに色が変化します。
 
 #### オーディオ/Audio
 
-(実験段階の機能で、OSXのみをサポートしています)
-
-オーディオトラックを使用すると、トラック内に音の波形を表示し、他のトラックと同期してオーディオを再生する事が可能です。現状、一つのプロジェクト内では一つのオーディオトラックのみが使用可能です。また、プロジェクトの全長はオーディオトラックの長さと同じである必要があります。
+オーディオトラックを使用すると、トラック内への音の波形表示、サウンドの再生、またFFTの結果をOSC経由で送信する事が出来ます。現状、一つのプロジェクト内では一つのオーディオトラックのみが使用可能です。また、プロジェクトの全長はオーディオトラックの長さと同じである必要があります。
 
 ### プロジェクトの長さの設定
 
@@ -202,7 +203,7 @@ Durationは、その全てのデータをバンドルされたOSCで送信しま
         <td>1つのInt32の値。1/0の値をとり、それぞれON/OFFを表します。</td>
     </tr>
     <tr>
-        <td>カーブ/Curves</td>
+        <td>カーブ/Curve and LFO</td>
         <td>再生ヘッド上のカーブの値として、1つのFloatの値。値は設定した最大値と最小値の間になります。</td>
     </tr>
     <tr>
@@ -395,7 +396,7 @@ Durationには外部からのOSCデータをカーブトラックやバントラ
 
 ## Durationをハッキングする
 
-Durationはオープンソースかつフリーで、どのようなプロジェクトにも使う事が出来ます。タイムラインは非常に多くの状況で使用されるため、一つのアプリケーションでその全ての目的を満たす方法はありません。そういった状況を踏まえて、Durationは解体出来る様に作られています。いくつかの方法でDurationをカスタマイズする事が出来ます。
+Durationはオープンソースかつ無償で提供されます。タイムラインは非常に多くの状況で使用されるため、一つのアプリケーションでその全ての目的を満たす方法はありません。そういった状況を考え、Durationは解体出来るように作られています。いくつかの方法でDurationをカスタマイズする事が出来ます。
 
 ### ソースコードをダウンロードする
 
@@ -420,7 +421,8 @@ Durationのレポジトリにはclone_addons.shファイルが入っています
 
 ## Supported By ##
 
-DurationDuration was co developed by YCAMInterLab during the [Guest Research Project v.2 at YCAM Interlab](http://interlab.ycam.jp/en/projects/guestresearch/vol2) by [James George](http://www.jamesgeorge.org) at the [YCAMInterLab](http://interlab.ycam.jp/en/)
+Duration is a project by [James George](http://www.jamesgeorge.org), co-developed by [YCAMInterLab](http://interlab.ycam.jp/en/) during the [Guest Research Project v.2](http://interlab.ycam.jp/en/projects/guestresearch/vol2)
+
 
 <p align="center">
     <img src="http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png" />
