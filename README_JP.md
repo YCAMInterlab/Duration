@@ -30,8 +30,8 @@ Windowsユーザーの方は[MSVC++ Runtime](http://www.microsoft.com/en-us/down
 
 ## デモビデオ
 
-Readmeを読む時間がありませんか？最新の紹介映像がここにあります。
-https://vimeo.com/47504220 password: duration
+Readmeを読む時間がありませんか？最新の紹介映像がここにあります。  
+https://vimeo.com/59654979
 
 ## ライセンス
 
