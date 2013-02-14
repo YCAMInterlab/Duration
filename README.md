@@ -29,7 +29,7 @@ For Windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.c
 ## Demo video
 
 Readme TL;DR? The latest walk through video is here:
-https://vimeo.com/47504220 password: duration
+https://vimeo.com/59654979
 
 
 ## License
