@@ -1,10 +1,8 @@
-# Duration
+# [Duration](http://duration.cc)
 
 ## クリエイティブコーディングのためのタイムライン
 
 Durationはタイムラインに沿って、値の変化をコントロールします。シンプルな1画面のインターフェースを備えたクロスプラットフォームのスタンドアローンアプリケーションで、複数のトラックを使ってタイムライン編集をする事ができます。
-
-[Duration official website](http://duration.cc)
 
 このアプリケーションによるタイムラインからの値はOSCによって送信されます。また、外部からのOSCメッセージで、アプリケーションを操作する事も可能です。
 
@@ -18,13 +16,14 @@ Duration is a project by [James George](http://www.jamesgeorge.org), co-develope
 
 Durationをダウンロードする：
 
-[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip)
+[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_003_OSX.zip)
 
-[Windows XP and 7](http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip)
+[Windows XP and 7](http://www.duration.cc/downloads/Duration_003_Windows.zip)
 
-[Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip)
+[Linux 64bit](http://www.duration.cc/downloads/Duration_003_Linux64.zip)  
+Thanks to [Philip Whitfield](http://underdoeg.com/) for the Linux build.
 
-[Windows用ソースコード（VC2010)と、Mac用ソースコード（XCode 4.5）](http://www.duration.cc/downloads/Duration_preRelease_002_Source_MacWndows.zip)
+[全プラットフォーム用のソースコード](http://www.duration.cc/downloads/DurationSource_003.zip)
 
 Windowsユーザーの方は[MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)のインストールが必要になる場合があります。
 
@@ -49,6 +48,15 @@ https://vimeo.com/47504220 password: duration
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+
+## デフォルトの言語を変更する
+
+Durationは現在、英語、日本語、フランス語、イタリア語で使用する事ができます。
+
+言語を変更するには、Duration/data/settings.mxlを開き、languageタグを変更してDurationを再起動します。
+
+Joanie LeMercier, Takayuki Ito, Francesco Fantoni、翻訳のご協力ありがとうございました。もし、他の言語の翻訳を提供してもよいと思われる方がいらっしゃいましたら、languagefile.csvを開き、翻訳を追加していただいたあと、私にpullリクエストを使って、もしくはemailで送ってください。次のリリース時に追加します！
 
 ## Durationのインターフェースを使用する
 
@@ -416,8 +424,9 @@ Durationのレポジトリにはclone_addons.shファイルが入っています
 これで、必要な全ての依存ファイルがopenFrameworks/addons/にダウンロードされ、プロジェクトのコンパイルが出来る様になるはずです。
 
 ## Version History
- - Alpha 002 released September 23nd
- - Alpha 001 released August 15th
+ - Alpha 003 released February 2nd 2013
+ - Alpha 002 released September 23rd 2012
+ - Alpha 001 released August 15th 2012
 
 ## Supported By ##
 
