@@ -24,7 +24,7 @@ Thanks to [Philip Whitfield](http://underdoeg.com/) for the Linux build.
 
 [Source for all platforms](http://www.duration.cc/downloads/DurationSource_003.zip)
 
-For Windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)
+For Windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555) and [OpenAL](http://connect.creativelabs.com/developer/Wiki/OpenAL%20Installer%20for%20Windows.aspx)
 
 ## Demo video
 
