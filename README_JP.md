@@ -25,8 +25,7 @@ Thanks to [Philip Whitfield](http://underdoeg.com/) for the Linux build.
 
 [全プラットフォーム用のソースコード](http://www.duration.cc/downloads/DurationSource_003.zip)
 
-Windowsユーザーの方は[MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)のインストールが必要になる場合があります。
-
+Windowsユーザーの方は[MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555)と[OpenAL](http://connect.creativelabs.com/developer/Wiki/OpenAL%20Installer%20for%20Windows.aspx)のインストールが必要になる場合があります。
 
 ## デモビデオ
 
