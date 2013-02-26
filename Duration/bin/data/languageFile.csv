@@ -1,0 +1,40 @@
+KEY,ENGLISH,JAPANESE,FRENCH,ITALIAN,GERMAN
+bangs,BANGS,バン,bangs,bangs,Schlag
+flags,FLAGS,フラグ,flags,flags,Nachricht
+switches,SWITCHES,スイッチ,switches,interruttori,Schalter
+curves,CURVES,カーブ,courbes,curve,Kurve
+colors,COLORS,カラー,couleurs,colori,Farbe
+audio,AUDIO,オーディオ,audio,audio,Audio
+lfo,LFO,LFO,lfo,lfo,LFO
+bins,bins,bins,bins,bins,bins
+new project...,new project...,新規プロジェクト,nouveau projet,nuovo progetto,neues Projekt
+open project...,open project...,プロジェクトを開く,ouvrir projet,apri progetto,Projekt öffnen
+BPM,BPM,BPM,BPM,BPM,BPM
+OSC IN,OSC IN,OSC受信,OSC IN, OSC IN,OSC EIN
+OSC OUT,OSC OUT,OSC送信,OSC OUT, OSC OUT,OSC OUT AUS
+ADD TRACK,ADD TRACK,トラック追加,AJOUTER PISTE,AGGIUNGI TRACCIA,Spur hinzufügen
+record,record,レコード,enregistrer,registra,Aufnahme
+switch project,switch project,プロジェクトの切り替え,changer de projet,cambia progetto,Projekt wechseln
+send osc,send osc,OSC送信,envoyer osc,invia osc,OSC senden
+sure?,sure?,ok？,ok ?,ok ?,Sicher?
+delete,delete,削除,supprimer,cancella,Entfernen
+reset,reset,リセット,remettre,reset,Neustart
+save,save,保存,save,salva,Speichern
+play,play,再生,lecture,play,Start
+pause,pause,一時停止,pause,pausa,Pause
+edit duration,edit duration,プロジェクトの長さ,Èditer la durÈe,modifica durata,Dauer bearbeiten
+current time,current time,再生位置の時間,temps,tempo, aktuelle Zeit
+stop,stop,停止,stop,stop,Stop
+toggle loop,toggle loop,ループ,mode loop,modo ripetizione,Loop umstellen
+snap to measures,snap to measures,スナップ,ajuster par mesure,snap alla battuta,An Werten anheften
+set beats per minute,set beats per minute,BPM設定,ajuster bpm,imposta bpm,BPM setzen
+enable incoming OSC,enable incoming OSC,OSC受信のON/OFF,Activer OSC entrant,Attiva OSC in ingresso,OSC Eingang aktivieren
+incoming OSC port,incoming OSC port,OSC受信Port,port OSC entrant,porta OSC in ingresso,OSC Porteingang  
+enable outgoing OSC,enable outgoing OSC,OSC送信のON/OFF,Activer OSC sortant,Attiva OSC in uscita,OSC Ausgang aktivieren
+remote IP,remote IP,送信先のIP,IP de destination,IP di destinazione,Ziel IP
+remote port,remote port,送信先のPort,port de destination,porta di destinazione,Ziel Port
+receive osc,receive osc,OSC受信,recevoir OSC,ricevi OSC,OSC empfangen
+change palette,change palette,パレットの変更,changer la palette,cambiare la tavolozza,Palette ändern
+select audio,select audio,オーディオを選択,Selectionner audio,Seleziona audio,Audio auswählen
+Error creating new project. The folder could not be created.,Error creating new project. The folder could not be created.,新規プロジェクトを作成できませんでした。フォルダーを作成できません。,Erreur de crÈation de projet. Le rÈpertoire n'a pu etre crÈÈ.,Errore nella creazione di un nuovo progetto. Impossibile creare la cartella.,Fehler beim erstellen des neuen Projektes. Der Ordner konnte nicht ertellt werden.
+Error creating new project. The folder already exists.,Error creating new project. The folder already exists.,新規プロジェクトを作成できませんでした。同名のフォルダーが既に存在しています。,Erreur de crÈation de projet. Le rÈpertoire existe dÈja.,Errore nella creazione di un nuovo progetto. Cartella esistente.,Fehler beim erstellen des neuen Projektes. Der Ordner existiert bereits.
