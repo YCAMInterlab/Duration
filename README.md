@@ -16,9 +16,9 @@ Duration is open source and completely free to use in your art, research, or com
 
 Download Duration: 
 
-[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_OSX_002_preRelease.zip)
+[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_003_OSX.zip)
 
-[Windows XP and 7](http://www.duration.cc/downloads/Duration_Windows_002_preRelease.zip)
+[Windows XP and 7](http://www.duration.cc/downloads/Duration_003_Windows.zip)
 
 [Linux](http://www.duration.cc/downloads/Duration_Linux_002_preRelease.zip)
 
@@ -427,8 +427,9 @@ The Duration repository has a clone_addons.sh file that can be run from the term
 This will configure all necessary dependencies into openFrameworks/addons/ and the project should compile
 
 ## Version History
- - Alpha 002 released September 23nd
- - Alpha 001 released August 15th
+ - Alpha 003 released February 2nd 2013
+ - Alpha 002 released September 23nd 2012
+ - Alpha 001 released August 15th 2012
 
 ## Supported By ##
 
