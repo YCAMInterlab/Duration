@@ -423,6 +423,7 @@ Durationのレポジトリにはclone_addons.shファイルが入っています
 これで、必要な全ての依存ファイルがopenFrameworks/addons/にダウンロードされ、プロジェクトのコンパイルが出来る様になるはずです。
 
 ## Version History
+ - Alpha 004 released February 26th 2013
  - Alpha 003 released February 2nd 2013
  - Alpha 002 released September 23rd 2012
  - Alpha 001 released August 15th 2012
