@@ -14,9 +14,9 @@ Duration is open source and completely free to use in your art, research, or com
 
 Download Duration: 
 
-[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_003_OSX.zip)
+[Mac OS X 10.6+](http://www.duration.cc/downloads/Duration_004_OSX.zip)
 
-[Windows XP and 7](http://www.duration.cc/downloads/Duration_003_Windows.zip)
+[Windows XP and 7](http://www.duration.cc/downloads/Duration_004_Windows.zip)
 
 [Linux 64bit](http://www.duration.cc/downloads/Duration_003_Linux64.zip) 
 
