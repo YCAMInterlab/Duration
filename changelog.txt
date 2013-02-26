@@ -1,0 +1,8 @@
+Duration Change Log
+
+Version 004
+-- Fixed audio looping bug
+-- Fixed FFT Normalization
+
+Version 003
+ -- First Public Release
