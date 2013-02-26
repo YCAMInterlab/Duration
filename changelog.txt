@@ -1,6 +1,7 @@
 Duration Change Log
 
 Version 004
+-- Added German language
 -- Fixed audio looping bug
 -- Fixed FFT Normalization
 
