@@ -41,7 +41,7 @@ DurationController::DurationController(){
 	shouldStartPlayback = false;
 	receivedAddTrack = false;
 	receivedPaletteToLoad = false;
-	
+
 	enabled = false;
 	shouldCreateNewProject = false;
     shouldLoadProject = false;
@@ -90,39 +90,39 @@ bool DurationController::isInterfaceEnabled(){
 }
 
 void DurationController::setup(){
-    
+
 	#ifdef TARGET_WIN32
 	FreeConsole();
 	#endif
 	if(!translation.load("languageFile.csv")){
 		ofLogError("DurationController::setup") << "error setting up translation, unpredictable stuff will happen" << endl;
 	}
-	
+
 	ofxXmlSettings defaultSettings;
 	bool settingsLoaded = defaultSettings.loadFile("settings.xml");	;
 	translation.setCurrentLanguage(defaultSettings.getValue("language", "english"));
-	
+
 	if(!settingsLoaded){
 		defaultSettings.setValue("language", "english");
 		defaultSettings.saveFile();
 	}
-	
+
     //populate projects
     vector<string> projects;
     projects.push_back(translation.translateKey("new project..."));
     projects.push_back(translation.translateKey("open project..."));
-   
+
 #ifdef TARGET_WIN32
     defaultProjectDirectoryPath = ofToDataPath(ofFilePath::getUserHomeDir() + "\\Documents\\Duration\\");
 #else
     defaultProjectDirectoryPath = ofToDataPath(ofFilePath::getUserHomeDir() + "/Documents/Duration/");
 #endif
 	ofDirectory projectDirectory = ofDirectory(defaultProjectDirectoryPath);
-	
+
     if(!projectDirectory.exists()){
         projectDirectory.create(true);
     }
-    
+
     projectDirectory.listDir();
     for(int i = 0; i < projectDirectory.size(); i++){
         if(projectDirectory.getFile(i).isDirectory()){
@@ -136,7 +136,7 @@ void DurationController::setup(){
             }
         }
     }
-	
+
 #ifdef TARGET_WIN32
 	timeline.setupFont("GUI/mplus-1c-regular.ttf", 9);
 	tooltipFont.loadFont("GUI/mplus-1c-regular.ttf", 7);
@@ -156,10 +156,10 @@ void DurationController::setup(){
 	timeline.setAutosave(false);
 	timeline.setEditableHeaders(true);
 	timeline.moveToThread(); //increases accuracy of bang call backs
-    
+
 	//Set up top GUI
     gui = new ofxUICanvas(0,0,ofGetWidth(), 90);
-    
+
     //ADD PROJECT DROP DOWN
     projectDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, "PROJECT", projects, OFX_UI_FONT_LARGE);
     projectDropDown->setAutoClose(true);
@@ -173,18 +173,18 @@ void DurationController::setup(){
     trackTypes.push_back(translation.translateKey("colors"));
 	trackTypes.push_back(translation.translateKey("lfo"));
 	trackTypes.push_back(translation.translateKey("audio"));
-	
+
     addTrackDropDown = new ofxUIDropDownList(DROP_DOWN_WIDTH, translation.translateKey("ADD TRACK"), trackTypes, OFX_UI_FONT_MEDIUM);
     addTrackDropDown->setAllowMultiple(false);
     addTrackDropDown->setAutoClose(true);
 	//    gui->addWidgetRight(addTrackDropDown);
 	gui->addWidgetSouthOf(addTrackDropDown, "PROJECT");
-	
+
     saveButton = new ofxUIMultiImageButton(32, 32, false, "GUI/save_.png", "SAVE");
     saveButton->setLabelVisible(false);
     gui->addWidgetEastOf(saveButton, "PROJECT");
-    
-	
+
+
     //ADD TIMECODE
     string zeroTimecode = "00:00:00:000";
     timeLabel = new ofxUILabel(zeroTimecode, OFX_UI_FONT_LARGE);
@@ -193,7 +193,7 @@ void DurationController::setup(){
     durationLabel = new ofxUITextInput("DURATION", zeroTimecode, timeLabel->getRect()->width,0,0,0,OFX_UI_FONT_MEDIUM);
     durationLabel->setAutoClear(false);
     gui->addWidgetSouthOf(durationLabel, zeroTimecode);
-    
+
     //ADD PLAY/PAUSE
     playpauseToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/play_.png", "PLAYPAUSE");
     playpauseToggle->setLabelVisible(false);
@@ -204,8 +204,8 @@ void DurationController::setup(){
 	loopToggle = new ofxUIMultiImageToggle(32, 32, false, "GUI/loop_.png", "LOOP");
 	loopToggle->setLabelVisible(false);
     gui->addWidgetRight(loopToggle);
-    
-	
+
+
     //SETUP BPM CONTROLS
 	useBPMToggle = new ofxUILabelToggle(translation.translateKey("BPM"), false);
     gui->addWidgetRight(useBPMToggle);
@@ -216,13 +216,13 @@ void DurationController::setup(){
 //	gui->addWidgetSouthOf(snapToKeysToggle, "BPM");
 //    snapToBPMToggle = new ofxUILabelToggle("Snap to BPM",false,0,0,0,0,OFX_UI_FONT_SMALL);
 //    gui->addWidgetSouthOf(snapToBPM, "BPM");
-    
+
     //SETUP OSC CONTROLS
     enableOSCInToggle = new ofxUILabelToggle(translation.translateKey("OSC IN"),false,0,0,0,0, OFX_UI_FONT_MEDIUM);
     enableOSCOutToggle = new ofxUILabelToggle(translation.translateKey("OSC OUT"),false,0,0,0,0, OFX_UI_FONT_MEDIUM);
     oscOutIPInput = new ofxUITextInput("OSCIP", "127.0.0.1",TEXT_INPUT_WIDTH*1.5,0,0,0, OFX_UI_FONT_MEDIUM);
     oscOutIPInput->setAutoClear(false);
-	
+
     oscInPortInput = new ofxUITextInput("OSCINPORT", "12346",TEXT_INPUT_WIDTH*.8,0,0,0, OFX_UI_FONT_MEDIUM);
     oscInPortInput->setAutoClear(false);
 
@@ -236,14 +236,14 @@ void DurationController::setup(){
     gui->addWidgetRight(oscOutPortInput);
 
 	ofAddListener(gui->newGUIEvent, this, &DurationController::guiEvent);
-	
+
 	//add events
     ofAddListener(timeline.events().bangFired, this, &DurationController::bangFired);
 	ofAddListener(ofEvents().exit, this, &DurationController::exit);
 
     //SET UP LISENTERS
 	enableInterface();
-	
+
     if(settingsLoaded){
         string lastProjectPath = defaultSettings.getValue("lastProjectPath", "");
         string lastProjectName = defaultSettings.getValue("lastProjectName", "");
@@ -261,7 +261,7 @@ void DurationController::setup(){
     }
 
 	createTooltips();
-	
+
 	startThread();
 }
 
@@ -273,7 +273,7 @@ void DurationController::threadedFunction(){
 		handleOscOut();
 		oscLock.unlock();
 		unlock();
-		
+
 		ofSleepMillis(1);
 	}
 }
@@ -282,7 +282,7 @@ void DurationController::handleOscIn(){
 	if(!settings.oscInEnabled){
 		return;
 	}
-	
+
 	//TODO: move parsing and receing to separate different threads?
 	long timelineStartTime = timeline.getCurrentTimeMillis();
 	while(receiver.hasWaitingMessages()){
@@ -297,9 +297,9 @@ void DurationController::handleOscIn(){
 			for(int t = 0; t < tracks.size(); t++){
 //				cout << " testing against " << "/"+tracks[t]->getDisplayName() << endl;
 				ofxTLTrack* track = tracks[t];
-				ofPtr<ofxTLUIHeader> header = headers[track->getName()];				
+				ofPtr<ofxTLUIHeader> header = headers[track->getName()];
 				if(header->receiveOSC() && m.getAddress() == ofFilePath::addLeadingSlash(track->getDisplayName()) ){
-					
+
 					if(timeline.getIsPlaying() ){ //TODO: change to isPlaying() && isRecording()
 						if(track->getTrackType() == "Curves"){
 							ofxTLCurves* curves = (ofxTLCurves*)track;
@@ -324,13 +324,13 @@ void DurationController::handleOscIn(){
 				}
 			}
 		}
-		
+
 		long endTime = recordTimer.getAppTimeMicros();
 //		cout << "receiving message took " << (endTime - startTime) << " micros " << endl;
 		if(handled){
 			return;
 		}
-		
+
 		//check for playback messages
 		if(m.getAddress() == "/duration/open"){
 			if(m.getNumArgs() == 1 && m.getArgType(0) == OFXOSC_TYPE_STRING){
@@ -371,7 +371,7 @@ void DurationController::handleOscIn(){
 				//seconds
 				if(m.getArgType(0) == OFXOSC_TYPE_FLOAT){
 					timeline.setDurationInSeconds(m.getArgAsFloat(0));
-					durationLabel->setTextString(timeline.getDurationInTimecode());					
+					durationLabel->setTextString(timeline.getDurationInTimecode());
 				}
 				//timecode
 				else if(m.getArgType(0) == OFXOSC_TYPE_STRING){
@@ -381,7 +381,7 @@ void DurationController::handleOscIn(){
 				//millis
 				else if(m.getArgType(0) == OFXOSC_TYPE_INT32){
 					timeline.setDurationInMillis(m.getArgAsInt32(0));
-					durationLabel->setTextString(timeline.getDurationInTimecode());					
+					durationLabel->setTextString(timeline.getDurationInTimecode());
 				}
 				else if(m.getArgType(0) == OFXOSC_TYPE_INT64){
 					timeline.setDurationInMillis(m.getArgAsInt64(0));
@@ -426,7 +426,7 @@ void DurationController::handleOscIn(){
 							header->getTrack()->stop();
 						}
 					}
-				}				
+				}
 			}
 		}
 		else if(m.getAddress() == "/duration/record"){
@@ -540,7 +540,7 @@ void DurationController::handleOscIn(){
 			else{
 				ofLogError("Duration:OSC") << "Enable OSC in incorrectly formatted arguments. usage: /duration/enableoscout enable:int32 == (1 or 0), or /duration/enableoscout trackname:string enable:int32 (1 or 0)";
 			}
-		}		
+		}
 		//adding and removing tracks
 		else if(m.getAddress() == "/duration/addtrack"){
 			//type,
@@ -712,21 +712,21 @@ void DurationController::handleOscIn(){
 }
 
 void DurationController::handleOscOut(){
-	
+
 	if(!settings.oscOutEnabled){
 		return;
 	}
-	
+
 	unsigned long bundleTime = recordTimer.getAppTimeMillis();
 	if(lastOSCBundleSent+oscFrequency > bundleTime){
 		return;
 	}
 	//cout << "OSC RATE IS " << settings.oscRate << " osc FREQUENCY is " << oscFrequency << " sending num at record timer " << recordTimer.getAppTimeMillis() << endl;
-	
+
 	unsigned long timelineSampleTime = timeline.getCurrentTimeMillis();
 	int numMessages = 0;
 	ofxOscBundle bundle;
-	
+
 	//lock();
 	vector<ofxTLPage*>& pages = timeline.getPages();
 	for(int i = 0; i < pages.size(); i++){
@@ -792,7 +792,7 @@ void DurationController::handleOscOut(){
 		}
 	}
 	//unlock();
-	
+
 	//any bangs that came our way this frame send them out too
 	for(int i = 0; i < bangsReceived.size(); i++){
 //		cout << "FOUND BANGS!" << endl;
@@ -805,11 +805,11 @@ void DurationController::handleOscOut(){
 
 	}
 	lastOSCBundleSent = bundleTime;
-	bangsReceived.clear();	
+	bangsReceived.clear();
 }
 
 //TODO: hook up to record button
-//and make NO LOOP 
+//and make NO LOOP
 void DurationController::startRecording(){
 	recordTimer.setStartTime();
 	recordTimeOffset = timeline.getCurrentTimeMillis();
@@ -827,7 +827,7 @@ void DurationController::bangFired(ofxTLBangEventArgs& bang){
 	if(!settings.oscOutEnabled){
 		return;
 	}
-	
+
     string trackType = bang.track->getTrackType();
     if(!headers[bang.track->getName()]->sendOSC()){
         return;
@@ -839,16 +839,16 @@ void DurationController::bangFired(ofxTLBangEventArgs& bang){
         m.addStringArg(bang.flag);
     }
 
-	bangsReceived.push_back(m);	
+	bangsReceived.push_back(m);
 }
 
 //--------------------------------------------------------------
 void DurationController::guiEvent(ofxUIEventArgs &e){
     string name = e.widget->getName();
 	int kind = e.widget->getKind();
-    
+
 	//	cout << "name is " << name << " kind is " << kind << endl;
-    
+
 	if(e.widget == stopButton && stopButton->getValue()){
 		if(timeline.getIsPlaying()){
 	        timeline.stop();
@@ -884,7 +884,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
                 string selectedTrackType = addTrackDropDown->getSelected()[0]->getName();
 				addTrack(translation.keyForTranslation(selectedTrackType));
 				unlock();
-				
+
                 addTrackDropDown->clearSelected();
             }
         }
@@ -947,7 +947,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
             receiver.setup(settings.oscInPort);
 			oscLock.unlock();
         }
-		needsSave = true;		
+		needsSave = true;
     }
 	//INCOMING PORT
 	else if(e.widget == oscInPortInput){
@@ -968,7 +968,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			}
 		}
     }
-	
+
 	//OSC OUTPUT
     else if(e.widget == enableOSCOutToggle){
 		settings.oscOutEnabled = enableOSCOutToggle->getValue();
@@ -976,7 +976,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			oscLock.lock();
             sender.setup(settings.oscIP, settings.oscOutPort);
 			oscLock.unlock();
-			needsSave = true;			
+			needsSave = true;
         }
     }
 
@@ -986,7 +986,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
         if(newIP == settings.oscIP){
             return;
         }
-		
+
         bool valid = (newIP == "localhost");
 		if(!valid){
 			vector<string> ipComponents = ofSplitString(newIP, ".");
@@ -1006,13 +1006,13 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			//don't allow us to send messages to ourself
 			valid = false;
 		}
-		
+
 		if(valid){
 			settings.oscIP = newIP;
 			oscLock.lock();
 			sender.setup(settings.oscIP, settings.oscOutPort);
 			oscLock.unlock();
-			needsSave = true;			
+			needsSave = true;
 		}
 		oscOutIPInput->setTextString(settings.oscIP);
     }
@@ -1027,7 +1027,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 			oscLock.lock();
 			sender.setup(settings.oscIP, settings.oscOutPort);
 			oscLock.unlock();
-			needsSave = true;			
+			needsSave = true;
         }
         else {
             oscOutPortInput->setTextString( ofToString(settings.oscOutPort) );
@@ -1038,7 +1038,7 @@ void DurationController::guiEvent(ofxUIEventArgs &e){
 //--------------------------------------------------------------
 ofxTLTrack* DurationController::addTrack(string trackType, string trackName, string xmlFileName){
 	ofxTLTrack* newTrack = NULL;
-	
+
 	trackType = ofToLower(trackType);
 	if(trackName == ""){
 		trackName = trackType;
@@ -1048,7 +1048,7 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 		string uniqueName = timeline.confirmedUniqueName(trackName);
 		xmlFileName = ofToDataPath(settings.path + "/" + uniqueName + "_.xml");
 	}
-	
+
 	if(trackType == translation.translateKey("bangs") || trackType == "bangs"){
 		newTrack = timeline.addBangs(trackName, xmlFileName);
 	}
@@ -1081,7 +1081,7 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 	else {
 		ofLogError("DurationController::addTrack") << "Unsupported track type: " << trackType;
 	}
-	
+
 	if(newTrack != NULL){
 		createHeaderForTrack(newTrack);
 		needsSave = true;
@@ -1092,7 +1092,7 @@ ofxTLTrack* DurationController::addTrack(string trackType, string trackName, str
 //--------------------------------------------------------------
 void DurationController::update(ofEventArgs& args){
 	gui->update();
-	
+
 	if(shouldStartPlayback){
 		shouldStartPlayback = false;
 		startPlayback();
@@ -1101,7 +1101,7 @@ void DurationController::update(ofEventArgs& args){
 	playpauseToggle->setValue(timeline.getIsPlaying());
 
 	if(audioTrack != NULL && audioTrack->isSoundLoaded()){
-		
+
 		if(timeline.getTimecontrolTrack() != audioTrack){
 			timeline.setTimecontrolTrack(audioTrack);
 		}
@@ -1109,12 +1109,12 @@ void DurationController::update(ofEventArgs& args){
 		if(audioTrack->getDuration() != timeline.getDurationInSeconds()){
 			timeline.setDurationInSeconds(audioTrack->getDuration());
 		}
-		
+
 		if(durationLabel->getTextString() != timeline.getDurationInTimecode()){
 			durationLabel->setTextString(timeline.getDurationInTimecode());
 		}
 	}
-	
+
 	if(ofGetHeight() < timeline.getDrawRect().getMaxY()){
 		ofSetWindowShape(ofGetWidth(), timeline.getDrawRect().getMaxY()+30);
 	}
@@ -1131,7 +1131,7 @@ void DurationController::update(ofEventArgs& args){
 			}
 		}
     }
-    
+
     if(shouldCreateNewProject){
         shouldCreateNewProject = false;
 		if(newProjectPath != ""){
@@ -1159,20 +1159,20 @@ void DurationController::update(ofEventArgs& args){
 		addTrack(oscTrackTypeReceived, oscTrackNameReceived, oscTrackFilePathReceived);
 		unlock();
 	}
-    
+
     //check if we deleted an element this frame
     map<string,ofPtr<ofxTLUIHeader> >::iterator it = headers.begin();
     while(it != headers.end()){
-		
+
 		needsSave |= it->second->getModified();
-		
+
 		if(timeline.isModal() && it->second->getGui()->isEnabled()){
 			it->second->getGui()->disable();
 		}
 		else if(!timeline.isModal() && !it->second->getGui()->isEnabled()){
 			it->second->getGui()->enable();
 		}
-		
+
 		if(it->second->getShouldDelete()){
 			lock();
             timeline.removeTrack(it->first);
@@ -1224,7 +1224,7 @@ void DurationController::draw(ofEventArgs& args){
 		}
 	}
 	ofPopStyle();
-	
+
 	timeline.draw();
 	gui->draw();
 
@@ -1232,7 +1232,8 @@ void DurationController::draw(ofEventArgs& args){
 		ofPushStyle();
 		ofSetColor(200,20,0, 40);
 		ofFill();
-		ofRect(*saveButton->getRect());
+		ofxUIRectangle r = *saveButton->getRect();
+		ofRect(r.x,r.y,r.width,r.height);
 		ofPopStyle();
 	}
 	drawTooltips();
@@ -1244,11 +1245,11 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
     if(timeline.isModal()){
         return;
     }
-	
+
 	if(gui->hasKeyboardFocus()){
 		return;
 	}
-	
+
     int key = keyArgs.key;
 	if(key == ' '){
 		if(ofGetModifierShiftPressed()){
@@ -1263,7 +1264,7 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
 			}
 		}
     }
-    
+
     if(key == 'i'){
 		if(ofGetModifierAltPressed()){
 			timeline.setInPointAtMillis(0);
@@ -1272,7 +1273,7 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
 	        timeline.setInPointAtPlayhead();
 		}
     }
-    
+
     if(key == 'o'){
 		if(ofGetModifierAltPressed()){
 			timeline.setOutPointAtPercent(1.0);
@@ -1281,12 +1282,12 @@ void DurationController::keyPressed(ofKeyEventArgs& keyArgs){
 	        timeline.setOutPointAtPlayhead();
 		}
     }
-	
-	
+
+
 	if(ofGetModifierShortcutKeyPressed() && (key == 's' || key=='s'-96) ){
 		saveProject();
 	}
-	
+
 }
 
 //--------------------------------------------------------------
@@ -1301,7 +1302,7 @@ void DurationController::startPlayback(){
 void DurationController::sendInfoMessage(){
 	if(settings.oscOutEnabled){
 		ofxOscMessage m;
-		m.setAddress("/duration/info");		
+		m.setAddress("/duration/info");
 		vector<ofxTLPage*>& pages = timeline.getPages();
 		for(int i = 0; i < pages.size(); i++){
 			vector<ofxTLTrack*>& tracks = pages[i]->getTracks();
@@ -1325,15 +1326,15 @@ void DurationController::sendInfoMessage(){
 //--------------------------------------------------------------
 DurationProjectSettings DurationController::defaultProjectSettings(){
     DurationProjectSettings settings;
-    
+
     settings.name = "newProject";
     settings.path = defaultProjectDirectoryPath + settings.name;
-    
+
     settings.useBPM = false;
     settings.bpm = 120.0f;
     settings.snapToBPM = false;
     settings.snapToKeys = true;
-    
+
 	settings.oscRate = 30;
     settings.oscOutEnabled = true;
 	settings.oscInEnabled = true;
@@ -1373,19 +1374,19 @@ void DurationController::newProject(string newProjectPath, string newProjectName
     	ofSystemAlertDialog(translation.translateKey("Error creating new project. The folder could not be created.")+" " + newProjectSettings.path);
         return;
     }
-    
+
     //TODO: prompt to save existing project
     settings = newProjectSettings;
 	lock();
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
 	unlock();
-	
+
     //saves file with default settings to new directory
     saveProject();
-    
+
     loadProject(settings.path, settings.name);
-    
+
     projectDropDown->addToggle(newProjectName);
 }
 
@@ -1397,12 +1398,12 @@ void DurationController::loadProject(string projectPath, bool forceCreate){
 	vector<string> pathComponents = ofSplitString(projectPath, "\\");
 #else
 	vector<string> pathComponents = ofSplitString(projectPath, "/");
-#endif	
+#endif
 	loadProject(projectPath, pathComponents[pathComponents.size()-1], forceCreate);
 }
 
 //--------------------------------------------------------------
-void DurationController::loadProject(string projectPath, string projectName, bool forceCreate){    
+void DurationController::loadProject(string projectPath, string projectName, bool forceCreate){
     ofxXmlSettings projectSettings;
 	string projectDataPath = ofToDataPath(projectPath+"/.durationproj");
 	if(!projectSettings.loadFile(projectDataPath)){
@@ -1414,9 +1415,9 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         }
         return;
     }
-	
+
 	lock();
-	
+
     timeline.removeFromThread();
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
@@ -1426,7 +1427,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
 		audioTrack = NULL;
 	}
     timeline.setWorkingFolder(projectPath);
-	
+
     //LOAD ALL TRACKS
     projectSettings.pushTag("tracks");
     int numPages = projectSettings.getNumTags("page");
@@ -1439,7 +1440,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         else{
             timeline.addPage(pageName, true);
         }
-		
+
         int numTracks = projectSettings.getNumTags("track");
         for(int i = 0; i < numTracks; i++){
             projectSettings.pushTag("track", i);
@@ -1447,7 +1448,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
             string xmlFileName = projectSettings.getValue("xmlFileName", "");
             string trackName = projectSettings.getValue("trackName","");
             string trackFilePath = ofToDataPath(projectPath + "/" + xmlFileName);
-			
+
 			//add the track
             ofxTLTrack* newTrack = addTrack(trackType, trackName, trackFilePath);
 
@@ -1485,32 +1486,32 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         }
         projectSettings.popTag(); //page
     }
-    
+
     timeline.moveToThread(); //increases accuracy of bang call backs
 
 
 	unlock();
-	
+
     timeline.setCurrentPage(0);
     projectSettings.popTag(); //tracks
-    
+
     //LOAD OTHER SETTINGS
     projectSettings.pushTag("timelineSettings");
     timeline.setDurationInTimecode(projectSettings.getValue("duration", "00:00:00:000"));
     timeline.setCurrentTimecode(projectSettings.getValue("playhead", "00:00:00:000"));
     timeline.setInPointAtTimecode(projectSettings.getValue("inpoint", "00:00:00:000"));
     timeline.setOutPointAtTimecode(projectSettings.getValue("outpoint", "00:00:00:000"));
-	
+
     bool loops = projectSettings.getValue("loop", true);
     timeline.setLoopType(loops ? OF_LOOP_NORMAL : OF_LOOP_NONE);
-	
+
     durationLabel->setTextString(timeline.getDurationInTimecode());
     loopToggle->setValue( loops );
     projectSettings.popTag(); //timeline settings;
-	
+
     DurationProjectSettings newSettings;
     projectSettings.pushTag("projectSettings");
-    
+
     useBPMToggle->setValue( newSettings.useBPM = projectSettings.getValue("useBPM", true) );
     bpmDialer->setValue( newSettings.bpm = projectSettings.getValue("bpm", 120.0f) );
 //    snapToBPMToggle->setValue( newSettings.snapToBPM = projectSettings.getValue("snapToBPM", true) );
@@ -1522,19 +1523,19 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     oscOutPortInput->setTextString( ofToString(newSettings.oscOutPort = projectSettings.getValue("oscOutPort", 12345)) );
 	newSettings.oscRate = projectSettings.getValue("oscRate", 30.0);
 	oscFrequency = 1000 * 1/newSettings.oscRate; //frequence in millis
-	
+
     projectSettings.popTag(); //project settings;
-	
+
     newSettings.path = projectPath;
     newSettings.name = projectName;
     newSettings.settingsPath = ofToDataPath(newSettings.path + "/.durationproj");
     settings = newSettings;
-	
+
     projectDropDown->setLabelText(projectName);
     timeline.setShowBPMGrid(newSettings.useBPM);
     timeline.enableSnapToBPM(newSettings.useBPM);
 	timeline.setBPM(newSettings.bpm);
-    
+
 	oscLock.lock();
 	if(settings.oscInEnabled){
 		receiver.setup(settings.oscInPort);
@@ -1543,20 +1544,20 @@ void DurationController::loadProject(string projectPath, string projectName, boo
         sender.setup(settings.oscIP, settings.oscOutPort);
     }
 	oscLock.unlock();
-	
+
     ofxXmlSettings defaultSettings;
     defaultSettings.loadFile("settings.xml");
     defaultSettings.setValue("lastProjectPath", settings.path);
     defaultSettings.setValue("lastProjectName", settings.name);
     defaultSettings.saveFile();
-	
+
 	needsSave = false;
 	sendInfoMessage();
 }
 
 //--------------------------------------------------------------
 void DurationController::saveProject(){
-	
+
 	timeline.save();
 
     ofxXmlSettings projectSettings;
@@ -1586,7 +1587,7 @@ void DurationController::saveProject(){
                 ofxTLKeyframes* curves = (ofxTLKeyframes*)tracks[t];
                 projectSettings.addValue("min", curves->getValueRange().min);
                 projectSettings.addValue("max", curves->getValueRange().max);
-				
+
             }
 			else if(trackType == "Colors"){
 				ofxTLColorTrack* colors = (ofxTLColorTrack*)tracks[t];
@@ -1602,7 +1603,7 @@ void DurationController::saveProject(){
         projectSettings.popTag(); //page
     }
 	projectSettings.popTag(); //tracks
-    
+
     //LOAD OTHER SETTINGS
     projectSettings.addTag("timelineSettings");
     projectSettings.pushTag("timelineSettings");
@@ -1612,7 +1613,7 @@ void DurationController::saveProject(){
     projectSettings.addValue("outpoint", timeline.getOutPointTimecode());
     projectSettings.addValue("loop", timeline.getLoopType() == OF_LOOP_NORMAL);
 	projectSettings.popTag();// timelineSettings
-    
+
     //UI SETTINGS
     projectSettings.addTag("projectSettings");
     projectSettings.pushTag("projectSettings");
@@ -1620,20 +1621,20 @@ void DurationController::saveProject(){
     projectSettings.addValue("bpm", settings.bpm);
     projectSettings.addValue("snapToBPM", settings.snapToBPM);
     projectSettings.addValue("snapToKeys", settings.snapToKeys);
-	
+
     projectSettings.addValue("oscInEnabled", settings.oscInEnabled);
     projectSettings.addValue("oscOutEnabled", settings.oscOutEnabled);
     projectSettings.addValue("oscInPort", settings.oscInPort);
     projectSettings.addValue("oscIP", settings.oscIP);
     projectSettings.addValue("oscOutPort", settings.oscOutPort);
 	projectSettings.addValue("oscRate", settings.oscRate);
-	
+
 //	projectSettings.addValue("zoomViewMin",timeline.getZoomer()->getSelectedRange().min);
 //	projectSettings.addValue("zoomViewMax",timeline.getZoomer()->getSelectedRange().max);
 
 	projectSettings.popTag(); //projectSettings
     projectSettings.saveFile(settings.settingsPath);
-	
+
 	needsSave = false;
 }
 
@@ -1655,14 +1656,14 @@ void DurationController::createTooltips(){
 	projectTip.sourceRect = *projectDropDown->getRect();
 	projectTip.displayPoint = ofVec2f(projectTip.sourceRect.x, 55);
 	tooltips.push_back(projectTip);
-	
+
 	//save
 	Tooltip saveTip;
 	saveTip.text = translation.translateKey("save");
 	saveTip.sourceRect = *saveButton->getRect();
 	saveTip.displayPoint = ofVec2f(saveTip.sourceRect.x, 55);
 	tooltips.push_back(saveTip);
-		
+
 	//play/pause
 	Tooltip playpauseTip;
 	playpauseTip.text = translation.translateKey("play")+"/"+translation.translateKey("pause"); //TODO: switch dynamically
@@ -1671,7 +1672,7 @@ void DurationController::createTooltips(){
 	tooltips.push_back(playpauseTip);
 
 	ofVec2f zone2 = playpauseTip.displayPoint;
-	
+
 	//edit duration
 	Tooltip editDurationTip;
 	editDurationTip.text = translation.translateKey("edit duration");
@@ -1685,14 +1686,14 @@ void DurationController::createTooltips(){
 	currentTimeTip.displayPoint = zone2;
 	currentTimeTip.sourceRect = *timeLabel->getRect();
 	tooltips.push_back(currentTimeTip);
-	
+
 	//stop
 	Tooltip stopTip;
 	stopTip.text = translation.translateKey("stop");
 	stopTip.sourceRect = *stopButton->getRect();
 	stopTip.displayPoint = ofVec2f(stopTip.sourceRect.x, 55);
 	tooltips.push_back(stopTip);
-	
+
 	//loop
 	Tooltip loopTip;
 	loopTip.text = translation.translateKey("toggle loop");
@@ -1706,14 +1707,14 @@ void DurationController::createTooltips(){
 	bpmTip.sourceRect = *useBPMToggle->getRect();
 	bpmTip.displayPoint = ofVec2f(bpmTip.sourceRect.x, 55);
 	tooltips.push_back(bpmTip);
-	
+
 	//set beats per minute
 	Tooltip setBpmTip;
 	setBpmTip.text = translation.translateKey("set beats per minute");
 	setBpmTip.sourceRect = *bpmDialer->getRect();
 	setBpmTip.displayPoint = ofVec2f(setBpmTip.sourceRect.x, 55);
 	tooltips.push_back(setBpmTip);
-	
+
 	//enable OSC
 	Tooltip oscInTip;
 	oscInTip.text = translation.translateKey("enable incoming OSC");
@@ -1749,10 +1750,10 @@ void DurationController::createTooltips(){
 	oscOutPortTip.displayPoint = ofVec2f(oscOutPortTip.sourceRect.x, 55);
 	tooltips.push_back(oscOutPortTip);
 
-	
+
 	for(int i = 0; i < tooltips.size(); i++){
-		tooltips[i].debugColor = ofColor::fromHsb(ofRandom(255), ofRandom(255,200), ofRandom(255,200));		
-	}	
+		tooltips[i].debugColor = ofColor::fromHsb(ofRandom(255), ofRandom(255,200), ofRandom(255,200));
+	}
 }
 
 void DurationController::drawTooltips(){
@@ -1775,11 +1776,11 @@ void DurationController::drawTooltipDebug(){
 	for(int i = 0; i < tooltips.size(); i++){
 		ofNoFill();
 		ofSetColor(tooltips[i].debugColor, 200);
-		ofRect(tooltips[i].sourceRect);
-		ofLine(tooltips[i].sourceRect.getMax(), tooltips[i].displayPoint);
+		ofRect(tooltips[i].sourceRect.x,tooltips[i].sourceRect.y,tooltips[i].sourceRect.width,tooltips[i].sourceRect.height);
+		ofLine(ofPoint(tooltips[i].sourceRect.getMaxX(),tooltips[i].sourceRect.getMaxX()), tooltips[i].displayPoint);
 		ofFill();
 		ofSetColor(tooltips[i].debugColor, 50);
-		ofRect(tooltips[i].sourceRect);
+		ofRect(tooltips[i].sourceRect.x,tooltips[i].sourceRect.y,tooltips[i].sourceRect.width,tooltips[i].sourceRect.height);
 		ofSetColor(255);
 		tooltipFont.drawString(tooltips[i].text, tooltips[i].sourceRect.x+5,tooltips[i].sourceRect.y+10);
 	}
@@ -1792,7 +1793,7 @@ void DurationController::exit(ofEventArgs& e){
 	headers.clear();
 	timeline.reset();
 	unlock();
-	
+
 	ofLogNotice("DurationController") << "waiting for thread on exit";
 	waitForThread(true);
 }

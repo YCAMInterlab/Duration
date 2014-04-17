@@ -54,7 +54,7 @@ ofxTLUIHeader::ofxTLUIHeader(){
 	lastColorSent = ofColor(0,0,0);
 	lastValueReceived = 0;
 	audioNumberOfBins = 256;
-	
+
 	bins = NULL;
 	minDialer = NULL;
 	maxDialer = NULL;
@@ -64,30 +64,30 @@ ofxTLUIHeader::ofxTLUIHeader(){
 }
 
 ofxTLUIHeader::~ofxTLUIHeader(){
-    
+
     if(trackHeader != NULL){
         ofRemoveListener(trackHeader->events().viewWasResized, this, &ofxTLUIHeader::viewWasResized);
     }
-    
+
     if(gui != NULL){
 	    ofRemoveListener(gui->newGUIEvent, this, &ofxTLUIHeader::guiEvent);
         delete gui;
     }
-	
+
 }
 
 void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     trackHeader = header;
-    
+
     //create gui
     ofRectangle headerRect = trackHeader->getDrawRect();
     headerRect.width = 600;
     headerRect.x = trackHeader->getTimeline()->getTopRight().x - (headerRect.width + 50);
-    
-	gui = new ofxUICanvas(headerRect);     
+
+	gui = new ofxUICanvas(headerRect.x,headerRect.y,headerRect.width,headerRect.height);
 	//gui->setDrawPadding(true);
     //gui->setDrawWidgetPadding(true);
-    
+
     gui->setWidgetSpacing(1);
 	gui->setPadding(0);
     //switch on track type
@@ -98,18 +98,18 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		playSolo->setPadding(0);
 		gui->addWidgetRight(playSolo);
 	}
-	
+
 	if(trackType == "Curves" || trackType == "LFO"){
         //SET THE RANGE
         ofxTLKeyframes* tweenTrack = (ofxTLKeyframes*)trackHeader->getTrack();
         minDialer = new ofxUINumberDialer(-9999., 9999., tweenTrack->getValueRange().min, 2, "min", OFX_UI_FONT_SMALL);
         minDialer->setPadding(0);
         gui->addWidgetRight( minDialer );
-        
+
         maxDialer = new ofxUINumberDialer(-9999., 9999, tweenTrack->getValueRange().max, 2, "max", OFX_UI_FONT_SMALL);
         maxDialer->setPadding(0);
         gui->addWidgetRight( maxDialer );
-		
+
 		resetRange = new ofxUILabelButton(translation->translateKey("reset"), false, 0,0,0,0,OFX_UI_FONT_SMALL);
 		resetRange->setPadding(0);
 		gui->addWidgetRight(resetRange);
@@ -123,30 +123,30 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
 		audioClip = new ofxUILabelButton(translation->translateKey("select audio"), false,0,0,0,0, OFX_UI_FONT_SMALL);
 		audioClip->setPadding(0);
 		gui->addWidgetRight(audioClip);
-		
+
         //REMOVING BINS
 //		ofxUILabel* binLabel = new ofxUILabel(0, 0, "bins", translation->translateKey("bins"), OFX_UI_FONT_SMALL);
 //		binLabel->setPadding(0);
 //		gui->addWidgetRight(binLabel);
-		
+
 //		bins = new ofxUITextInput("bins", "256", 50, 0,0,0, OFX_UI_FONT_SMALL);
 //		bins->setAutoClear(false);
 //		bins->setPadding(0);
 //		gui->addWidgetRight(bins);
 	}
-	
+
 	if(trackType == "Bangs" || trackType == "Curves"){
 		receiveOSCEnable = new ofxUIToggle(translation->translateKey("receive osc"), true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
 		receiveOSCEnable->setPadding(1);
 		gui->addWidgetRight(receiveOSCEnable);
 	}
-	
+
 //	if(trackType != "Audio"){ //TODO: audio should send some nice FFT OSC
 		sendOSCEnable = new ofxUIToggle(translation->translateKey("send osc"), true, 17, 17, 0, 0, OFX_UI_FONT_SMALL);
 		sendOSCEnable->setPadding(1);
 		gui->addWidgetRight(sendOSCEnable);
 //	}
-    
+
     //DELETE ME???
     vector<string> deleteTrack;
     deleteTrack.push_back(translation->translateKey("sure?"));
@@ -155,9 +155,9 @@ void ofxTLUIHeader::setTrackHeader(ofxTLTrackHeader* header){
     dropDown->setAutoClose(true);
     dropDown->setPadding(0); //Tweak to make the drop down small enough
     gui->addWidgetRight(dropDown);
-    
+
     gui->autoSizeToFitWidgets();
-    
+
     gui->getRect()->y = trackHeader->getDrawRect().y; //TWEAK to get on the header
 	gui->getRect()->x = trackHeader->getTimeline()->getTopRight().x - (gui->getRect()->width + 50);
 
@@ -171,7 +171,7 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 }
 
 //void ofxTLUIHeader::setMinFrequency(int frequency){
-//    
+//
 //}
 
 //int ofxTLUIHeader::getMinFrequency(){
@@ -182,11 +182,11 @@ void ofxTLUIHeader::viewWasResized(ofEventArgs& args){
 //}
 //
 //void ofxTLUIHeader::setBandsPerOctave(int bands){
-//    
+//
 //}
 //
 //int ofxTLUIHeader::getBandsPerOctave(){
-//    
+//
 //}
 
 
@@ -213,7 +213,7 @@ void ofxTLUIHeader::setValueRange(ofRange range){
 	}
 	else{
 		ofLogError("ofxTLUIHeader::setValueMax") << "Cannot set value range on tracks that aren't curves";
-	}	
+	}
 }
 
 void ofxTLUIHeader::setValueMin(float min){
@@ -292,7 +292,7 @@ string ofxTLUIHeader::getTrackType(){
 
 void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 //    cout << e.widget->getName() << " hit!" << endl;
-    
+
 	if(e.widget->getName() == ">" && ((ofxUILabelButton*)e.widget)->getValue()){
 		getTrack()->togglePlay();
 	}
@@ -335,7 +335,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 			ofxTLColorTrack* colorTrack = (ofxTLColorTrack*)trackHeader->getTrack();
 			colorTrack->loadColorPalette(r.getPath());
 			modified = true;
-		}		
+		}
 	}
 	else if(e.widget == resetRange && resetRange->getValue()){
 		minDialer->setValue(0);
@@ -343,7 +343,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
         ofRange newValueRange = ofRange(0, 1.0);
         ofxTLKeyframes* track = (ofxTLKeyframes*)trackHeader->getTrack();
         track->setValueRange(newValueRange);
-		modified = true;		
+		modified = true;
 	}
 	else if(e.widget == audioClip && audioClip->getValue()){
 		ofFileDialogResult r = ofSystemLoadDialog();
@@ -358,7 +358,7 @@ void ofxTLUIHeader::guiEvent(ofxUIEventArgs &e){
 		if(!isNumber(bins->getTextString())){
 			bins->setTextString(ofToString(audioNumberOfBins));
 		}
-	
+
 		int newBinNumber = ofToInt(bins->getTextString());
 		if(newBinNumber != audioNumberOfBins){
 			audioNumberOfBins = newBinNumber;
