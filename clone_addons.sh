@@ -16,10 +16,7 @@ ${PREFIX}YCAMInterlab/ofxTimecode.git
 
 ${PREFIX}obviousjim/ofxTween.git
 
-${PREFIX}obviousjim/ofxUI.git
-cd ofxUI/
-git checkout develop
-cd ..
+${PREFIX}rezaali/ofxUI
 
 ${PREFIX}obviousjim/ofxLocalization.git
 
