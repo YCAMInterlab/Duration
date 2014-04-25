@@ -29,7 +29,4 @@ ${PREFIX}Flightphase/ofxRange.git
 ${PREFIX}Flightphase/ofxFTGL.git
 
 ${PREFIX}YCAMInterlab/ofxTimeline.git
-cd ofxTimeline/
-git checkout develop
-cd ..
 

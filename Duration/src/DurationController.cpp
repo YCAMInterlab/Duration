@@ -1421,6 +1421,7 @@ void DurationController::loadProject(string projectPath, string projectName, boo
     timeline.removeFromThread();
     headers.clear(); //smart pointers will call destructor
     timeline.reset();
+    timeline.setup();
 
 	if(audioTrack != NULL){
 		delete audioTrack;
