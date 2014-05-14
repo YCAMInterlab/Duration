@@ -16,10 +16,7 @@ ${PREFIX}YCAMInterlab/ofxTimecode.git
 
 ${PREFIX}obviousjim/ofxTween.git
 
-${PREFIX}obviousjim/ofxUI.git
-cd ofxUI/
-git checkout develop
-cd ..
+${PREFIX}rezaali/ofxUI
 
 ${PREFIX}obviousjim/ofxLocalization.git
 
@@ -32,7 +29,4 @@ ${PREFIX}Flightphase/ofxRange.git
 ${PREFIX}Flightphase/ofxFTGL.git
 
 ${PREFIX}YCAMInterlab/ofxTimeline.git
-cd ofxTimeline/
-git checkout develop
-cd ..
 

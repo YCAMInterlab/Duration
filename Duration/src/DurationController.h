@@ -46,23 +46,23 @@ typedef struct {
     string path; //full project path
     string name;
     string settingsPath;
-    
+
     bool useBPM;
     float bpm;
     bool snapToBPM;
     bool snapToKeys;
-    
+
 	float oscRate; // BUNDLES PER SECOND
     bool oscInEnabled;
 	bool oscOutEnabled;
 	int oscInPort;
     string oscIP;
     int oscOutPort;
-    
+
 } DurationProjectSettings;
 
 typedef struct{
-	ofRectangle sourceRect;
+	ofxUIRectangle sourceRect;
 	ofVec2f displayPoint;
 	string text;
 	ofColor debugColor;
@@ -72,27 +72,27 @@ class DurationController : public ofThread  {
   public:
 	DurationController();
 	~DurationController();
-	
+
 	void setup();
-		
+
 	void enableInterface();
 	void disableInterface();
 	bool isInterfaceEnabled();
-	
+
 	void update(ofEventArgs& args);
 	void draw(ofEventArgs& args);
-	
+
 	void keyPressed(ofKeyEventArgs& keyArgs);
-		
+
 	ofxTimeline& getTimeline();
-	
+
     ofRectangle canvasRectangle;
     ofxUICanvas* gui;
 	void guiEvent(ofxUIEventArgs& e);
     void exit(ofEventArgs& e);
-	
+
 	ofxTLTrack* addTrack(string trackType, string trackName = "", string xmlFileName = "");
-	
+
     //control elements
     ofxUIDropDownList* projectDropDown;
 	ofxUIMultiImageButton* saveButton;
@@ -101,34 +101,34 @@ class DurationController : public ofThread  {
     ofxUIMultiImageToggle* playpauseToggle;
 	ofxUIMultiImageButton* stopButton;
     ofxUIMultiImageToggle* loopToggle;
-	
+
 	//project settings elements
     ofxUILabelToggle* useBPMToggle;
 	ofxUINumberDialer* bpmDialer;
-	
+
 	//TODO: find a place for these
     ofxUILabelToggle* snapToKeysToggle;
-    
+
     ofxUILabelToggle* enableOSCInToggle;
 	ofxUILabelToggle* enableOSCOutToggle;
     ofxUITextInput* oscInPortInput;
     ofxUITextInput* oscOutIPInput;
     ofxUITextInput* oscOutPortInput;
-    
+
     vector<string> trackTypes;
     ofxUIDropDownList* addTrackDropDown;
-	
+
     string defaultProjectDirectoryPath;
 	DurationProjectSettings settings;
-	
+
 	void newProject(string projectPath);
     void newProject(string newProjectPath, string newProjectName);
     void loadProject(string projectPath, bool forceCreate = false);
     void loadProject(string projectPath, string projectName, bool forceCreate = false);
     void saveProject();
-    
+
     DurationProjectSettings defaultProjectSettings();
-    	
+
 	void startRecording();
 	void stopRecording();
 
@@ -136,58 +136,58 @@ class DurationController : public ofThread  {
 	ofxTimeline timeline;
     void bangFired(ofxTLBangEventArgs& bang);
 	vector<string> trackAddresses;
-	
+
 	bool shouldStartPlayback;
 	void startPlayback();
 	void sendInfoMessage();
 	bool refreshAllOscOut;
-	
+
     bool shouldCreateNewProject;
 	string newProjectPath;
     bool shouldLoadProject;
 	string projectToLoad;
-	
+
 	ofxOscReceiver receiver;
 	ofxOscSender sender;
-	
+
 	void threadedFunction();
 	void handleOscOut();
 	void handleOscIn();
 	bool enabled;
-	
+
 	unsigned long recordTimeOffset;
 	ofxMSATimer recordTimer;
 
 	void createTooltips();
 	void drawTooltips();
 	void drawTooltipDebug();
-	
+
 	ofxLocalization translation;
 	ofMutex oscLock;
-	
+
 	vector<Tooltip> tooltips;
 	//only can have one of these!
 	ofxTLAudioTrack* audioTrack;
 
 	vector<ofxOscMessage> bangsReceived;
 	map<string, ofPtr<ofxTLUIHeader> > headers;
-    
+
 	ofxTLUIHeader* createHeaderForTrack(ofxTLTrack* track);
 	ofPtr<ofxTLUIHeader> getHeaderWithDisplayName(string name);
-	
+
 	float oscFrequency; // 1 / BUNDLES PER SECOND * 1000
 	unsigned long lastOSCBundleSent;
 	ofxFTGLFont tooltipFont;
 	bool needsSave;
-	
+
 	bool receivedAddTrack;
 	string oscTrackTypeReceived;
 	string oscTrackNameReceived;
 	string oscTrackFilePathReceived;
-	
+
 	bool receivedPaletteToLoad;
 	ofxTLColorTrack* paletteTrack;
 	string palettePath;
-	
+
 };
 

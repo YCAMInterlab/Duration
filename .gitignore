@@ -79,9 +79,5 @@ DurationRemote/bin/libs/*
 RecordingDataGenerator/bin/RecordingDataGenerator
 RecordingDataGenerator/bin/libs/*
 
-*.cbp
-*.workspace
-Makefile
-config.make
 
 DurationRemote/bin/DurationRemote
