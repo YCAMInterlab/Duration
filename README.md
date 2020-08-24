@@ -446,10 +446,11 @@ This will configure all necessary dependencies into openFrameworks/addons/ and t
 
 Duration is a project by [James George](http://www.jamesgeorge.org), co-developed by [YCAMInterLab](http://interlab.ycam.jp/en/) during the [Guest Research Project v.2](http://interlab.ycam.jp/en/projects/guestresearch/vol2)
 
+<!--
 <p align="center">
     <img src="http://www.jamesgeorge.org/images/ofxtimeline/github/logo_ycam.png" />
 </p>
-
+-->
 ## Additional Support
 
 ![Additional Support](http://www.jamesgeorge.org/images/ofxtimeline/github/SupportedBy.png)
