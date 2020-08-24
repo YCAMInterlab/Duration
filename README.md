@@ -452,9 +452,9 @@ Duration is a project by [James George](http://www.jamesgeorge.org), co-develope
 </p>
 -->
 ## Additional Support
-
+<!--
 ![Additional Support](http://www.jamesgeorge.org/images/ofxtimeline/github/SupportedBy.png)
-
+-->
 [Playmodes](http://www.playmodes.com/) who graciously funded and shaped the project in its early stages for [BlueBeams](https://vimeo.com/35931265).
 
 [The Frank-Ratchye STUDIO for Creative Inquiry](http://studioforcreativeinquiry.org/) who have supported the [RGBDToolkit](http://www.rgbdtoolkit.com) project for which ofxTimeline was first created.
