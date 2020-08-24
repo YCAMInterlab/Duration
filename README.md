@@ -6,10 +6,13 @@ Duration controls change over time. With a simple one window approach, the cross
 
 The application sends values over OSC and can be configured through OSC messages.
 
+<!--
 ![DurationInterface](http://www.duration.cc/assets/images/duration_screen.png)
+-->
 
 Duration is open source and completely free to use in your art, research, or commercial projects. It's built with [openFrameworks](http://www.openframeworks.cc), and inherits its commitment to sharing. Duration is a project by [James George](http://www.jamesgeorge.org), co-developed by [YCAMInterLab](http://interlab.ycam.jp/en/) during the [Guest Research Project v.2](http://interlab.ycam.jp/en/projects/guestresearch/vol2)
 
+<!--
 ## Download
 
 Download Duration: 
@@ -25,6 +28,7 @@ Thanks to [Philip Whitfield](http://underdoeg.com/) for the Linux build.
 [Source for all platforms](http://www.duration.cc/downloads/DurationSource_003.zip)
 
 For Windows, you may need to install the [MSVC++ Runtime](http://www.microsoft.com/en-us/download/details.aspx?id=5555) and [OpenAL](http://connect.creativelabs.com/developer/Wiki/OpenAL%20Installer%20for%20Windows.aspx)
+-->
 
 ## Demo video
 
