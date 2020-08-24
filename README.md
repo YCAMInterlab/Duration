@@ -1,5 +1,7 @@
+# Duration
+<!--
 # [Duration](http://duration.cc)
-
+-->
 ## Timeline for creative code 
 
 Duration controls change over time. With a simple one window approach, the cross platform stand alone application manages lists of tracks to compose changing data over a fixed duration.
@@ -395,7 +397,9 @@ Duration's OSC input is always listening for you to tell it what to do next.
 
 Duration comes packaged with a simple application called "DurationRemote", which can be used to test control messages.
 
+<!--
 ![DurationRemote](http://www.duration.cc/duration_remote.png)
+-->
 
 ### Recording data into tracks from OSC
 
@@ -405,7 +409,9 @@ If a message is being received that matches a Curve track's name and has valid d
 
 * NOTE: Use the bundled RecordingDataGenerator to test this functionality by naming a track to match one of the outgoing parameters.
 
+<!--
 ![RecordingGenerator](http://www.duration.cc/duration_datagenerator.png)
+-->
 
 * NOTE: This is still an experimental feature with a few quirks. Be careful about receiving values out of range, recording over existing data or ending up with huge amounts of unmanageable keyframes! All of these cases are not yet handled very well by Duration.
 
