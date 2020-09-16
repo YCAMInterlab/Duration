@@ -388,7 +388,13 @@ Duration's OSC input is always listening for you to tell it what to do next.
         <td>Audio Clip</td>
         <td>/duration/audioclip</td>
         <td>ClipPath (String)</td>
-        <td>Loads the sound clip into the Audio track. The Audio track must alrady be present in the current project</td>
+        <td>Loads the sound clip into the Audio track. The Audio track must already be present in the current project</td>
+    </tr>
+    <tr>
+        <td>Info</td>
+        <td>/duration/sendinfo</td>
+        <td>-</td>
+        <td>Resends the /duration/info information</td>
     </tr>
 
 </table>

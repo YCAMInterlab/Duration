@@ -708,6 +708,10 @@ void DurationController::handleOscIn(){
 				ofLogError("Duration:OSC") << "Set audio clip failed, incorrectly formatted arguments. \n usage /duration/audioclip filepath:string ";
 			}
 		}
+		// Allow resending track information
+		else if(m.getAddress() == "/duration/sendinfo"){
+			sendInfoMessage();
+		}
 	}
 }
 
