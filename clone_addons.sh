@@ -22,7 +22,7 @@ ${PREFIX}obviousjim/ofxLocalization.git
 
 ${PREFIX}obviousjim/ofxMSATimer.git
 
-${PREFIX}Flightphase/ofxTextInputField.git
+${PREFIX}Flightphase/ofxTextInputField.git -b develop
 
 ${PREFIX}Flightphase/ofxRange.git
 
